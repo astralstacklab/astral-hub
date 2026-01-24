@@ -1,0 +1,28 @@
+{
+  "name": "card-erp",
+  "version": "1.0.0",
+  "description": "OMO 收藏卡交易平台 - 線上線下整合系統",
+  "private": true,
+  "author": "Card ERP Team",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "echo 'Please run dev command in specific workspace (e.g., pnpm --filter api dev)'",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,vue}\"",
+    "type-check": "pnpm -r type-check",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
