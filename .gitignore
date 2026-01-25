@@ -64,3 +64,6 @@ docker-compose.override.yml
 
 # Monorepo
 .turbo/
+
+# Claude Code
+.claude/settings.local.json

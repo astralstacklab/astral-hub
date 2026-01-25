@@ -1,6 +1,7 @@
 {
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true,
-    "document-skills@anthropic-agent-skills": true
+    "document-skills@anthropic-agent-skills": true,
+    "claude-reflect@claude-reflect-marketplace": true
   }
 }
