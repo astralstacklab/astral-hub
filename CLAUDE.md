@@ -643,10 +643,143 @@ pnpm type-check                 # TypeScript 型別檢查
 
 ---
 
+## 文件索引與參考方針
+
+### 📚 文件導航
+
+Card ERP 專案包含完整的文件體系，確保開發過程有據可循。所有文件分為以下類別：
+
+**完整文件索引**: [docs/DOCS_INDEX.md](./docs/DOCS_INDEX.md)
+
+#### 核心文件分類
+
+```
+docs/
+├── 📋 產品規劃
+│   ├── PRD.md                          # 產品需求文檔
+│   └── TASKS.md                        # 任務總綱
+│
+├── 🎨 設計系統
+│   └── design-system/
+│       ├── BRAND_GUIDELINES.md         # 品牌設計指南
+│       ├── ADMIN_WEB_STYLE_GUIDE.md    # Admin Web 風格（Fintech/Crypto）
+│       ├── BUYER_WEB_STYLE_GUIDE.md    # Buyer Web 風格（DeFi Cyberpunk）
+│       ├── POS_WEB_STYLE_GUIDE.md      # POS Web 風格（功能型）
+│       ├── TAILWIND_USAGE.md           # Tailwind 使用指南
+│       └── tailwind-preset.js          # 共用 Tailwind preset
+│
+├── 🏗️ 架構設計
+│   └── plans/
+│       └── 2026-01-24-system-architecture-design.md
+│
+├── 🗺️ 產品路線圖
+│   └── roadmap/
+│       ├── README.md                   # 路線圖總覽（三階段）
+│       ├── PHASE-2-3-OVERVIEW.md       # Phase 2/3 功能概覽
+│       └── TECHNICAL-EVOLUTION.md      # 技術演進路線圖
+│
+├── ✅ 實作任務
+│   └── tasks/
+│       └── phase-1-mvp/                # 01-22 詳細任務文件
+│
+└── 🔧 開發指南
+    ├── SKILLS_GUIDE.md                 # Skills 使用指南
+    ├── SKILLS_LOCATION.md              # Skills 位置說明
+    └── DOCS_INDEX.md                   # 文件索引（本導航）
+```
+
+### 🎯 執行方針：文件先行原則
+
+**核心原則**: **執行 A 任務 → 先讀 A 文件 → 完成後更新 A 文件**
+
+#### 開發前必讀
+
+| 開發任務 | 必讀文件 | 完成後需更新 |
+|---------|---------|------------|
+| **新增產品功能** | `PRD.md` → 對應 `Task 文件` | `PRD.md`（如需求變更）<br>`Task 文件`（如步驟調整） |
+| **UI/UX 開發** | `BRAND_GUIDELINES.md` → 對應應用的 `Style Guide` → `TAILWIND_USAGE.md` | `Style Guide`（如新增顏色/組件）<br>`tailwind-preset.js`（如共用樣式變更） |
+| **架構調整** | `plans/2026-01-24-system-architecture-design.md` → `TECHNICAL-EVOLUTION.md` | `Architecture Design`<br>受影響的 `Task 文件` |
+| **執行 Phase 1 任務** | `tasks/phase-1-mvp/XX-<topic>.md` → `PRD.md` → `Architecture Design` | 對應的 `Task 文件`（如實作調整） |
+| **路線圖規劃** | `roadmap/README.md` → `PHASE-2-3-OVERVIEW.md` → `TECHNICAL-EVOLUTION.md` | 所有 roadmap 文件<br>`PRD.md`（如產品方向變更） |
+
+### 🔄 文件同步更新規則
+
+**當發生以下變更時，必須同步更新相關文件**：
+
+#### 1. 產品需求變更
+```
+變更流程:
+1. 更新 docs/PRD.md（需求定義）
+2. 更新 docs/roadmap/README.md（如影響路線圖）
+3. 更新受影響的 Task 文件（具體實作）
+```
+
+#### 2. 架構調整
+```
+變更流程:
+1. 更新 docs/plans/2026-01-24-system-architecture-design.md（架構設計）
+2. 更新受影響的 Task 文件（如 22-deployment.md）
+3. 更新 CLAUDE.md（如技術棧變更）
+4. 更新 docs/roadmap/TECHNICAL-EVOLUTION.md（如影響演進方向）
+```
+
+#### 3. UI 風格變更
+```
+變更流程:
+1. 更新對應的 Style Guide（ADMIN/BUYER/POS_WEB_STYLE_GUIDE.md）
+2. 更新 docs/design-system/BRAND_GUIDELINES.md（如影響統一原則）
+3. 更新 docs/design-system/TAILWIND_USAGE.md（如配置變更）
+4. 更新 tailwind-preset.js（如共用樣式變更）
+```
+
+#### 4. 路線圖調整
+```
+變更流程:
+1. 更新 docs/roadmap/README.md（總體規劃）
+2. 更新 docs/roadmap/PHASE-2-3-OVERVIEW.md（功能清單）
+3. 更新 docs/PRD.md（如產品願景變更）
+```
+
+### 📋 文件一致性檢查 Checklist
+
+在提交重大變更或 Pull Request 前，應檢查：
+
+- [ ] `PRD.md` 與 `roadmap/README.md` 的產品願景是否一致？
+- [ ] `Architecture Design` 與 Phase 1 Task 文件的架構是否一致？
+- [ ] 三個 `Style Guide` 與 `BRAND_GUIDELINES.md` 的統一原則是否一致？
+- [ ] `TECHNICAL-EVOLUTION.md` 與 `CLAUDE.md` 的技術棧是否一致？
+- [ ] 所有受影響的文件是否都已更新？
+- [ ] 是否更新了文件的「最後更新」日期？
+
+### 🚨 強制要求
+
+**AI 助手與開發者在開發過程中**：
+
+1. ✅ **開始任務前** → 必須先閱讀對應的文件
+2. ✅ **方案調整時** → 必須同步更新相關文件
+3. ✅ **完成任務後** → 必須在 Commit Message 中說明文件變更
+4. ❌ **禁止** → 只改代碼不更新文件
+5. ❌ **禁止** → 文件與實作不一致
+
+### 📖 詳細參考
+
+完整的文件參考指引、更新規則、文件關聯圖請參考：
+👉 **[docs/DOCS_INDEX.md](./docs/DOCS_INDEX.md)**
+
+---
+
 ## 資源連結
 
-- [PRD 產品需求文檔](./docs/PRD.md)
-- [系統設計文檔](./docs/plans/)
+### 內部文檔
+- **[文件索引](./docs/DOCS_INDEX.md)** - 完整文件導航與參考指引 ⭐
+- **[PRD 產品需求文檔](./docs/PRD.md)** - 產品需求與功能範圍
+- **[系統設計文檔](./docs/plans/)** - 架構設計與技術規格
+- **[產品路線圖](./docs/roadmap/)** - 三階段演進規劃
+- **[設計系統](./docs/design-system/)** - UI/UX 風格指南
+- **[Phase 1 任務](./docs/tasks/phase-1-mvp/)** - MVP 詳細實作任務
+- **[Skills 使用指南](./docs/SKILLS_GUIDE.md)** - Claude Code Skills 使用說明
+
+### 外部資源
 - [Nuxt 3 文檔](https://nuxt.com/)
 - [Fastify 文檔](https://www.fastify.io/)
 - [Prisma 文檔](https://www.prisma.io/)
