@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true,
+    "document-skills@anthropic-agent-skills": true
+  }
+}
