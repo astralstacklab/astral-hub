@@ -2,10 +2,21 @@
 
 本專案已安裝以下 Claude Code Skills，協助開發流程更加系統化和高效。
 
+## 🚀 快速安裝
+
+Clone 專案後，執行以下命令安裝所需的 plugins：
+
+```bash
+bash .claude/setup-skills.sh
+```
+
+這會自動安裝專案所需的所有 Claude Code plugins。
+
 ## 📦 已安裝的 Plugins
 
 - **superpowers@superpowers-marketplace** (v4.1.1)
 - **document-skills@anthropic-agent-skills** (v69c0b1a06741)
+- **claude-reflect@claude-reflect-marketplace** (v2.4.0)
 
 ## 🎯 核心開發流程技能（Tier 1 - 必備）
 
@@ -256,6 +267,37 @@ claude plugin list
 # 檢查專案配置
 cat .claude/settings.json
 ```
+
+---
+
+## 📁 專案 Skills 配置
+
+專案的 Claude Code 配置位於 `.claude/` 目錄，會跟隨 Git 版本控制：
+
+```
+.claude/
+├── settings.json          # 專案設定（版本控制）
+├── settings.local.json    # 本地設定（不進版控）
+├── setup-skills.sh        # Plugins 安裝腳本
+├── README.md              # 配置說明
+└── skills/                # 專案自訂 skills
+    └── card-erp-workflow.md  # Card ERP 開發工作流程
+```
+
+### 專案自訂 Skill: `card-erp-workflow`
+
+專案內建的開發工作流程 skill，包含：
+- 專案背景與結構
+- TypeScript 嚴格規範
+- 開發流程指南
+- Git 規範
+- 常用命令
+
+### 新機器設置流程
+
+1. Clone 專案：`git clone <repo-url>`
+2. 安裝 plugins：`bash .claude/setup-skills.sh`
+3. 開始使用 Claude Code
 
 ---
 
