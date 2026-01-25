@@ -154,6 +154,7 @@ card-erp/                          # Monorepo 根目錄
 ### 代碼風格
 
 - **TypeScript**: 必須，所有 `.ts` 和 `.vue` 檔案使用 TypeScript
+- **嚴格型別**: 禁止使用 `any` 型別（單元測試除外），改用 `unknown` 或明確型別定義
 - **ESLint**: 遵循 `@nuxt/eslint-config` 與 `@typescript-eslint/recommended`
 - **Prettier**: 統一格式化，2 空格縮排，單引號
 - **命名規範**:
@@ -164,6 +165,8 @@ card-erp/                          # Monorepo 根目錄
   - Enum: `PascalCase`
 
 ### Git Commit 規範
+
+**⚠️ 重要**: Git commit 操作僅由專案負責人發起，AI 助手不應執行 `git commit` 或 `git push` 指令。
 
 使用 Conventional Commits:
 
