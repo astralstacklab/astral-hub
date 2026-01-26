@@ -1,6 +1,6 @@
 ---
 name: test-driven-development
-description: 實作任何功能或 bugfix 之前使用。先寫測試、看到失敗、再寫最小代碼通過。
+description: Use when implementing any feature or bugfix, before writing implementation code
 ---
 
 # Test-Driven Development (TDD)
@@ -46,11 +46,33 @@ Implement fresh from tests. Period.
 
 ## Red-Green-Refactor
 
+```dot
+digraph tdd_cycle {
+    rankdir=LR;
+    red [label="RED\nWrite failing test", shape=box, style=filled, fillcolor="#ffcccc"];
+    verify_red [label="Verify fails\ncorrectly", shape=diamond];
+    green [label="GREEN\nMinimal code", shape=box, style=filled, fillcolor="#ccffcc"];
+    verify_green [label="Verify passes\nAll green", shape=diamond];
+    refactor [label="REFACTOR\nClean up", shape=box, style=filled, fillcolor="#ccccff"];
+    next [label="Next", shape=ellipse];
+
+    red -> verify_red;
+    verify_red -> green [label="yes"];
+    verify_red -> red [label="wrong\nfailure"];
+    green -> verify_green;
+    verify_green -> refactor [label="yes"];
+    verify_green -> green [label="no"];
+    refactor -> verify_green [label="stay\ngreen"];
+    verify_green -> next;
+    next -> red;
+}
+```
+
 ### RED - Write Failing Test
 
 Write one minimal test showing what should happen.
 
-**Good:**
+<Good>
 ```typescript
 test('retries failed operations 3 times', async () => {
   let attempts = 0;
@@ -67,8 +89,9 @@ test('retries failed operations 3 times', async () => {
 });
 ```
 Clear name, tests real behavior, one thing
+</Good>
 
-**Bad:**
+<Bad>
 ```typescript
 test('retry works', async () => {
   const mock = jest.fn()
@@ -80,6 +103,7 @@ test('retry works', async () => {
 });
 ```
 Vague name, tests mock not code
+</Bad>
 
 **Requirements:**
 - One behavior
@@ -107,7 +131,7 @@ Confirm:
 
 Write simplest code to pass the test.
 
-**Good:**
+<Good>
 ```typescript
 async function retryOperation<T>(fn: () => Promise<T>): Promise<T> {
   for (let i = 0; i < 3; i++) {
@@ -121,8 +145,9 @@ async function retryOperation<T>(fn: () => Promise<T>): Promise<T> {
 }
 ```
 Just enough to pass
+</Good>
 
-**Bad:**
+<Bad>
 ```typescript
 async function retryOperation<T>(
   fn: () => Promise<T>,
@@ -136,6 +161,7 @@ async function retryOperation<T>(
 }
 ```
 Over-engineered
+</Bad>
 
 Don't add features, refactor other code, or "improve" beyond the test.
 
@@ -216,6 +242,16 @@ TDD IS pragmatic:
 - Enables refactoring (change freely, tests catch breaks)
 
 "Pragmatic" shortcuts = debugging in production = slower.
+
+**"Tests after achieve the same goals - it's spirit not ritual"**
+
+No. Tests-after answer "What does this do?" Tests-first answer "What should this do?"
+
+Tests-after are biased by your implementation. You test what you built, not what's required. You verify remembered edge cases, not discovered ones.
+
+Tests-first force edge case discovery before implementing. Tests-after verify you remembered everything (you didn't).
+
+30 minutes of tests after ≠ TDD. You get coverage, lose proof tests work.
 
 ## Common Rationalizations
 
@@ -317,6 +353,13 @@ Can't check all boxes? You skipped TDD. Start over.
 Bug found? Write failing test reproducing it. Follow TDD cycle. Test proves fix and prevents regression.
 
 Never fix bugs without a test.
+
+## Testing Anti-Patterns
+
+When adding mocks or test utilities, read @testing-anti-patterns.md to avoid common pitfalls:
+- Testing mock behavior instead of real behavior
+- Adding test-only methods to production classes
+- Mocking without understanding dependencies
 
 ## Final Rule
 

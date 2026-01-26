@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: 宣稱工作完成、commit、創建 PR 之前使用。確保測試真的通過，驗證部署前的狀態。
+description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
 ---
 
 # Verification Before Completion
@@ -107,8 +107,8 @@ Skip any step = lying, not verifying
 
 ## Why This Matters
 
-From failure memories:
-- "I don't believe you" - trust broken
+From 24 failure memories:
+- your human partner said "I don't believe you" - trust broken
 - Undefined functions shipped - would crash
 - Missing requirements shipped - incomplete features
 - Time wasted on false completion → redirect → rework

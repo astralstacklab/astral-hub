@@ -19,18 +19,43 @@ bash .claude/setup-skills.sh
 ├── settings.local.json    # 本地設定（不進版控）
 ├── setup-skills.sh        # Plugins 安裝腳本
 └── skills/                # 專案 skills（版本控制）
-    ├── card-erp-workflow.md           # Card ERP 開發工作流程
-    ├── systematic-debugging.md        # 系統化除錯
-    ├── test-driven-development.md     # TDD 測試驅動開發
-    ├── verification-before-completion.md  # 完成前驗證
-    ├── requesting-code-review.md      # 請求 Code Review
-    ├── receiving-code-review.md       # 接收 Code Review
-    ├── using-git-worktrees.md         # Git Worktree 使用
-    ├── finishing-a-development-branch.md  # 完成開發分支
-    ├── executing-plans.md             # 執行計劃
-    ├── writing-plans.md               # 撰寫計劃
-    ├── frontend-design.md             # 前端設計
-    └── webapp-testing.md              # Web 應用測試
+    ├── card-erp-workflow/          # Card ERP 開發工作流程
+    │   └── SKILL.md
+    ├── systematic-debugging/       # 系統化除錯（含參考腳本）
+    │   ├── SKILL.md
+    │   ├── root-cause-tracing.md
+    │   ├── defense-in-depth.md
+    │   ├── condition-based-waiting.md
+    │   ├── condition-based-waiting-example.ts
+    │   └── find-polluter.sh
+    ├── test-driven-development/    # TDD 測試驅動開發
+    │   ├── SKILL.md
+    │   └── testing-anti-patterns.md
+    ├── verification-before-completion/  # 完成前驗證
+    │   └── SKILL.md
+    ├── requesting-code-review/     # 請求 Code Review
+    │   ├── SKILL.md
+    │   └── code-reviewer.md
+    ├── receiving-code-review/      # 接收 Code Review
+    │   └── SKILL.md
+    ├── using-git-worktrees/        # Git Worktree 使用
+    │   └── SKILL.md
+    ├── finishing-a-development-branch/  # 完成開發分支
+    │   └── SKILL.md
+    ├── executing-plans/            # 執行計劃
+    │   └── SKILL.md
+    ├── writing-plans/              # 撰寫計劃
+    │   └── SKILL.md
+    ├── frontend-design/            # 前端設計
+    │   └── SKILL.md
+    └── webapp-testing/             # Web 應用測試（含範例與腳本）
+        ├── SKILL.md
+        ├── examples/
+        │   ├── console_logging.py
+        │   ├── element_discovery.py
+        │   └── static_html_automation.py
+        └── scripts/
+            └── with_server.py
 ```
 
 ## 配置文件說明

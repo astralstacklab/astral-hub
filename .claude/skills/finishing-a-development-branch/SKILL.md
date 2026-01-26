@@ -1,6 +1,6 @@
 ---
 name: finishing-a-development-branch
-description: 實作完成、所有測試通過後使用。引導完成開發工作的收尾流程（merge、PR、cleanup）。
+description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
 ---
 
 # Finishing a Development Branch
