@@ -50,7 +50,7 @@
         POSTGRES_PASSWORD: card_erp_password
         POSTGRES_DB: card_erp
       ports:
-        - "5432:5432"
+        - "5678:5432"
       volumes:
         - postgres_data:/var/lib/postgresql/data
         - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
@@ -374,7 +374,7 @@
 
 ## 🚨 注意事項
 
-1. **端口衝突**: 確保 5432 和 6379 端口未被佔用
+1. **端口衝突**: 確保 5678（PostgreSQL）和 6379（Redis）端口未被佔用（注意：WSL2 環境下 Hyper-V 會保留 port 5432，因此改用 5678）
 2. **Docker 資源**: PostgreSQL + Redis 大約需要 500MB RAM
 3. **檔案權限**: Linux/macOS 需要執行權限（chmod +x）
 4. **Windows 相容性**: 提供 PowerShell 版本腳本

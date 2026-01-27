@@ -424,7 +424,7 @@ API_PORT=3000
 API_HOST=0.0.0.0
 
 # 資料庫
-DATABASE_URL=postgresql://user:password@localhost:5432/card_erp
+DATABASE_URL=postgresql://user:password@localhost:5678/card_erp
 REDIS_URL=redis://localhost:6379
 
 # GCS
@@ -476,7 +476,7 @@ POS_WEB_URL=http://localhost:3003
      --name card-erp-postgres \
      -e POSTGRES_PASSWORD=password \
      -e POSTGRES_DB=card_erp \
-     -p 5432:5432 \
+     -p 5678:5432 \
      postgres:15
    ```
 
