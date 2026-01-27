@@ -13,7 +13,7 @@
 
 ## 🎯 成功標準
 
-- [ ] 執行 `pnpm run setup-dev` 能成功啟動環境
+- [x] 執行 `pnpm run setup-dev` 能成功啟動環境
 - [x] Docker containers 正常運行（PostgreSQL + Redis）
 - [x] 可連接 PostgreSQL（使用 psql 或 GUI 工具測試）
 - [x] 可連接 Redis（使用 redis-cli 測試）
@@ -105,7 +105,7 @@
 ### 1.2 開發工具腳本
 
 #### 1.2.1 建立開發環境設定腳本
-- [ ] 建立 `scripts/setup-dev.sh`（macOS/Linux）
+- [x] 建立 `scripts/setup-dev.sh`（macOS/Linux）
   ```bash
   #!/bin/bash
   # 檢查 Node.js 版本
@@ -116,43 +116,43 @@
   # 安裝所有依賴（pnpm install）
   # 提示後續步驟
   ```
-- [ ] 建立 `scripts/setup-dev.ps1`（Windows PowerShell）
+- [ ] 建立 `scripts/setup-dev.ps1`（Windows PowerShell）⚠️ 暫緩：目前為 Linux 開發環境，視需求補建
   - 與上述腳本功能相同
-- [ ] 賦予執行權限
+- [x] 賦予執行權限
   ```bash
   chmod +x scripts/setup-dev.sh
   ```
 
 #### 1.2.2 建立清理腳本
-- [ ] 建立 `scripts/teardown-dev.sh`
+- [x] 建立 `scripts/teardown-dev.sh`
   ```bash
   #!/bin/bash
   # 停止 Docker containers
   # 刪除 volumes（可選）
   # 清理 node_modules（可選）
   ```
-- [ ] 建立對應的 Windows 版本
+- [ ] 建立對應的 Windows 版本 ⚠️ 暫緩：同上
 
 #### 1.2.3 在 package.json 新增腳本
-- [ ] 編輯根目錄 `package.json`
+- [x] 編輯根目錄 `package.json`
   ```json
   {
     "scripts": {
       "setup-dev": "bash scripts/setup-dev.sh",
       "teardown-dev": "bash scripts/teardown-dev.sh",
-      "docker:up": "docker-compose up -d",
-      "docker:down": "docker-compose down",
-      "docker:logs": "docker-compose logs -f",
+      "docker:up": "docker compose up -d",
+      "docker:down": "docker compose down",
+      "docker:logs": "docker compose logs -f",
       "db:psql": "docker exec -it card-erp-postgres psql -U card_erp_user -d card_erp"
     }
   }
   ```
 
 #### 1.2.4 測試腳本
-- [ ] 執行 `pnpm run setup-dev`
-- [ ] 驗證所有步驟成功執行
-- [ ] 執行 `pnpm run teardown-dev`
-- [ ] 驗證清理成功
+- [x] 執行 `pnpm run setup-dev`
+- [x] 驗證所有步驟成功執行
+- [x] 執行 `pnpm run teardown-dev`
+- [x] 驗證清理成功
 
 ---
 
@@ -359,7 +359,7 @@
 - [x] `docker-compose.yml`
 - [x] `scripts/init-db.sql`
 - [x] `scripts/setup-dev.sh`
-- [ ] `scripts/teardown-dev.sh`
+- [x] `scripts/teardown-dev.sh`
 - [ ] `scripts/validate-env.ts`
 - [ ] `.vscode/settings.json`
 - [ ] `.vscode/extensions.json`
@@ -395,7 +395,7 @@
 | 子任務 | 狀態 | 負責人 | 完成日期 |
 |--------|------|--------|---------|
 | 1.1 Docker Compose | ✅ 完成 | Claude | 2026-01-27 |
-| 1.2 開發工具腳本 | ⏳ 未開始 | - | - |
+| 1.2 開發工具腳本 | ✅ 完成（Windows 腳本暫緩） | Gemini + Claude | 2026-01-27 |
 | 1.3 環境變數驗證 | ⏳ 未開始 | - | - |
 | 1.4 VSCode 設定 | ⏳ 未開始 | - | - |
 | 1.5 Git Hooks | ⏳ 未開始 | - | - |

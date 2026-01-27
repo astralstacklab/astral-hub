@@ -12,7 +12,13 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,vue}\"",
     "type-check": "pnpm -r type-check",
     "test": "pnpm -r test",
-    "clean": "pnpm -r clean && rm -rf node_modules"
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "setup-dev": "bash scripts/setup-dev.sh",
+    "teardown-dev": "bash scripts/teardown-dev.sh",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "db:psql": "docker exec -it card-erp-postgres psql -U card_erp_user -d card_erp"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
