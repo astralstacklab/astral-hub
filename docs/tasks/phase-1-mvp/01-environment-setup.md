@@ -14,9 +14,9 @@
 ## 🎯 成功標準
 
 - [ ] 執行 `pnpm run setup-dev` 能成功啟動環境
-- [ ] Docker containers 正常運行（PostgreSQL + Redis）
-- [ ] 可連接 PostgreSQL（使用 psql 或 GUI 工具測試）
-- [ ] 可連接 Redis（使用 redis-cli 測試）
+- [x] Docker containers 正常運行（PostgreSQL + Redis）
+- [x] 可連接 PostgreSQL（使用 psql 或 GUI 工具測試）
+- [x] 可連接 Redis（使用 redis-cli 測試）
 - [ ] Git hooks 正常運作（pre-commit、commit-msg）
 - [ ] 環境變數驗證工具正常運作
 
@@ -38,8 +38,8 @@
 ### 1.1 Docker Compose 設定
 
 #### 1.1.1 建立 docker-compose.yml
-- [ ] 在專案根目錄建立 `docker-compose.yml`
-- [ ] 配置 PostgreSQL 15 服務
+- [x] 在專案根目錄建立 `docker-compose.yml`
+- [x] 配置 PostgreSQL 15 服務
   ```yaml
   services:
     postgres:
@@ -60,7 +60,7 @@
         timeout: 5s
         retries: 5
   ```
-- [ ] 配置 Redis 7 服務
+- [x] 配置 Redis 7 服務
   ```yaml
     redis:
       image: redis:7-alpine
@@ -75,7 +75,7 @@
         timeout: 5s
         retries: 5
   ```
-- [ ] 定義 volumes
+- [x] 定義 volumes
   ```yaml
   volumes:
     postgres_data:
@@ -83,19 +83,19 @@
   ```
 
 #### 1.1.2 建立資料庫初始化腳本
-- [ ] 建立 `scripts/init-db.sql`
+- [x] 建立 `scripts/init-db.sql`
   - 建立必要的 extension（如 uuid-ossp）
   - 設定資料庫編碼（UTF-8）
   - 建立初始 schema（若需要）
 
 #### 1.1.3 測試 Docker 環境
-- [ ] 執行 `docker-compose up -d`
-- [ ] 確認 containers 正常啟動
-- [ ] 測試 PostgreSQL 連線
+- [x] 執行 `docker-compose up -d`
+- [x] 確認 containers 正常啟動
+- [x] 測試 PostgreSQL 連線
   ```bash
   docker exec -it card-erp-postgres psql -U card_erp_user -d card_erp
   ```
-- [ ] 測試 Redis 連線
+- [x] 測試 Redis 連線
   ```bash
   docker exec -it card-erp-redis redis-cli ping
   ```
@@ -356,9 +356,9 @@
 
 ## 📝 交付物
 
-- [ ] `docker-compose.yml`
-- [ ] `scripts/init-db.sql`
-- [ ] `scripts/setup-dev.sh`
+- [x] `docker-compose.yml`
+- [x] `scripts/init-db.sql`
+- [x] `scripts/setup-dev.sh`
 - [ ] `scripts/teardown-dev.sh`
 - [ ] `scripts/validate-env.ts`
 - [ ] `.vscode/settings.json`
@@ -394,7 +394,7 @@
 
 | 子任務 | 狀態 | 負責人 | 完成日期 |
 |--------|------|--------|---------|
-| 1.1 Docker Compose | ⏳ 未開始 | - | - |
+| 1.1 Docker Compose | ✅ 完成 | Claude | 2026-01-27 |
 | 1.2 開發工具腳本 | ⏳ 未開始 | - | - |
 | 1.3 環境變數驗證 | ⏳ 未開始 | - | - |
 | 1.4 VSCode 設定 | ⏳ 未開始 | - | - |
