@@ -44,6 +44,8 @@ docs/
 │           └── 22-deployment.md
 │
 ├── 🔧 開發指南 (Development Guide)
+│   ├── MULTI_AGENT_PROTOCOL.md          # Multi-Agent 協作協定
+│   ├── executor-rules.md               # Executor Agent Rules（Antigravity 設定參考）
 │   ├── SKILLS_GUIDE.md                  # Skills 使用指南
 │   ├── SKILLS_LOCATION.md               # Skills 位置說明
 │   └── DOCS_INDEX.md                    # 本文件 - 文件索引
@@ -444,6 +446,7 @@ docs/
 | 可用的 Skills | `SKILLS_GUIDE.md` |
 | Skills 安裝位置 | `SKILLS_LOCATION.md` |
 | 專案開發規範 | `CLAUDE.md` |
+| Multi-Agent 協作流程與產物模板 | `MULTI_AGENT_PROTOCOL.md` |
 
 ---
 

@@ -216,6 +216,22 @@ main            # 生產環境（保護分支）
 3. Code Review 通過後合併
 4. 定期從 `develop` 合併到 `main` 並部署
 
+### Multi-Agent 協作規範
+
+本專案採用 Claude（策劃）、執行代理（執行）、Gemini（審查）三角色協作開發。
+
+**任務分級**：
+- **L1（單兵）**：改動 < 3 個檔案、無跨模組影響 → 單一 Agent 直接完成
+- **L2（標準）**：邊界清晰的獨立功能 → 完整管線（策劃 → 執行 → 審查 → 歸檔）
+- **L3（複雜）**：多模組、需反覆迭代 → 迭代管線（最多 3 輪）
+
+**契約產物**：Agent 間透過 3 份固定的結構化 Markdown 產物溝通（位於 repo 根目錄，不進版控，每次任務覆寫）：
+- `MISSION_CONTROL.md` — 策劃者產出，定義目標、範圍、約束、驗證指令
+- `EXECUTION_LOG.md` — 執行者產出，記錄操作步驟與決策理由
+- `REVIEW_REPORT.md` — 審查者產出，結構化差異分析與改進建議
+
+**完整協定**：[`docs/MULTI_AGENT_PROTOCOL.md`](./docs/MULTI_AGENT_PROTOCOL.md)
+
 ### Review 完成後的任務勾選規則
 
 **⚠️ 強制要求**: AI 助手在完成 Review 並確認任務通過後，**必須**執行以下動作：

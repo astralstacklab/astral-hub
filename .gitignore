@@ -67,3 +67,8 @@ docker-compose.override.yml
 
 # Claude Code
 .claude/settings.local.json
+
+# Multi-Agent artifacts (inter-agent communication, not project docs)
+MISSION_CONTROL.md
+EXECUTION_LOG.md
+REVIEW_REPORT.md
