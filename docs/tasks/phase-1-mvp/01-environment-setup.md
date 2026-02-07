@@ -23,12 +23,14 @@
 ## 📦 前置條件
 
 **系統需求**:
+
 - Node.js >= 18.0.0
 - pnpm >= 8.0.0
 - Docker Desktop 或 Docker Engine
 - Git
 
 **前置任務**:
+
 - 無（這是第一個任務）
 
 ---
@@ -38,6 +40,7 @@
 ### 1.1 Docker Compose 設定
 
 #### 1.1.1 建立 docker-compose.yml
+
 - [x] 在專案根目錄建立 `docker-compose.yml`
 - [x] 配置 PostgreSQL 15 服務
   ```yaml
@@ -50,30 +53,30 @@
         POSTGRES_PASSWORD: card_erp_password
         POSTGRES_DB: card_erp
       ports:
-        - "5678:5432"
+        - '5678:5432'
       volumes:
         - postgres_data:/var/lib/postgresql/data
         - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
       healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U card_erp_user"]
+        test: ['CMD-SHELL', 'pg_isready -U card_erp_user']
         interval: 10s
         timeout: 5s
         retries: 5
   ```
 - [x] 配置 Redis 7 服務
   ```yaml
-    redis:
-      image: redis:7-alpine
-      container_name: card-erp-redis
-      ports:
-        - "6379:6379"
-      volumes:
-        - redis_data:/data
-      healthcheck:
-        test: ["CMD", "redis-cli", "ping"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
+  redis:
+    image: redis:7-alpine
+    container_name: card-erp-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
   ```
 - [x] 定義 volumes
   ```yaml
@@ -83,12 +86,14 @@
   ```
 
 #### 1.1.2 建立資料庫初始化腳本
+
 - [x] 建立 `scripts/init-db.sql`
   - 建立必要的 extension（如 uuid-ossp）
   - 設定資料庫編碼（UTF-8）
   - 建立初始 schema（若需要）
 
 #### 1.1.3 測試 Docker 環境
+
 - [x] 執行 `docker-compose up -d`
 - [x] 確認 containers 正常啟動
 - [x] 測試 PostgreSQL 連線
@@ -105,6 +110,7 @@
 ### 1.2 開發工具腳本
 
 #### 1.2.1 建立開發環境設定腳本
+
 - [x] 建立 `scripts/setup-dev.sh`（macOS/Linux）
   ```bash
   #!/bin/bash
@@ -124,6 +130,7 @@
   ```
 
 #### 1.2.2 建立清理腳本
+
 - [x] 建立 `scripts/teardown-dev.sh`
   ```bash
   #!/bin/bash
@@ -134,6 +141,7 @@
 - [ ] 建立對應的 Windows 版本 ⚠️ 暫緩：同上
 
 #### 1.2.3 在 package.json 新增腳本
+
 - [x] 編輯根目錄 `package.json`
   ```json
   {
@@ -149,6 +157,7 @@
   ```
 
 #### 1.2.4 測試腳本
+
 - [x] 執行 `pnpm run setup-dev`
 - [x] 驗證所有步驟成功執行
 - [x] 執行 `pnpm run teardown-dev`
@@ -159,7 +168,9 @@
 ### 1.3 環境變數驗證
 
 #### 1.3.1 建立環境變數驗證工具
+
 - [x] 建立 `scripts/validate-env.ts`
+
   ```typescript
   import { z } from 'zod'
   import { config } from 'dotenv'
@@ -174,13 +185,16 @@
 
   // 驗證邏輯
   ```
+
 - [x] 安裝依賴: `pnpm add -D zod dotenv`
 
 #### 1.3.2 整合到開發腳本
+
 - [x] 在 `setup-dev.sh` 中呼叫驗證工具
 - [x] 驗證失敗時提供清楚的錯誤訊息
 
 #### 1.3.3 新增 package.json 腳本
+
 - [x] 編輯 `package.json`
   ```json
   {
@@ -195,6 +209,7 @@
 ### 1.4 VSCode 設定
 
 #### 1.4.1 建立 VSCode 工作區設定
+
 - [x] 建立 `.vscode/settings.json`
   ```json
   {
@@ -218,6 +233,7 @@
   ```
 
 #### 1.4.2 建立推薦擴充清單
+
 - [x] 建立 `.vscode/extensions.json`
   ```json
   {
@@ -233,6 +249,7 @@
   ```
 
 #### 1.4.3 建立除錯配置（可選）
+
 - [x] 建立 `.vscode/launch.json`
   - API 伺服器除錯配置
   - 前端應用除錯配置
@@ -242,6 +259,7 @@
 ### 1.5 Git Hooks
 
 #### 1.5.1 安裝 Husky
+
 - [x] 安裝依賴
   ```bash
   pnpm add -D husky lint-staged
@@ -252,6 +270,7 @@
   ```
 
 #### 1.5.2 配置 pre-commit hook
+
 - [x] 編輯 `.husky/pre-commit`
   ```bash
   #!/bin/sh
@@ -260,17 +279,13 @@
 - [x] 建立 `.lintstagedrc.json`
   ```json
   {
-    "*.{ts,tsx,js,jsx,vue}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx,js,jsx,vue}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"]
   }
   ```
 
 #### 1.5.3 配置 commit-msg hook
+
 - [x] 安裝 commitlint
   ```bash
   pnpm add -D @commitlint/cli @commitlint/config-conventional
@@ -296,6 +311,7 @@
   ```
 
 #### 1.5.4 測試 Git Hooks
+
 - [x] 測試 pre-commit（故意寫錯格式）
 - [x] 測試 commit-msg（使用錯誤的 commit message）
 - [x] 驗證 hooks 正常阻止錯誤提交
@@ -305,31 +321,41 @@
 ### 1.6 文檔更新
 
 #### 1.6.1 更新 README.md
-- [ ] 新增「快速開始」章節
-  ```markdown
+
+- [x] 新增「快速開始」章節
+
+  ````markdown
   ## 快速開始
 
   1. 安裝依賴
+
   ```bash
   pnpm install
   ```
+  ````
 
   2. 設定環境
+
   ```bash
   pnpm run setup-dev
   ```
 
   3. 啟動開發伺服器
+
   ```bash
   # 後端 API
   pnpm --filter api dev
 
   # 前端（後續補充）
   ```
+
+  ```
+
   ```
 
 #### 1.6.2 建立開發環境疑難排解文檔
-- [ ] 建立 `docs/TROUBLESHOOTING.md`
+
+- [x] 建立 `docs/TROUBLESHOOTING.md`
   - Docker 常見問題
   - 端口衝突解決方案
   - 權限問題處理
@@ -339,6 +365,7 @@
 ## 🧪 測試步驟
 
 ### 全新環境測試
+
 1. [ ] 在全新的機器或虛擬環境中 clone 專案
 2. [ ] 執行 `pnpm run setup-dev`
 3. [ ] 驗證所有步驟成功
@@ -346,6 +373,7 @@
 5. [ ] 連接 Redis 並執行 SET/GET 測試
 
 ### Git Hooks 測試
+
 1. [ ] 建立測試檔案並故意加入格式錯誤
 2. [ ] 執行 `git add .` 和 `git commit`
 3. [ ] 驗證 pre-commit hook 攔截錯誤
@@ -367,8 +395,8 @@
 - [x] `.husky/commit-msg`
 - [x] `.lintstagedrc.json`
 - [x] `.commitlintrc.json`
-- [ ] 更新後的 `README.md`
-- [ ] `docs/TROUBLESHOOTING.md`
+- [x] 更新後的 `README.md`
+- [x] `docs/TROUBLESHOOTING.md`
 
 ---
 
@@ -392,14 +420,14 @@
 
 ## 📊 進度追蹤
 
-| 子任務 | 狀態 | 負責人 | 完成日期 |
-|--------|------|--------|---------|
-| 1.1 Docker Compose | ✅ 完成 | Claude | 2026-01-27 |
-| 1.2 開發工具腳本 | ✅ 完成（Windows 腳本暫緩） | Gemini + Claude | 2026-01-27 |
-| 1.3 環境變數驗證 | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
-| 1.4 VSCode 設定 | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
-| 1.5 Git Hooks | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
-| 1.6 文檔更新 | ⏳ 未開始 | - | - |
+| 子任務             | 狀態                        | 負責人              | 完成日期   |
+| ------------------ | --------------------------- | ------------------- | ---------- |
+| 1.1 Docker Compose | ✅ 完成                     | Claude              | 2026-01-27 |
+| 1.2 開發工具腳本   | ✅ 完成（Windows 腳本暫緩） | Gemini + Claude     | 2026-01-27 |
+| 1.3 環境變數驗證   | ✅ 完成                     | Gemini CLI + Claude | 2026-02-07 |
+| 1.4 VSCode 設定    | ✅ 完成                     | Gemini CLI + Claude | 2026-02-07 |
+| 1.5 Git Hooks      | ✅ 完成                     | Gemini CLI + Claude | 2026-02-07 |
+| 1.6 文檔更新       | ✅ 完成                     | Claude              | 2026-02-07 |
 
 ---
 
