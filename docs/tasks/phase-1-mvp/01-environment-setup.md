@@ -17,7 +17,7 @@
 - [x] Docker containers 正常運行（PostgreSQL + Redis）
 - [x] 可連接 PostgreSQL（使用 psql 或 GUI 工具測試）
 - [x] 可連接 Redis（使用 redis-cli 測試）
-- [ ] Git hooks 正常運作（pre-commit、commit-msg）
+- [x] Git hooks 正常運作（pre-commit、commit-msg）
 - [x] 環境變數驗證工具正常運作
 
 ## 📦 前置條件
@@ -242,22 +242,22 @@
 ### 1.5 Git Hooks
 
 #### 1.5.1 安裝 Husky
-- [ ] 安裝依賴
+- [x] 安裝依賴
   ```bash
   pnpm add -D husky lint-staged
   ```
-- [ ] 初始化 Husky
+- [x] 初始化 Husky
   ```bash
   pnpm exec husky init
   ```
 
 #### 1.5.2 配置 pre-commit hook
-- [ ] 編輯 `.husky/pre-commit`
+- [x] 編輯 `.husky/pre-commit`
   ```bash
   #!/bin/sh
   pnpm exec lint-staged
   ```
-- [ ] 建立 `.lintstagedrc.json`
+- [x] 建立 `.lintstagedrc.json`
   ```json
   {
     "*.{ts,tsx,js,jsx,vue}": [
@@ -271,11 +271,11 @@
   ```
 
 #### 1.5.3 配置 commit-msg hook
-- [ ] 安裝 commitlint
+- [x] 安裝 commitlint
   ```bash
   pnpm add -D @commitlint/cli @commitlint/config-conventional
   ```
-- [ ] 建立 `.commitlintrc.json`
+- [x] 建立 `.commitlintrc.json`
   ```json
   {
     "extends": ["@commitlint/config-conventional"],
@@ -289,16 +289,16 @@
     }
   }
   ```
-- [ ] 建立 `.husky/commit-msg`
+- [x] 建立 `.husky/commit-msg`
   ```bash
   #!/bin/sh
   pnpm exec commitlint --edit $1
   ```
 
 #### 1.5.4 測試 Git Hooks
-- [ ] 測試 pre-commit（故意寫錯格式）
-- [ ] 測試 commit-msg（使用錯誤的 commit message）
-- [ ] 驗證 hooks 正常阻止錯誤提交
+- [x] 測試 pre-commit（故意寫錯格式）
+- [x] 測試 commit-msg（使用錯誤的 commit message）
+- [x] 驗證 hooks 正常阻止錯誤提交
 
 ---
 
@@ -363,10 +363,10 @@
 - [x] `scripts/validate-env.ts`
 - [x] `.vscode/settings.json`
 - [x] `.vscode/extensions.json`
-- [ ] `.husky/pre-commit`
-- [ ] `.husky/commit-msg`
-- [ ] `.lintstagedrc.json`
-- [ ] `.commitlintrc.json`
+- [x] `.husky/pre-commit`
+- [x] `.husky/commit-msg`
+- [x] `.lintstagedrc.json`
+- [x] `.commitlintrc.json`
 - [ ] 更新後的 `README.md`
 - [ ] `docs/TROUBLESHOOTING.md`
 
@@ -398,7 +398,7 @@
 | 1.2 開發工具腳本 | ✅ 完成（Windows 腳本暫緩） | Gemini + Claude | 2026-01-27 |
 | 1.3 環境變數驗證 | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
 | 1.4 VSCode 設定 | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
-| 1.5 Git Hooks | ⏳ 未開始 | - | - |
+| 1.5 Git Hooks | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
 | 1.6 文檔更新 | ⏳ 未開始 | - | - |
 
 ---

@@ -19,14 +19,20 @@
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "db:psql": "docker exec -it card-erp-postgres psql -U card_erp_user -d card_erp",
-    "validate-env": "tsx scripts/validate-env.ts"
+    "validate-env": "tsx scripts/validate-env.ts",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
     "@types/node": "^25.2.1",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "dotenv": "^16.6.1",
     "eslint": "^8.50.0",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "picocolors": "^1.1.1",
     "prettier": "^3.0.0",
     "tsx": "^4.21.0",
