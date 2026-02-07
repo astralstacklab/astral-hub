@@ -58,11 +58,11 @@
 
 ## 3. 任務分級
 
-| 等級 | 判斷標準 | 使用流程 | 範例 |
-|------|---------|---------|------|
-| **L1 單兵** | 改動 < 3 個檔案，邏輯單純，無跨模組影響 | 單一 Agent 完成，不走管線 | 修 typo、加一個欄位、調 CSS |
-| **L2 標準** | 邊界清晰的獨立功能，可一次完成 | 完整管線（策劃→執行→審查→歸檔） | 實作商品 CRUD API、建立結帳頁面 |
-| **L3 複雜** | 涉及多模組、需反覆嘗試、架構影響大 | 迭代管線（允許回退與多輪） | 競標 WebSocket 系統、金流串接 |
+| 等級        | 判斷標準                                | 使用流程                        | 範例                            |
+| ----------- | --------------------------------------- | ------------------------------- | ------------------------------- |
+| **L1 單兵** | 改動 < 3 個檔案，邏輯單純，無跨模組影響 | 單一 Agent 完成，不走管線       | 修 typo、加一個欄位、調 CSS     |
+| **L2 標準** | 邊界清晰的獨立功能，可一次完成          | 完整管線（策劃→執行→審查→歸檔） | 實作商品 CRUD API、建立結帳頁面 |
+| **L3 複雜** | 涉及多模組、需反覆嘗試、架構影響大      | 迭代管線（允許回退與多輪）      | 競標 WebSocket 系統、金流串接   |
 
 分級由人類（Coordinator）判斷。不確定時以 L2 起步。
 
@@ -102,6 +102,39 @@ Phase 3（審查）→ REVIEW_REPORT verdict = BLOCKED
 
 **迭代上限**：同一任務最多 3 輪。超過 3 輪表示任務拆分不夠細，應暫停重新拆解。
 
+### 4.3 分段管線（大型任務）
+
+當任務清單的某個子任務（如 Task 2.2 ui-components）內含多個獨立可交付的子項目時，採用「Planning + 多個小 Mission」的方式拆分執行：
+
+```
+Planning（全局規劃）
+  │  Planner 產出整體實作計畫，定義所有 Mission 的切分方式
+  │
+  ├→ Mission A（小塊）→ MISSION_CONTROL → Execute → Review → Commit
+  ├→ Mission B（小塊）→ MISSION_CONTROL → Execute → Review → Commit
+  ├→ Mission C（小塊）→ MISSION_CONTROL → Execute → Review → Commit
+  └→ ...（依序執行，每個 Mission 獨立走完整管線）
+```
+
+**適用條件**：
+
+- 子任務內含 > 5 個獨立可交付項目
+- 單一 MISSION_CONTROL 的 File Scope 會超過 10 個檔案
+- 項目之間有依賴順序但各自可獨立驗證
+
+**拆分原則**：
+
+- 每個 Mission 改動 3~8 個檔案
+- 每個 Mission 完成後有明確的可用狀態
+- Mission 之間允許根據 Review 結果調整後續 Mission 方向
+
+**優勢**：
+
+- Review 範圍小，審查品質更高
+- 每步 commit 後可隨時暫停或調整方向
+- Executor 出錯時回溯成本低
+- 中途需求變更時已完成的 Mission 不受影響
+
 ---
 
 ## 5. 契約產物（Contract Artifacts）
@@ -126,40 +159,51 @@ card-erp/
 # MISSION_CONTROL
 
 ## Meta
+
 - **Task ID**: phase-1/task-05-api-products
 - **Level**: L2
 - **Date**: 2026-01-29
 - **Planner**: Claude
 
 ## Objective
+
 （一句話描述目標）
 實作商品模組的 CRUD API，包含分頁查詢與篩選功能。
 
 ## File Scope
+
 （Executor 必須讀取的檔案，限定操作範圍）
+
 - `services/api/src/modules/products/` — 主要工作目錄
 - `services/api/prisma/schema.prisma` — 需讀取但僅在必要時修改
 - `packages/shared-types/src/entities/` — 需新增 Product 型別
 
 ## Constraints
+
 （不可更動的邊界）
+
 - 不可修改 `services/api/src/server.ts` 的插件載入順序
 - 必須使用 Zod 做 request validation，不可使用 Fastify 內建 schema
 - API response 格式必須符合 AGENTS.md 定義的標準格式
 
 ## Verification Commands
+
 （完成後必須通過的驗證）
 pnpm --filter api test -- --grep "products"
 pnpm --filter api type-check
 
 ## Halt Conditions
+
 （觸發任一條件時，立即停止執行並回報）
+
 - Prisma migrate 失敗
 - 型別錯誤超過 5 個且非本次變更引起
 - 修改了 File Scope 以外的檔案
 
 ## Reference Docs
+
 （Executor 可選讀的參考文件）
+
 - `docs/tasks/phase-1-mvp/05-api-products.md`
 - `AGENTS.md` > API 設計規範
 ```
@@ -172,6 +216,7 @@ pnpm --filter api type-check
 # EXECUTION_LOG
 
 ## Meta
+
 - **Task ID**: phase-1/task-05-api-products
 - **Executor**: Antigravity
 - **Start**: 2026-01-29 14:00
@@ -179,17 +224,20 @@ pnpm --filter api type-check
 - **Status**: completed | halted | partial
 
 ## Changes Summary
+
 （概述所有變更）
 新增 5 個檔案，修改 2 個檔案。實作了 Product CRUD API 共 5 個 endpoints。
 
 ## Detailed Steps
 
 ### Step 1: 建立 Product Zod schemas
+
 - **Action**: 新增 `services/api/src/modules/products/schemas.ts`
 - **Rationale**: 根據 AGENTS.md 的 Products 實體定義建立驗證 schema
 - **Result**: 成功
 
 ### Step 2: 實作 route handlers
+
 - **Action**: 新增 `services/api/src/modules/products/routes.ts`
 - **Rationale**: 按 RESTful 規範實作 5 個 endpoint
 - **Result**: 成功
@@ -197,19 +245,23 @@ pnpm --filter api type-check
   因為商品列表可能頻繁新增，offset 會造成重複/遺漏
 
 ## Verification Results
+
 （執行 MISSION_CONTROL 中定義的驗證指令）
 $ pnpm --filter api test -- --grep "products"
-  12 tests passed, 0 failed
+12 tests passed, 0 failed
 
 $ pnpm --filter api type-check
-  No errors found.
+No errors found.
 
 ## Deviations from Mission
+
 （任何偏離 MISSION_CONTROL 的地方，必須說明原因）
+
 - 新增了 `services/api/src/utils/pagination.ts`（不在 File Scope 內），
   因為分頁是通用邏輯，放在 products module 內不合理。
 
 ## Files Changed
+
 - [NEW] `services/api/src/modules/products/schemas.ts`
 - [NEW] `services/api/src/modules/products/routes.ts`
 - [NEW] `services/api/src/modules/products/service.ts`
@@ -227,6 +279,7 @@ $ pnpm --filter api type-check
 # REVIEW_REPORT
 
 ## Meta
+
 - **Task ID**: phase-1/task-05-api-products
 - **Reviewer**: Gemini
 - **Date**: 2026-01-29
@@ -234,31 +287,39 @@ $ pnpm --filter api type-check
 ## Verdict: APPROVED | APPROVED_WITH_NOTES | CHANGES_REQUIRED | BLOCKED
 
 ## 1. Goal Completion
+
 （對比 MISSION_CONTROL 的 Objective，逐項檢查）
 
-| 目標 | 狀態 | 備註 |
-|------|------|------|
-| Product CRUD API | DONE | 5 endpoints 均已實作 |
-| 分頁查詢 | DONE | 使用 cursor-based，合理 |
-| 篩選功能 | PARTIAL | 缺少按 gradingStatus 篩選 |
+| 目標             | 狀態    | 備註                      |
+| ---------------- | ------- | ------------------------- |
+| Product CRUD API | DONE    | 5 endpoints 均已實作      |
+| 分頁查詢         | DONE    | 使用 cursor-based，合理   |
+| 篩選功能         | PARTIAL | 缺少按 gradingStatus 篩選 |
 
 ## 2. Architecture Consistency
+
 （對比 AGENTS.md 的設計規範）
+
 - [PASS] API response 格式符合標準
 - [PASS] 使用 Zod validation
 - [WARN] `pagination.ts` 放在 `utils/` 但 AGENTS.md 未定義 utils 的職責邊界
 - [FAIL] 缺少 `Products.status + Products.channel` 複合索引
 
 ## 3. Side Effects
+
 （跨模組影響分析）
+
 - `schema.prisma` 變更會觸發所有 Prisma client 重新生成
 
 ## 4. Security & Performance
+
 - [PASS] 無原生 SQL，全部透過 Prisma
 - [WARN] GET /products 未設 rate limiting
 
 ## 5. Required Actions
+
 （Verdict 不是 APPROVED 時，列出必修項）
+
 1. 新增 `gradingStatus` 篩選參數到 GET /products
 2. 在 schema.prisma 補上 `@@index([status, channel])` 複合索引
 ```
@@ -271,20 +332,20 @@ $ pnpm --filter api type-check
 
 任一觸發時 Executor 停止執行，將狀態寫入 `EXECUTION_LOG.md` 並回報人類：
 
-| 信號 | 判斷方式 | 後續動作 |
-|------|---------|---------|
-| **同一錯誤重複出現** | 同一 error message 出現 >= 3 次且修復嘗試未改變錯誤訊息 | 轉交 Reviewer 做全域診斷 |
-| **範圍溢出** | 需要修改 File Scope 以外的檔案 >= 2 個 | 回退 Planner 擴大 Scope |
-| **驗證持續失敗** | Verification Commands 執行 3 次仍未全數通過 | 轉交 Reviewer |
-| **Halt Condition 觸發** | 按 MISSION_CONTROL 定義判斷 | 按 MISSION_CONTROL 指示處理 |
+| 信號                    | 判斷方式                                                | 後續動作                    |
+| ----------------------- | ------------------------------------------------------- | --------------------------- |
+| **同一錯誤重複出現**    | 同一 error message 出現 >= 3 次且修復嘗試未改變錯誤訊息 | 轉交 Reviewer 做全域診斷    |
+| **範圍溢出**            | 需要修改 File Scope 以外的檔案 >= 2 個                  | 回退 Planner 擴大 Scope     |
+| **驗證持續失敗**        | Verification Commands 執行 3 次仍未全數通過             | 轉交 Reviewer               |
+| **Halt Condition 觸發** | 按 MISSION_CONTROL 定義判斷                             | 按 MISSION_CONTROL 指示處理 |
 
 ### 6.2 Reviewer 升級條件
 
-| 信號 | 後續動作 |
-|------|---------|
-| **設計層缺陷** — 需重新定義 Objective 或 Constraints | Verdict = BLOCKED，回退 Planner |
+| 信號                                                      | 後續動作                        |
+| --------------------------------------------------------- | ------------------------------- |
+| **設計層缺陷** — 需重新定義 Objective 或 Constraints      | Verdict = BLOCKED，回退 Planner |
 | **架構違規** — 違反 AGENTS.md 規範且無法在當前 Scope 修復 | Verdict = BLOCKED，人類參與決策 |
-| **任務拆分不當** — 涵蓋過多不相關目標 | 暫停管線，拆分為多個獨立任務 |
+| **任務拆分不當** — 涵蓋過多不相關目標                     | 暫停管線，拆分為多個獨立任務    |
 
 ### 6.3 管線熔斷
 
@@ -301,12 +362,12 @@ $ pnpm --filter api type-check
 
 ### 切換觸發方式
 
-| 切換方向 | 人類對下一個 Agent 說的話 |
-|---------|------------------------|
-| → Executor | 「讀取 MISSION_CONTROL.md 並執行」 |
-| → Reviewer | 「讀取 MISSION_CONTROL.md 和 EXECUTION_LOG.md，產出 REVIEW_REPORT.md」 |
-| → Executor（修正） | 「讀取 REVIEW_REPORT.md，修正問題後更新 EXECUTION_LOG.md」 |
-| → Planner（歸檔） | 「讀取 EXECUTION_LOG.md 和 REVIEW_REPORT.md，驗證並歸檔」 |
+| 切換方向           | 人類對下一個 Agent 說的話                                              |
+| ------------------ | ---------------------------------------------------------------------- |
+| → Executor         | 「讀取 MISSION_CONTROL.md 並執行」                                     |
+| → Reviewer         | 「讀取 MISSION_CONTROL.md 和 EXECUTION_LOG.md，產出 REVIEW_REPORT.md」 |
+| → Executor（修正） | 「讀取 REVIEW_REPORT.md，修正問題後更新 EXECUTION_LOG.md」             |
+| → Planner（歸檔）  | 「讀取 EXECUTION_LOG.md 和 REVIEW_REPORT.md，驗證並歸檔」              |
 
 ---
 
@@ -370,6 +431,7 @@ REVIEW_REPORT.md         ← 當前審查報告（Reviewer → Planner/Executor�
 ```
 
 **產物**（repo 根目錄，不進版控）:
+
 - `MISSION_CONTROL.md` — Planner 寫，驅動 Executor
 - `EXECUTION_LOG.md` — Executor 寫，記錄過程與決策
 - `REVIEW_REPORT.md` — Reviewer 寫，結構化審查結果
