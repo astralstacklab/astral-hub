@@ -18,7 +18,7 @@
 - [x] 可連接 PostgreSQL（使用 psql 或 GUI 工具測試）
 - [x] 可連接 Redis（使用 redis-cli 測試）
 - [ ] Git hooks 正常運作（pre-commit、commit-msg）
-- [ ] 環境變數驗證工具正常運作
+- [x] 環境變數驗證工具正常運作
 
 ## 📦 前置條件
 
@@ -159,7 +159,7 @@
 ### 1.3 環境變數驗證
 
 #### 1.3.1 建立環境變數驗證工具
-- [ ] 建立 `scripts/validate-env.ts`
+- [x] 建立 `scripts/validate-env.ts`
   ```typescript
   import { z } from 'zod'
   import { config } from 'dotenv'
@@ -174,14 +174,14 @@
 
   // 驗證邏輯
   ```
-- [ ] 安裝依賴: `pnpm add -D zod dotenv`
+- [x] 安裝依賴: `pnpm add -D zod dotenv`
 
 #### 1.3.2 整合到開發腳本
-- [ ] 在 `setup-dev.sh` 中呼叫驗證工具
-- [ ] 驗證失敗時提供清楚的錯誤訊息
+- [x] 在 `setup-dev.sh` 中呼叫驗證工具
+- [x] 驗證失敗時提供清楚的錯誤訊息
 
 #### 1.3.3 新增 package.json 腳本
-- [ ] 編輯 `package.json`
+- [x] 編輯 `package.json`
   ```json
   {
     "scripts": {
@@ -360,7 +360,7 @@
 - [x] `scripts/init-db.sql`
 - [x] `scripts/setup-dev.sh`
 - [x] `scripts/teardown-dev.sh`
-- [ ] `scripts/validate-env.ts`
+- [x] `scripts/validate-env.ts`
 - [ ] `.vscode/settings.json`
 - [ ] `.vscode/extensions.json`
 - [ ] `.husky/pre-commit`
@@ -396,7 +396,7 @@
 |--------|------|--------|---------|
 | 1.1 Docker Compose | ✅ 完成 | Claude | 2026-01-27 |
 | 1.2 開發工具腳本 | ✅ 完成（Windows 腳本暫緩） | Gemini + Claude | 2026-01-27 |
-| 1.3 環境變數驗證 | ⏳ 未開始 | - | - |
+| 1.3 環境變數驗證 | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
 | 1.4 VSCode 設定 | ⏳ 未開始 | - | - |
 | 1.5 Git Hooks | ⏳ 未開始 | - | - |
 | 1.6 文檔更新 | ⏳ 未開始 | - | - |

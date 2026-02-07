@@ -44,6 +44,10 @@ docker compose up -d
 echo "安裝 pnpm 依賴..."
 pnpm install
 
+# 驗證環境變數
+echo "驗證環境變數..."
+pnpm run validate-env
+
 echo -e "\n✅ 開發環境設定完成！"
 echo "下一步："
 echo "1. (若有需要) 修改 .env 檔案中的設定"
