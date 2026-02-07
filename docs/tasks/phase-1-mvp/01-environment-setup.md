@@ -195,7 +195,7 @@
 ### 1.4 VSCode 設定
 
 #### 1.4.1 建立 VSCode 工作區設定
-- [ ] 建立 `.vscode/settings.json`
+- [x] 建立 `.vscode/settings.json`
   ```json
   {
     "editor.formatOnSave": true,
@@ -218,7 +218,7 @@
   ```
 
 #### 1.4.2 建立推薦擴充清單
-- [ ] 建立 `.vscode/extensions.json`
+- [x] 建立 `.vscode/extensions.json`
   ```json
   {
     "recommendations": [
@@ -233,7 +233,7 @@
   ```
 
 #### 1.4.3 建立除錯配置（可選）
-- [ ] 建立 `.vscode/launch.json`
+- [x] 建立 `.vscode/launch.json`
   - API 伺服器除錯配置
   - 前端應用除錯配置
 
@@ -361,8 +361,8 @@
 - [x] `scripts/setup-dev.sh`
 - [x] `scripts/teardown-dev.sh`
 - [x] `scripts/validate-env.ts`
-- [ ] `.vscode/settings.json`
-- [ ] `.vscode/extensions.json`
+- [x] `.vscode/settings.json`
+- [x] `.vscode/extensions.json`
 - [ ] `.husky/pre-commit`
 - [ ] `.husky/commit-msg`
 - [ ] `.lintstagedrc.json`
@@ -397,7 +397,7 @@
 | 1.1 Docker Compose | ✅ 完成 | Claude | 2026-01-27 |
 | 1.2 開發工具腳本 | ✅ 完成（Windows 腳本暫緩） | Gemini + Claude | 2026-01-27 |
 | 1.3 環境變數驗證 | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
-| 1.4 VSCode 設定 | ⏳ 未開始 | - | - |
+| 1.4 VSCode 設定 | ✅ 完成 | Gemini CLI + Claude | 2026-02-07 |
 | 1.5 Git Hooks | ⏳ 未開始 | - | - |
 | 1.6 文檔更新 | ⏳ 未開始 | - | - |
 
