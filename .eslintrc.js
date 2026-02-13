@@ -1,19 +1,25 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
+  parser: 'vue-eslint-parser',
+  parserOptions: {
+    parser: '@typescript-eslint/parser',
+    ecmaVersion: 2022,
+    sourceType: 'module',
+  },
   plugins: ['@typescript-eslint'],
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:vue/vue3-recommended',
+    'prettier',
+  ],
   rules: {
-    // Add custom rules here, or override recommended ones
-    // For example, to allow console.log in development
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'vue/multi-word-component-names': 'off',
   },
   env: {
     node: true,
-  },
-  parserOptions: {
-    ecmaVersion: 2021,
-    sourceType: 'module',
+    browser: true,
   },
 }
