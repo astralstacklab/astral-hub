@@ -15,7 +15,7 @@
 
 - [x] shared-types 套件可被前後端專案引用
 - [x] 所有型別定義完整且無 `any` 型別（測試除外）
-- [ ] ui-components 元件可在 Vue 3 專案中正常使用
+- [x] ui-components 元件可在 Vue 3 專案中正常使用
 - [ ] utils 工具函數有完整的單元測試
 - [ ] 所有套件有清楚的 README 與使用範例
 - [ ] TypeScript 型別檢查通過
@@ -305,7 +305,7 @@
 
 #### 2.2.3 建立基礎元件（components/base/）
 
-- [ ] `Button.vue`
+- [x] `Button.vue`
 
   ```vue
   <script setup lang="ts">
@@ -339,26 +339,26 @@
   </template>
   ```
 
-- [ ] `Card.vue`
-- [ ] `Modal.vue`
-- [ ] `Toast.vue`
-- [ ] `Input.vue`
+- [x] `Card.vue`
+- [x] `Modal.vue`
+- [x] `Toast.vue`
+- [x] `Input.vue`
 
 #### 2.2.4 建立資料展示元件（components/data/）
 
-- [ ] `Table.vue`
-- [ ] `Pagination.vue`
-- [ ] `EmptyState.vue`
+- [x] `Table.vue`
+- [x] `Pagination.vue`
+- [x] `EmptyState.vue`
 
 #### 2.2.5 建立表單元件（components/form/）
 
-- [ ] `FormInput.vue`
-- [ ] `FormSelect.vue`
-- [ ] `FormUpload.vue`
+- [x] `FormInput.vue`
+- [x] `FormSelect.vue`
+- [x] `FormUpload.vue`
 
 #### 2.2.6 建立業務元件（components/business/）
 
-- [ ] `ProductCard.vue`
+- [x] `ProductCard.vue`
 
   ```vue
   <script setup lang="ts">
@@ -386,12 +386,12 @@
   </template>
   ```
 
-- [ ] `OrderStatus.vue`
-- [ ] `AuctionTimer.vue`
+- [x] `OrderStatus.vue`
+- [x] `AuctionTimer.vue`
 
 #### 2.2.7 建立匯出入口
 
-- [ ] `src/index.ts`
+- [x] `src/index.ts`
 
   ```typescript
   // Base
@@ -578,7 +578,7 @@
 ## 📝 交付物
 
 - [x] `packages/shared-types/` 完整套件
-- [ ] `packages/ui-components/` 完整套件
+- [x] `packages/ui-components/` 完整套件
 - [ ] `packages/utils/` 完整套件
 - [ ] 每個套件的 README.md
 - [ ] 單元測試（utils）
@@ -609,7 +609,7 @@
 | 子任務            | 狀態      | 負責人              | 完成日期   |
 | ----------------- | --------- | ------------------- | ---------- |
 | 2.1 shared-types  | ✅ 完成   | Gemini CLI + Claude | 2026-02-08 |
-| 2.2 ui-components | 🔄 進行中 | Gemini CLI + Codex  | 2026-02-13 |
+| 2.2 ui-components | ✅ 完成   | Gemini CLI + Codex  | 2026-02-13 |
 | 2.3 utils         | ⏳ 未開始 | -                   | -          |
 | 2.4 整合測試      | ⏳ 未開始 | -                   | -          |
 
