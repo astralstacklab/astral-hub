@@ -20,6 +20,7 @@
 ## 技術棧總覽
 
 ### 前端
+
 - **框架**: Vue 3 + Nuxt 3
 - **狀態管理**: Pinia
 - **樣式**: TailwindCSS
@@ -27,22 +28,26 @@
 - **構建工具**: Vite
 
 ### 後端
+
 - **框架**: Fastify + TypeScript
 - **ORM**: Prisma (推薦) 或 TypeORM
 - **驗證**: Zod (Schema Validation)
 - **認證**: JWT (後台) + OAuth (買家端)
 
 ### 資料層
+
 - **主資料庫**: PostgreSQL (Cloud SQL)
 - **快取**: Redis Cloud（既有資源）
 - **檔案儲存**: Google Cloud Storage (GCS)
 
 ### 部署
+
 - **平台**: GCP Cloud Run (前後端)
 - **CI/CD**: GitHub Actions
 - **環境**: Development (本地) / Staging (Cloud SQL 關機) / Production
 
 ### 第三方服務
+
 - **金流**: 綠界 ECPay
 - **物流**: 7-11 賣貨便、全家店到店
 - **認證**: Google OAuth、Facebook Login
@@ -180,6 +185,7 @@ card-erp/                          # Monorepo 根目錄
 ```
 
 **Type**:
+
 - `feat`: 新功能
 - `fix`: 修復 bug
 - `docs`: 文檔更新
@@ -190,6 +196,7 @@ card-erp/                          # Monorepo 根目錄
 - `chore`: 建構/工具變動
 
 **範例**:
+
 ```
 feat(products): 新增商品競標功能
 
@@ -211,6 +218,7 @@ main            # 生產環境（保護分支）
 ```
 
 **流程**:
+
 1. 從 `develop` 切出 `feature/*` 或 `fix/*` 分支
 2. 開發完成後發起 PR 到 `develop`
 3. Code Review 通過後合併
@@ -218,14 +226,20 @@ main            # 生產環境（保護分支）
 
 ### Multi-Agent 協作規範
 
-本專案採用 Claude（策劃）、執行代理（執行）、Gemini（審查）三角色協作開發。
+本專案採用多 Agent 協作開發，角色分配如下：
+
+- **Planner / Archiver（策劃 + 進版控）**：Claude（固定）
+- **Executor（開發）**：Gemini（固定）
+- **Reviewer（審查）**：Claude 或 Codex（由 Coordinator 彈性指派）
 
 **任務分級**：
+
 - **L1（單兵）**：改動 < 3 個檔案、無跨模組影響 → 單一 Agent 直接完成
 - **L2（標準）**：邊界清晰的獨立功能 → 完整管線（策劃 → 執行 → 審查 → 歸檔）
 - **L3（複雜）**：多模組、需反覆迭代 → 迭代管線（最多 3 輪）
 
 **契約產物**：Agent 間透過 3 份固定的結構化 Markdown 產物溝通（位於 repo 根目錄，不進版控，每次任務覆寫）：
+
 - `MISSION_CONTROL.md` — 策劃者產出，定義目標、範圍、約束、驗證指令
 - `EXECUTION_LOG.md` — 執行者產出，記錄操作步驟與決策理由
 - `REVIEW_REPORT.md` — 審查者產出，結構化差異分析與改進建議
@@ -242,6 +256,7 @@ main            # 生產環境（保護分支）
 4. **勾選成功標準**: 在「🎯 成功標準」區段中，勾選已驗證通過的項目
 
 **範例**: 完成 1.1.3 Docker 環境測試後，應勾選：
+
 - 成功標準中的 Docker/PostgreSQL/Redis 相關項目
 - 1.1.1 ~ 1.1.3 所有已完成的 checkbox
 - 交付物中的 `docker-compose.yml`、`scripts/init-db.sql` 等
@@ -254,6 +269,7 @@ main            # 生產環境（保護分支）
 ### 核心實體
 
 #### Products（商品）
+
 ```typescript
 {
   id: UUID                    // 主鍵
@@ -280,6 +296,7 @@ main            # 生產環境（保護分支）
 ```
 
 #### Orders（訂單）
+
 ```typescript
 {
   id: UUID
@@ -301,14 +318,15 @@ main            # 生產環境（保護分支）
 ```
 
 #### Auctions（競標）
+
 ```typescript
 {
   id: UUID
   productId: UUID
-  startingPrice: number       // 底價
-  buyNowPrice: number | null  // 直購價
-  currentPrice: number        // 當前價格
-  incrementAmount: number     // 每次加價金額
+  startingPrice: number // 底價
+  buyNowPrice: number | null // 直購價
+  currentPrice: number // 當前價格
+  incrementAmount: number // 每次加價金額
   currentBidderId: UUID | null
   startTime: DateTime
   endTime: DateTime
@@ -318,32 +336,34 @@ main            # 生產環境（保護分支）
 ```
 
 #### Users（用戶 - 買家）
+
 ```typescript
 {
   id: UUID
   email: string
   name: string
   avatar: string | null
-  provider: 'GOOGLE' | 'FACEBOOK'  // OAuth provider
+  provider: 'GOOGLE' | 'FACEBOOK' // OAuth provider
   providerId: string
-  loyaltyPoints: number       // 紅利點數
-  memberLevel: 'STANDARD'     // 預留等級擴充
+  loyaltyPoints: number // 紅利點數
+  memberLevel: 'STANDARD' // 預留等級擴充
   createdAt: DateTime
 }
 ```
 
 #### Sellers（賣家）
+
 ```typescript
 {
   id: UUID
   email: string
   name: string
   level: 'BRONZE' | 'SILVER' | 'GOLD'
-  totalSales: number          // 總銷售額（用於自動升級）
-  balance: number             // 虛擬錢包餘額
-  commissionRate: number      // 當前抽成比例
-  onlineListingFee: number    // 線上上架費
-  offlineListingFee: number   // 實體上架費
+  totalSales: number // 總銷售額（用於自動升級）
+  balance: number // 虛擬錢包餘額
+  commissionRate: number // 當前抽成比例
+  onlineListingFee: number // 線上上架費
+  offlineListingFee: number // 實體上架費
   status: 'ACTIVE' | 'SUSPENDED'
   createdAt: DateTime
 }
@@ -405,6 +425,7 @@ POST   /api/sellers/me/withdraw   # 申請提領
 ### 回應格式
 
 **成功回應**:
+
 ```json
 {
   "success": true,
@@ -418,6 +439,7 @@ POST   /api/sellers/me/withdraw   # 申請提領
 ```
 
 **錯誤回應**:
+
 ```json
 {
   "success": false,
@@ -432,11 +454,13 @@ POST   /api/sellers/me/withdraw   # 申請提領
 ### 認證方式
 
 **後台 API** (管理員、賣家):
+
 ```
 Authorization: Bearer <JWT_TOKEN>
 ```
 
 **買家 API**:
+
 ```
 Authorization: Bearer <JWT_TOKEN>  # OAuth 登入後取得
 ```
@@ -497,12 +521,14 @@ POS_WEB_URL=http://localhost:3003
 ### 本地開發設定
 
 1. **安裝依賴**:
+
    ```bash
    # 使用 pnpm（推薦）
    pnpm install
    ```
 
 2. **啟動 PostgreSQL（Docker）**:
+
    ```bash
    docker run -d \
      --name card-erp-postgres \
@@ -513,17 +539,20 @@ POS_WEB_URL=http://localhost:3003
    ```
 
 3. **啟動 Redis**（使用既有 Redis Cloud 或本地）:
+
    ```bash
    docker run -d --name card-erp-redis -p 6379:6379 redis:7
    ```
 
 4. **資料庫遷移**:
+
    ```bash
    cd services/api
    pnpm prisma migrate dev
    ```
 
 5. **啟動開發伺服器**:
+
    ```bash
    # 後端 API
    cd services/api
@@ -621,6 +650,7 @@ pnpm deploy
 ## 開發階段優先級
 
 ### 第一階段（當前）- 自營 MVP
+
 - [ ] 商品 CRUD API
 - [ ] QR Code 生成功能
 - [ ] 店面結帳系統（掃碼、購物車、結帳）
@@ -631,18 +661,21 @@ pnpm deploy
 - [ ] 圖片上傳與處理（GCS、壓縮、浮水印）
 
 ### 第二階段 - 買家會員
+
 - [ ] OAuth 登入（Google、Facebook）
 - [ ] 紅利點數系統
 - [ ] 物流串接（7-11、全家）
 - [ ] 訂單追蹤
 
 ### 第三階段 - 賣家系統
+
 - [ ] 賣家後台
 - [ ] 寄賣審核流程
 - [ ] 抽成與對帳系統
 - [ ] 提領功能
 
 ### 第四階段 - 進階功能
+
 - [ ] 權限管理
 - [ ] Capacitor APP
 - [ ] 多元物流（黑貓等）
@@ -726,19 +759,20 @@ docs/
 
 #### 開發前必讀
 
-| 開發任務 | 必讀文件 | 完成後需更新 |
-|---------|---------|------------|
-| **新增產品功能** | `PRD.md` → 對應 `Task 文件` | `PRD.md`（如需求變更）<br>`Task 文件`（如步驟調整） |
-| **UI/UX 開發** | `BRAND_GUIDELINES.md` → 對應應用的 `Style Guide` → `TAILWIND_USAGE.md` | `Style Guide`（如新增顏色/組件）<br>`tailwind-preset.js`（如共用樣式變更） |
-| **架構調整** | `plans/2026-01-24-system-architecture-design.md` → `TECHNICAL-EVOLUTION.md` | `Architecture Design`<br>受影響的 `Task 文件` |
-| **執行 Phase 1 任務** | `tasks/phase-1-mvp/XX-<topic>.md` → `PRD.md` → `Architecture Design` | 對應的 `Task 文件`（如實作調整） |
-| **路線圖規劃** | `roadmap/README.md` → `PHASE-2-3-OVERVIEW.md` → `TECHNICAL-EVOLUTION.md` | 所有 roadmap 文件<br>`PRD.md`（如產品方向變更） |
+| 開發任務              | 必讀文件                                                                    | 完成後需更新                                                               |
+| --------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| **新增產品功能**      | `PRD.md` → 對應 `Task 文件`                                                 | `PRD.md`（如需求變更）<br>`Task 文件`（如步驟調整）                        |
+| **UI/UX 開發**        | `BRAND_GUIDELINES.md` → 對應應用的 `Style Guide` → `TAILWIND_USAGE.md`      | `Style Guide`（如新增顏色/組件）<br>`tailwind-preset.js`（如共用樣式變更） |
+| **架構調整**          | `plans/2026-01-24-system-architecture-design.md` → `TECHNICAL-EVOLUTION.md` | `Architecture Design`<br>受影響的 `Task 文件`                              |
+| **執行 Phase 1 任務** | `tasks/phase-1-mvp/XX-<topic>.md` → `PRD.md` → `Architecture Design`        | 對應的 `Task 文件`（如實作調整）                                           |
+| **路線圖規劃**        | `roadmap/README.md` → `PHASE-2-3-OVERVIEW.md` → `TECHNICAL-EVOLUTION.md`    | 所有 roadmap 文件<br>`PRD.md`（如產品方向變更）                            |
 
 ### 🔄 文件同步更新規則
 
 **當發生以下變更時，必須同步更新相關文件**：
 
 #### 1. 產品需求變更
+
 ```
 變更流程:
 1. 更新 docs/PRD.md（需求定義）
@@ -747,6 +781,7 @@ docs/
 ```
 
 #### 2. 架構調整
+
 ```
 變更流程:
 1. 更新 docs/plans/2026-01-24-system-architecture-design.md（架構設計）
@@ -756,6 +791,7 @@ docs/
 ```
 
 #### 3. UI 風格變更
+
 ```
 變更流程:
 1. 更新對應的 Style Guide（ADMIN/BUYER/POS_WEB_STYLE_GUIDE.md）
@@ -765,6 +801,7 @@ docs/
 ```
 
 #### 4. 路線圖調整
+
 ```
 變更流程:
 1. 更新 docs/roadmap/README.md（總體規劃）
@@ -803,6 +840,7 @@ docs/
 ## 資源連結
 
 ### 內部文檔
+
 - **[文件索引](./docs/DOCS_INDEX.md)** - 完整文件導航與參考指引 ⭐
 - **[PRD 產品需求文檔](./docs/PRD.md)** - 產品需求與功能範圍
 - **[系統設計文檔](./docs/plans/)** - 架構設計與技術規格
@@ -812,6 +850,7 @@ docs/
 - **[Skills 使用指南](./docs/SKILLS_GUIDE.md)** - AI Agent Skills 使用說明
 
 ### 外部資源
+
 - [Nuxt 3 文檔](https://nuxt.com/)
 - [Fastify 文檔](https://www.fastify.io/)
 - [Prisma 文檔](https://www.prisma.io/)
@@ -830,6 +869,7 @@ docs/
 4. 檢查 `.env.example` 確認環境變數配置
 
 **開發原則**:
+
 - ✅ TypeScript 優先
 - ✅ 遵循 SOLID 原則
 - ✅ 寫清晰的註解（中文或英文）
