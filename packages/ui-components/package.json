@@ -1,0 +1,32 @@
+{
+  "name": "@card-erp/ui-components",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/ui-components.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/ui-components.js"
+    }
+  },
+  "scripts": {
+    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "type-check": "vue-tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "dependencies": {
+    "@card-erp/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "typescript": "^5.2.0",
+    "vite": "^6.0.0",
+    "vue": "^3.3.0",
+    "vue-tsc": "^2.0.0"
+  }
+}

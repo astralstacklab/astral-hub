@@ -262,7 +262,7 @@
 
 #### 2.2.1 建立套件結構
 
-- [ ] 建立 `packages/ui-components/` 目錄結構
+- [x] 建立 `packages/ui-components/` 目錄結構
   ```
   packages/ui-components/
   ├── src/
@@ -281,7 +281,7 @@
 
 #### 2.2.2 配置 package.json
 
-- [ ] 建立 `packages/ui-components/package.json`
+- [x] 建立 `packages/ui-components/package.json`
   ```json
   {
     "name": "@card-erp/ui-components",
@@ -609,7 +609,7 @@
 | 子任務            | 狀態      | 負責人              | 完成日期   |
 | ----------------- | --------- | ------------------- | ---------- |
 | 2.1 shared-types  | ✅ 完成   | Gemini CLI + Claude | 2026-02-08 |
-| 2.2 ui-components | ⏳ 未開始 | -                   | -          |
+| 2.2 ui-components | 🔄 進行中 | Gemini CLI + Codex  | 2026-02-13 |
 | 2.3 utils         | ⏳ 未開始 | -                   | -          |
 | 2.4 整合測試      | ⏳ 未開始 | -                   | -          |
 
