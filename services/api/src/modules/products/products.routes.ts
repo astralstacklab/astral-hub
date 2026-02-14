@@ -10,6 +10,47 @@ import {
 import { successResponse, errorResponse } from '../../utils/response.js'
 import { generateQRCode } from '../../utils/qrcode-generator.js'
 
+// ── 共用 JSON Schema 片段 ──────────────────────────
+const ErrorResponseSchema = {
+  type: 'object',
+  properties: {
+    success: { type: 'boolean', enum: [false] },
+    error: {
+      type: 'object',
+      properties: {
+        code: { type: 'string' },
+        message: { type: 'string' },
+      },
+    },
+  },
+} as const
+
+const ProductSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'string', format: 'uuid' },
+    type: { type: 'string', enum: ['CARD', 'ACCESSORY'] },
+    category: { type: 'string' },
+    name: { type: 'string' },
+    series: { type: 'string', nullable: true },
+    cardNumber: { type: 'string', nullable: true },
+    gradingStatus: { type: 'string', enum: ['RAW', 'PSA', 'ARS', 'BGS'] },
+    gradingScore: { type: 'number', nullable: true },
+    costPrice: { type: 'number' },
+    sellingPrice: { type: 'number' },
+    status: { type: 'string', enum: ['PENDING', 'LISTED', 'SOLD'] },
+    channel: { type: 'string', enum: ['ONLINE', 'OFFLINE', 'BOTH'] },
+    description: { type: 'string' },
+    conditionNotes: { type: 'string', nullable: true },
+    supplier: { type: 'string', nullable: true },
+    supplierContact: { type: 'string', nullable: true },
+    stockQuantity: { type: 'integer' },
+    sellerId: { type: 'string', format: 'uuid', nullable: true },
+    createdAt: { type: 'string', format: 'date-time' },
+    updatedAt: { type: 'string', format: 'date-time' },
+  },
+} as const
+
 const productsRoutes: FastifyPluginAsync = async (server) => {
   const productsService = new ProductsService(server.prisma)
 
@@ -37,6 +78,25 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
             sort: {
               type: 'string',
               enum: ['price:asc', 'price:desc', 'createdAt:asc', 'createdAt:desc'],
+            },
+          },
+        },
+        response: {
+          200: {
+            description: '成功回傳商品列表',
+            type: 'object',
+            properties: {
+              success: { type: 'boolean', enum: [true] },
+              data: { type: 'array', items: ProductSchema },
+              meta: {
+                type: 'object',
+                properties: {
+                  page: { type: 'integer' },
+                  limit: { type: 'integer' },
+                  total: { type: 'integer' },
+                  totalPages: { type: 'integer' },
+                },
+              },
             },
           },
         },
@@ -81,6 +141,17 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
           type: 'object',
           properties: { id: { type: 'string', format: 'uuid' } },
           required: ['id'],
+        },
+        response: {
+          200: {
+            description: '成功回傳商品詳情',
+            type: 'object',
+            properties: {
+              success: { type: 'boolean', enum: [true] },
+              data: ProductSchema,
+            },
+          },
+          404: { description: '找不到指定商品', ...ErrorResponseSchema },
         },
       },
     },
@@ -141,6 +212,18 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
             stockQuantity: { type: 'integer', minimum: 1, default: 1 },
           },
         },
+        response: {
+          201: {
+            description: '商品建立成功',
+            type: 'object',
+            properties: {
+              success: { type: 'boolean', enum: [true] },
+              data: ProductSchema,
+            },
+          },
+          400: { description: '請求參數驗證失敗', ...ErrorResponseSchema },
+          401: { description: '未授權', ...ErrorResponseSchema },
+        },
       },
     },
     async (request, reply) => {
@@ -188,6 +271,19 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
             stockQuantity: { type: 'integer', minimum: 1 },
           },
         },
+        response: {
+          200: {
+            description: '商品更新成功',
+            type: 'object',
+            properties: {
+              success: { type: 'boolean', enum: [true] },
+              data: ProductSchema,
+            },
+          },
+          400: { description: '請求參數驗證失敗', ...ErrorResponseSchema },
+          401: { description: '未授權', ...ErrorResponseSchema },
+          404: { description: '找不到指定商品', ...ErrorResponseSchema },
+        },
       },
     },
     async (request, reply) => {
@@ -218,6 +314,11 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
           type: 'object',
           properties: { id: { type: 'string', format: 'uuid' } },
           required: ['id'],
+        },
+        response: {
+          204: { description: '商品刪除成功', type: 'null' },
+          401: { description: '未授權', ...ErrorResponseSchema },
+          404: { description: '找不到指定商品', ...ErrorResponseSchema },
         },
       },
     },
@@ -254,6 +355,19 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
           required: ['status'],
           properties: { status: { type: 'string', enum: ['PENDING', 'LISTED', 'SOLD'] } },
         },
+        response: {
+          200: {
+            description: '狀態更新成功',
+            type: 'object',
+            properties: {
+              success: { type: 'boolean', enum: [true] },
+              data: ProductSchema,
+            },
+          },
+          400: { description: '請求參數驗證失敗', ...ErrorResponseSchema },
+          401: { description: '未授權', ...ErrorResponseSchema },
+          404: { description: '找不到指定商品', ...ErrorResponseSchema },
+        },
       },
     },
     async (request, reply) => {
@@ -286,6 +400,10 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
           properties: { id: { type: 'string', format: 'uuid' } },
           required: ['id'],
         },
+        response: {
+          401: { description: '未授權', ...ErrorResponseSchema },
+          501: { description: '功能尚未實作', ...ErrorResponseSchema },
+        },
       },
     },
     async (_request, reply) => {
@@ -311,6 +429,24 @@ const productsRoutes: FastifyPluginAsync = async (server) => {
           type: 'object',
           properties: { id: { type: 'string', format: 'uuid' } },
           required: ['id'],
+        },
+        response: {
+          200: {
+            description: '成功回傳 QR Code',
+            type: 'object',
+            properties: {
+              success: { type: 'boolean', enum: [true] },
+              data: {
+                type: 'object',
+                properties: {
+                  productId: { type: 'string', format: 'uuid' },
+                  qrCode: { type: 'string', description: 'base64 PNG data URL' },
+                },
+              },
+            },
+          },
+          401: { description: '未授權', ...ErrorResponseSchema },
+          404: { description: '找不到指定商品', ...ErrorResponseSchema },
         },
       },
     },
