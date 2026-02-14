@@ -6,6 +6,7 @@ import { logger, loggerConfig } from './utils/logger.js'
 import prismaPlugin from './plugins/prisma.js'
 import redisPlugin from './plugins/redis.js'
 import authPlugin from './plugins/auth.js'
+import websocketPlugin from './plugins/websocket.js'
 import swaggerPlugin from './plugins/swagger.js'
 
 // Middlewares
@@ -15,6 +16,7 @@ import errorHandlerMiddleware from './middlewares/error-handler.js'
 
 // Routes
 import { productsRoutes } from './modules/products/index.js'
+import { auctionsRoutes } from './modules/auctions/index.js'
 
 export async function buildServer() {
   const server = Fastify({
@@ -25,6 +27,7 @@ export async function buildServer() {
   await server.register(prismaPlugin)
   await server.register(redisPlugin)
   await server.register(authPlugin)
+  await server.register(websocketPlugin)
 
   // Swagger（在 routes 之前註冊）
   await server.register(swaggerPlugin)
@@ -47,6 +50,7 @@ export async function buildServer() {
 
   // 業務路由
   await server.register(productsRoutes, { prefix: '/api/products' })
+  await server.register(auctionsRoutes, { prefix: '/api/auctions' })
 
   // API 版本資訊
   server.get(

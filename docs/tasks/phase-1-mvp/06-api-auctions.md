@@ -344,14 +344,14 @@
 
 #### 6.3.1 安裝 WebSocket 套件
 
-- [ ] 安裝依賴
+- [x] 安裝依賴
   ```bash
   pnpm --filter @card-erp/api add @fastify/websocket
   ```
 
 #### 6.3.2 建立 WebSocket Plugin
 
-- [ ] 建立 `src/plugins/websocket.ts`
+- [x] 建立 `src/plugins/websocket.ts`
 
   ```typescript
   import type { FastifyPluginAsync } from 'fastify'
@@ -367,7 +367,7 @@
 
 #### 6.3.3 建立連線管理器（Room-based）
 
-- [ ] 建立 `src/modules/auctions/auction-rooms.ts`
+- [x] 建立 `src/modules/auctions/auction-rooms.ts`
 
   ```typescript
   import type { WebSocket } from 'ws'
@@ -417,7 +417,7 @@
 
 #### 6.3.4 註冊到主 server
 
-- [ ] 編輯 `src/server.ts`
+- [x] 編輯 `src/server.ts`
 
   ```typescript
   import websocketPlugin from './plugins/websocket.js'
@@ -436,7 +436,7 @@
 
 #### 6.4.1 建立 Auctions Routes
 
-- [ ] 建立 `src/modules/auctions/auctions.routes.ts`
+- [x] 建立 `src/modules/auctions/auctions.routes.ts`
 
   **模式說明**: 遵循 Task 5 products routes 的架構模式：
   - Fastify schema 使用 JSON Schema 格式（用於 Swagger 文檔 + 輸入驗證）
@@ -809,7 +809,7 @@
 
 #### 6.4.2 建立 Module Index
 
-- [ ] 建立 `src/modules/auctions/index.ts`
+- [x] 建立 `src/modules/auctions/index.ts`
   ```typescript
   export { default as auctionsRoutes } from './auctions.routes.js'
   export { AuctionsService } from './auctions.service.js'
@@ -951,13 +951,13 @@
 
 - [x] `src/modules/auctions/auctions.schema.ts`
 - [x] `src/modules/auctions/auctions.service.ts`
-- [ ] `src/modules/auctions/auctions.routes.ts`
-- [ ] `src/modules/auctions/auction-rooms.ts`
-- [ ] `src/modules/auctions/index.ts`
-- [ ] `src/plugins/websocket.ts`
+- [x] `src/modules/auctions/auctions.routes.ts`
+- [x] `src/modules/auctions/auction-rooms.ts`
+- [x] `src/modules/auctions/index.ts`
+- [x] `src/plugins/websocket.ts`
 - [ ] `src/jobs/auction-end.job.ts`
-- [ ] `tests/modules/auctions/auctions.service.test.ts`
-- [ ] `tests/modules/auctions/auctions.routes.test.ts`
+- [x] `tests/modules/auctions/auctions.service.test.ts`
+- [x] `tests/modules/auctions/auctions.routes.test.ts`
 
 ---
 
@@ -983,14 +983,14 @@
 
 ## 📊 進度追蹤
 
-| 子任務        | 狀態                           | 負責人 | 完成日期   |
-| ------------- | ------------------------------ | ------ | ---------- |
-| 6.1 Schema    | ✅ 完成                        | Codex  | 2026-02-14 |
-| 6.2 Service   | ✅ 完成                        | Codex  | 2026-02-14 |
-| 6.3 WebSocket | ⏳ 未開始                      | -      | -          |
-| 6.4 Routes    | ⏳ 未開始                      | -      | -          |
-| 6.5 定時任務  | ⏳ 未開始                      | -      | -          |
-| 6.6 測試      | 🔄 部分完成（service test ✅） | Codex  | -          |
+| 子任務        | 狀態                               | 負責人 | 完成日期   |
+| ------------- | ---------------------------------- | ------ | ---------- |
+| 6.1 Schema    | ✅ 完成                            | Codex  | 2026-02-14 |
+| 6.2 Service   | ✅ 完成                            | Codex  | 2026-02-14 |
+| 6.3 WebSocket | ✅ 完成                            | Codex  | 2026-02-15 |
+| 6.4 Routes    | ✅ 完成                            | Codex  | 2026-02-15 |
+| 6.5 定時任務  | ⏳ 未開始                          | -      | -          |
+| 6.6 測試      | 🔄 部分完成（service + routes ✅） | Codex  | 2026-02-15 |
 
 ---
 
