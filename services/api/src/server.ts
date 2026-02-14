@@ -12,6 +12,9 @@ import corsMiddleware from './middlewares/cors.js'
 import rateLimiterMiddleware from './middlewares/rate-limiter.js'
 import errorHandlerMiddleware from './middlewares/error-handler.js'
 
+// Routes
+import { productsRoutes } from './modules/products/index.js'
+
 export async function buildServer() {
   const server = Fastify({
     logger: loggerConfig,
@@ -31,6 +34,9 @@ export async function buildServer() {
   server.get('/health', async () => {
     return { status: 'ok', timestamp: new Date().toISOString() }
   })
+
+  // 業務路由
+  await server.register(productsRoutes, { prefix: '/api/products' })
 
   // API 版本資訊
   server.get('/api', async () => {
@@ -58,4 +64,9 @@ async function start() {
   }
 }
 
-start()
+// 只在直接執行時啟動，避免被 test import 時觸發
+const isMainModule =
+  process.argv[1]?.endsWith('server.js') || process.argv[1]?.endsWith('server.ts')
+if (isMainModule) {
+  start()
+}

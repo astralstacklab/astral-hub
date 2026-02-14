@@ -13,24 +13,26 @@
 
 ## 🎯 成功標準
 
-- [ ] 所有商品 API endpoints 正常運作
-- [ ] Zod Schema 驗證所有輸入參數
-- [ ] Service 層單元測試覆蓋率 > 80%
-- [ ] API 整合測試通過
-- [ ] Redis 快取機制運作正常
-- [ ] API 回應時間 < 200ms（單一查詢）
-- [ ] 圖片上傳成功並返回 URL
-- [ ] QR Code 生成正確
+- [x] 所有商品 API endpoints 正常運作
+- [x] Zod Schema 驗證所有輸入參數
+- [x] Service 層單元測試覆蓋率 > 80%
+- [x] API 整合測試通過
+- [x] Redis 快取機制運作正常
+- [x] API 回應時間 < 200ms（單一查詢）
+- [ ] 圖片上傳成功並返回 URL（預留 501，待 GCS 整合）
+- [x] QR Code 生成正確
 
 ## 📦 前置條件
 
 **前置任務**:
+
 - [x] 01 - 環境建置完成
 - [x] 02 - shared-types 套件完成
 - [x] 03 - 資料庫設計完成
 - [x] 04 - API 基礎架構完成
 
 **技術需求**:
+
 - Fastify 4.x
 - Prisma Client
 - Zod
@@ -43,7 +45,9 @@
 ### 5.1 資料驗證 Schema
 
 #### 5.1.1 建立 Zod Schema
-- [ ] 建立 `src/modules/products/products.schema.ts`
+
+- [x] 建立 `src/modules/products/products.schema.ts`
+
   ```typescript
   import { z } from 'zod'
   import { ProductType, ProductStatus, ProductChannel, GradingStatus } from '@card-erp/shared-types'
@@ -108,10 +112,16 @@
 ### 5.2 Service 層
 
 #### 5.2.1 建立 Products Service
-- [ ] 建立 `src/modules/products/products.service.ts`
+
+- [x] 建立 `src/modules/products/products.service.ts`
+
   ```typescript
   import { PrismaClient, Product } from '@prisma/client'
-  import type { CreateProductInput, UpdateProductInput, QueryProductsInput } from './products.schema'
+  import type {
+    CreateProductInput,
+    UpdateProductInput,
+    QueryProductsInput,
+  } from './products.schema'
 
   export class ProductsService {
     constructor(private prisma: PrismaClient) {}
@@ -246,7 +256,9 @@
   ```
 
 #### 5.2.2 單元測試
-- [ ] 建立 `tests/modules/products/products.service.test.ts`
+
+- [x] 建立 `tests/modules/products/products.service.test.ts`
+
   ```typescript
   import { describe, it, expect, beforeEach, afterEach } from 'vitest'
   import { PrismaClient } from '@prisma/client'
@@ -318,7 +330,9 @@
 ### 5.3 Routes 層
 
 #### 5.3.1 建立 Products Routes
-- [ ] 建立 `src/modules/products/products.routes.ts`
+
+- [x] 建立 `src/modules/products/products.routes.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import { ProductsService } from './products.service'
@@ -541,7 +555,9 @@
   ```
 
 #### 5.3.2 整合到主 server
-- [ ] 編輯 `src/server.ts`
+
+- [x] 編輯 `src/server.ts`
+
   ```typescript
   import productsRoutes from './modules/products/products.routes'
 
@@ -554,7 +570,8 @@
 ### 5.4 圖片上傳功能（預留，待 GCS 整合）
 
 #### 5.4.1 預留圖片上傳路由
-- [ ] 在 `products.routes.ts` 中預留 POST /products/:id/images
+
+- [x] 在 `products.routes.ts` 中預留 POST /products/:id/images
   ```typescript
   // TODO: 待 GCS 整合完成後實作
   server.post(
@@ -573,14 +590,17 @@
 ### 5.5 QR Code 生成
 
 #### 5.5.1 安裝 QR Code 套件
-- [ ] 安裝依賴
+
+- [x] 安裝依賴
   ```bash
   pnpm add qrcode
   pnpm add -D @types/qrcode
   ```
 
 #### 5.5.2 建立 QR Code 工具
-- [ ] 建立 `src/utils/qrcode-generator.ts`
+
+- [x] 建立 `src/utils/qrcode-generator.ts`
+
   ```typescript
   import QRCode from 'qrcode'
 
@@ -602,7 +622,9 @@
   ```
 
 #### 5.5.3 建立 QR Code 路由
-- [ ] 在 `products.routes.ts` 中新增
+
+- [x] 在 `products.routes.ts` 中新增
+
   ```typescript
   import { generateQRCode } from '@/utils/qrcode-generator'
 
@@ -646,7 +668,9 @@
 ### 5.6 整合測試
 
 #### 5.6.1 建立 API 整合測試
-- [ ] 建立 `tests/modules/products/products.routes.test.ts`
+
+- [x] 建立 `tests/modules/products/products.routes.test.ts`
+
   ```typescript
   import { describe, it, expect, beforeAll, afterAll } from 'vitest'
   import { buildTestServer, closeTestServer } from '../../helpers'
@@ -719,11 +743,13 @@
    - 測試錯誤的輸入（應返回 400）
 
 2. **Service 層測試**
+
    ```bash
    pnpm --filter @card-erp/api test products.service.test
    ```
 
 3. **API 整合測試**
+
    ```bash
    pnpm --filter @card-erp/api test products.routes.test
    ```
@@ -749,12 +775,12 @@
 
 ## 📝 交付物
 
-- [ ] `src/modules/products/products.schema.ts`
-- [ ] `src/modules/products/products.service.ts`
-- [ ] `src/modules/products/products.routes.ts`
-- [ ] `src/utils/qrcode-generator.ts`
-- [ ] `tests/modules/products/products.service.test.ts`
-- [ ] `tests/modules/products/products.routes.test.ts`
+- [x] `src/modules/products/products.schema.ts`
+- [x] `src/modules/products/products.service.ts`
+- [x] `src/modules/products/products.routes.ts`
+- [x] `src/utils/qrcode-generator.ts`
+- [x] `tests/modules/products/products.service.test.ts`
+- [x] `tests/modules/products/products.routes.test.ts`
 - [ ] API 文檔（OpenAPI/Swagger，可選）
 
 ---
@@ -779,14 +805,14 @@
 
 ## 📊 進度追蹤
 
-| 子任務 | 狀態 | 負責人 | 完成日期 |
-|--------|------|--------|---------|
-| 5.1 Schema 定義 | ⏳ 未開始 | - | - |
-| 5.2 Service 層 | ⏳ 未開始 | - | - |
-| 5.3 Routes 層 | ⏳ 未開始 | - | - |
-| 5.4 圖片上傳 | ⏳ 未開始 | - | - |
-| 5.5 QR Code | ⏳ 未開始 | - | - |
-| 5.6 整合測試 | ⏳ 未開始 | - | - |
+| 子任務          | 狀態        | 負責人 | 完成日期   |
+| --------------- | ----------- | ------ | ---------- |
+| 5.1 Schema 定義 | ✅ 完成     | Claude | 2026-02-14 |
+| 5.2 Service 層  | ✅ 完成     | Claude | 2026-02-14 |
+| 5.3 Routes 層   | ✅ 完成     | Claude | 2026-02-14 |
+| 5.4 圖片上傳    | ✅ 預留 501 | Claude | 2026-02-14 |
+| 5.5 QR Code     | ✅ 完成     | Claude | 2026-02-14 |
+| 5.6 整合測試    | ✅ 完成     | Claude | 2026-02-14 |
 
 ---
 
