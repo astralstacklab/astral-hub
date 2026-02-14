@@ -418,7 +418,7 @@
 
 #### 2.3.1 建立套件結構
 
-- [ ] 建立 `packages/utils/` 目錄結構
+- [x] 建立 `packages/utils/` 目錄結構
   ```
   packages/utils/
   ├── src/
@@ -436,7 +436,7 @@
 
 #### 2.3.2 建立格式化工具（formatters/）
 
-- [ ] `formatters/currency.ts`
+- [x] `formatters/currency.ts`
 
   ```typescript
   export function formatCurrency(amount: number, currency = 'TWD'): string {
@@ -451,7 +451,7 @@
   }
   ```
 
-- [ ] `formatters/date.ts`
+- [x] `formatters/date.ts`
 
   ```typescript
   export function formatDate(date: Date | string, format = 'YYYY-MM-DD'): string {
@@ -463,12 +463,12 @@
   }
   ```
 
-- [ ] `formatters/phone.ts`
-- [ ] `formatters/number.ts`
+- [x] `formatters/phone.ts`
+- [x] `formatters/number.ts`
 
 #### 2.3.3 建立驗證工具（validators/）
 
-- [ ] `validators/email.ts`
+- [x] `validators/email.ts`
 
   ```typescript
   export function isValidEmail(email: string): boolean {
@@ -477,12 +477,12 @@
   }
   ```
 
-- [ ] `validators/phone.ts`
-- [ ] `validators/card-number.ts`（卡片編號驗證）
+- [x] `validators/phone.ts`
+- [x] `validators/card-number.ts`（卡片編號驗證）
 
 #### 2.3.4 建立計算工具（calculators/）
 
-- [ ] `calculators/commission.ts`
+- [x] `calculators/commission.ts`
 
   ```typescript
   export function calculateCommission(sellingPrice: number, commissionRate: number): number {
@@ -507,7 +507,7 @@
 
 #### 2.3.6 單元測試
 
-- [ ] 為所有工具函數建立測試
+- [x] 為所有工具函數建立測試
 
   ```typescript
   // tests/formatters/currency.test.ts
