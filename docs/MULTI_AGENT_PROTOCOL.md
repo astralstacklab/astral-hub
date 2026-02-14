@@ -1,15 +1,15 @@
 # Multi-Agent 協作協定 (Multi-Agent Collaboration Protocol)
 
-> **版本**: 0.3.0 (Draft)
-> **最後更新**: 2026-02-13
+> **版本**: 0.4.0 (Draft)
+> **最後更新**: 2026-02-14
 > **狀態**: 待審核
 > **適用範圍**: Card ERP 專案所有 AI Agent 協作場景
 
 本協定定義 Card ERP 開發中的多 Agent 協作規範。角色與 Agent 的對應關係如下：
 
 - **Planner / Archiver（策劃 + 進版控）**：Claude（固定）
-- **Executor（開發）**：Gemini（固定）
-- **Reviewer（審查）**：Claude 或 Codex（由 Coordinator 彈性指派）
+- **Executor（開發）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派）
+- **Reviewer（審查）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派，需與 Executor 不同）
 
 ---
 
@@ -34,7 +34,9 @@
 **輸入**：人類的任務描述 + 專案文件
 **輸出**：`MISSION_CONTROL.md`
 
-### 2.2 Executor（執行者）— Gemini
+### 2.2 Executor（執行者）— Gemini / Codex / Antigravity
+
+由 Coordinator 依任務性質彈性指派，每次任務指定一位。
 
 - 根據 `MISSION_CONTROL.md` 執行程式碼變更
 - 記錄每一步操作的原因與結果至 `EXECUTION_LOG.md`
@@ -43,9 +45,9 @@
 **輸入**：`MISSION_CONTROL.md`
 **輸出**：`EXECUTION_LOG.md` + 程式碼變更
 
-### 2.3 Reviewer（審查者）— Claude 或 Codex
+### 2.3 Reviewer（審查者）— Gemini / Codex / Antigravity
 
-由 Coordinator 依任務性質彈性指派。兩者遵循相同的審查標準與產出格式。
+由 Coordinator 依任務性質彈性指派，需與同一任務的 Executor 不同。
 
 - 對比 `MISSION_CONTROL.md` 目標與 `EXECUTION_LOG.md` 產出
 - 檢查架構一致性（對比 AGENTS.md 設計規範）
@@ -85,7 +87,7 @@
 ┌─────────────┐  寫入  ┌─────────────┐  寫入  ┌──────────────────┐  讀取  ┌─────────────┐
 │  Phase 1    │───────▶│  Phase 2    │───────▶│  Phase 3         │───────▶│  Phase 4    │
 │  策劃       │        │  執行       │        │  審查            │        │  歸檔       │
-│  (Claude)   │        │  (Gemini)   │        │ (Claude 或 Codex)│        │  (Claude)   │
+│  (Claude)   │        │  (Executor) │        │   (Reviewer)     │        │  (Claude)   │
 └─────────────┘        └─────────────┘        └──────────────────┘        └─────────────┘
 ```
 
@@ -279,7 +281,7 @@ No errors found.
 
 ### 5.3 REVIEW_REPORT.md
 
-由 Reviewer（Gemini）產出，結構化差異分析。
+由 Reviewer 產出，結構化差異分析。
 
 ```markdown
 # REVIEW_REPORT
@@ -367,17 +369,23 @@ No errors found.
 - **Claude**：讀取 `CLAUDE.md` → 引導至 `AGENTS.md`
 - **Gemini**：讀取 `AGENTS.md`（透過 System Instructions 配置）
 - **Codex**：讀取 `AGENTS.md` + `codex.md`
+- **Antigravity**：讀取 `AGENTS.md`（透過 System Instructions 配置）
 
 因此 **不需要額外的 handoff prompt 或上下文組裝文件**。Agent 切換時，人類只需告知下一個 Agent 讀取 repo 根目錄的對應產物。
 
 ### 切換觸發方式
 
-| 切換方向                   | 目標 Agent      | 人類對下一個 Agent 說的話                                              |
-| -------------------------- | --------------- | ---------------------------------------------------------------------- |
-| → Executor                 | Gemini          | 「讀取 MISSION_CONTROL.md 並執行」                                     |
-| → Reviewer                 | Claude 或 Codex | 「讀取 MISSION_CONTROL.md 和 EXECUTION_LOG.md，產出 REVIEW_REPORT.md」 |
-| → Executor（修正）         | Gemini          | 「讀取 REVIEW_REPORT.md，修正問題後更新 EXECUTION_LOG.md」             |
-| → Planner（歸檔 + 進版控） | Claude          | 「讀取 EXECUTION_LOG.md 和 REVIEW_REPORT.md，驗證並歸檔」              |
+Coordinator 透過關鍵字觸發 Agent 角色：
+
+- **Executor 觸發**：「讀取 MISSION_CONTROL」、「開始執行」、「執行任務」
+- **Reviewer 觸發**：「REVIEW」、「閱讀 EXECUTION_LOG」、「審查」
+
+| 切換方向                   | 目標 Agent                   | 人類對下一個 Agent 說的話                                              |
+| -------------------------- | ---------------------------- | ---------------------------------------------------------------------- |
+| → Executor                 | Gemini / Codex / Antigravity | 「讀取 MISSION_CONTROL.md 並執行」                                     |
+| → Reviewer                 | Gemini / Codex / Antigravity | 「讀取 MISSION_CONTROL.md 和 EXECUTION_LOG.md，產出 REVIEW_REPORT.md」 |
+| → Executor（修正）         | 同原 Executor                | 「讀取 REVIEW_REPORT.md，修正問題後更新 EXECUTION_LOG.md」             |
+| → Planner（歸檔 + 進版控） | Claude                       | 「讀取 EXECUTION_LOG.md 和 REVIEW_REPORT.md，驗證並歸檔」              |
 
 ---
 

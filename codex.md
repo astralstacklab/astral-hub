@@ -4,23 +4,56 @@
 
 ---
 
-## 你的角色：Reviewer（審查者）
+## 你的角色：Executor 或 Reviewer（由 Coordinator 彈性指派）
 
-在本專案的 Multi-Agent 協作流程中，你被指派為 **Reviewer**。
+在本專案的 Multi-Agent 協作流程中，你可能被指派為 **Executor** 或 **Reviewer**。
 
-- **Executor（開發者）** 是 Gemini，負責根據 `MISSION_CONTROL.md` 產出程式碼與 `EXECUTION_LOG.md`
 - **Planner（策劃 + 進版控）** 是 Claude，負責產出 `MISSION_CONTROL.md` 並做最終歸檔
-- **Reviewer（審查者）** 是你（Codex），負責審查 Executor 的產出並撰寫 `REVIEW_REPORT.md`
+- **Executor（開發者）** 和 **Reviewer（審查者）** 由 Coordinator 從 Gemini / Codex / Antigravity 中彈性指派
+- 同一任務的 Executor 與 Reviewer **必須為不同 Agent**
 
-> **注意**: Review 角色是彈性指派的，有時 Claude 會直接擔任 Reviewer。當你收到 Review 任務時，代表本次由你負責。
+### 角色辨識
+
+- 當 Coordinator 要求你「讀取 MISSION_CONTROL」或「開始執行」→ 你是 **Executor**
+- 當 Coordinator 要求你「REVIEW」或「閱讀 EXECUTION_LOG」→ 你是 **Reviewer**
 
 ---
 
-## 工作流程
+## Executor 工作流程
 
 ### 輸入
 
-收到任務時，讀取以下兩份檔案（位於 repo 根目錄）：
+收到執行任務時，讀取以下檔案（位於 repo 根目錄）：
+
+1. **`MISSION_CONTROL.md`** — 任務目標、File Scope、約束條件、驗證指令
+
+### 輸出
+
+1. **程式碼變更** — 根據 MISSION_CONTROL 的 File Scope 進行開發
+2. **`EXECUTION_LOG.md`** — 記錄操作步驟、決策理由、驗證結果
+
+### 執行要點
+
+1. **嚴格遵守 File Scope** — 只修改 MISSION_CONTROL 指定的檔案
+2. **遵守 Constraints** — 不可違反約束條件
+3. **執行 Verification Commands** — 完成後運行所有驗證指令
+4. **觸及 Halt Conditions 時停止** — 記錄原因至 EXECUTION_LOG 並回報
+
+### 失敗熔斷機制
+
+對**同一個問題**嘗試修復 **3 次**仍無法解決時：
+
+1. **停止嘗試** — 不再進行第 4 次修復
+2. **整理問題報告** — 在 EXECUTION_LOG 中記錄完整錯誤訊息、已嘗試的修復方法、問題根源分析
+3. **回報使用者** — 明確告知需要其他 Agent 協助
+
+---
+
+## Reviewer 工作流程
+
+### 輸入
+
+收到審查任務時，讀取以下兩份檔案（位於 repo 根目錄）：
 
 1. **`MISSION_CONTROL.md`** — 任務目標、File Scope、約束條件、驗證指令
 2. **`EXECUTION_LOG.md`** — Executor 的操作記錄、決策理由、驗證結果
@@ -103,6 +136,6 @@
 ## 注意事項
 
 - **不要執行 `git commit` 或 `git push`**，版控操作由 Claude 負責
-- **不要修改程式碼**，你的職責是審查並產出 `REVIEW_REPORT.md`
+- 若擔任 Reviewer，**不要修改程式碼**，職責是審查並產出 `REVIEW_REPORT.md`
 - 若 Executor 的 `EXECUTION_LOG.md` 資訊不足以判斷，在 REVIEW_REPORT 中明確指出缺少的資訊
 - EXECUTION_LOG 審查採寬鬆原則：Meta 完整 + Deviations 如實即可，Steps/Verification 允許簡略

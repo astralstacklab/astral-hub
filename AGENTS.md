@@ -229,8 +229,10 @@ main            # 生產環境（保護分支）
 本專案採用多 Agent 協作開發，角色分配如下：
 
 - **Planner / Archiver（策劃 + 進版控）**：Claude（固定）
-- **Executor（開發）**：Gemini（固定）
-- **Reviewer（審查）**：Claude 或 Codex（由 Coordinator 彈性指派）
+- **Executor（開發）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派）
+- **Reviewer（審查）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派，需與 Executor 不同）
+
+**觸發辨識**：當 Coordinator 要求 Agent「讀取 MISSION_CONTROL」或「開始執行」→ Executor 角色；要求「REVIEW」或「閱讀 EXECUTION_LOG」→ Reviewer 角色。
 
 **任務分級**：
 
