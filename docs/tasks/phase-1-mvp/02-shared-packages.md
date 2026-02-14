@@ -533,15 +533,15 @@
 
 #### 2.4.1 測試套件間引用
 
-- [ ] 在 utils 中引用 shared-types
-- [ ] 在 ui-components 中引用 shared-types
-- [ ] 驗證型別正確傳遞
+- [x] 在 utils 中引用 shared-types
+- [x] 在 ui-components 中引用 shared-types
+- [x] 驗證型別正確傳遞
 
 #### 2.4.2 建立範例專案
 
-- [ ] 建立 `examples/` 資料夾
-- [ ] 建立簡單的 Vue 3 專案引用套件
-- [ ] 驗證所有元件與工具正常運作
+- [x] ~~建立 `examples/` 資料夾~~ → 改為整合測試（`tests/integration/cross-package.test.ts`）
+- [x] ~~建立簡單的 Vue 3 專案引用套件~~ → apps/ 尚未建立，以 type-check + build 驗證替代
+- [x] 驗證所有元件與工具正常運作
 
 ---
 
@@ -606,12 +606,12 @@
 
 ## 📊 進度追蹤
 
-| 子任務            | 狀態      | 負責人              | 完成日期   |
-| ----------------- | --------- | ------------------- | ---------- |
-| 2.1 shared-types  | ✅ 完成   | Gemini CLI + Claude | 2026-02-08 |
-| 2.2 ui-components | ✅ 完成   | Gemini CLI + Codex  | 2026-02-13 |
-| 2.3 utils         | ✅ 完成   | Codex + Gemini      | 2026-02-14 |
-| 2.4 整合測試      | ⏳ 未開始 | -                   | -          |
+| 子任務            | 狀態    | 負責人              | 完成日期   |
+| ----------------- | ------- | ------------------- | ---------- |
+| 2.1 shared-types  | ✅ 完成 | Gemini CLI + Claude | 2026-02-08 |
+| 2.2 ui-components | ✅ 完成 | Gemini CLI + Codex  | 2026-02-13 |
+| 2.3 utils         | ✅ 完成 | Codex + Gemini      | 2026-02-14 |
+| 2.4 整合測試      | ✅ 完成 | Claude              | 2026-02-14 |
 
 ---
 
