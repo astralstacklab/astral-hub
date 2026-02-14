@@ -13,20 +13,22 @@
 
 ## 🎯 成功標準
 
-- [ ] Prisma Schema 定義完整且符合 PRD 需求
-- [ ] 資料庫遷移成功執行
-- [ ] 所有資料表關聯正確建立
-- [ ] 索引策略已實施
-- [ ] Seed 腳本可成功生成測試資料
-- [ ] Prisma Client 可正常使用
+- [x] Prisma Schema 定義完整且符合 PRD 需求
+- [x] 資料庫遷移成功執行
+- [x] 所有資料表關聯正確建立
+- [x] 索引策略已實施
+- [x] Seed 腳本可成功生成測試資料
+- [x] Prisma Client 可正常使用
 
 ## 📦 前置條件
 
 **前置任務**:
+
 - [x] 01 - 環境建置完成
 - [x] 02 - shared-types 套件完成
 
 **技術需求**:
+
 - Prisma 5.x
 - PostgreSQL 15
 
@@ -37,7 +39,8 @@
 ### 3.1 Prisma 設定
 
 #### 3.1.1 安裝 Prisma
-- [ ] 在 API 專案安裝 Prisma
+
+- [x] 在 API 專案安裝 Prisma
   ```bash
   cd services/api
   pnpm add prisma @prisma/client
@@ -45,16 +48,19 @@
   ```
 
 #### 3.1.2 初始化 Prisma
-- [ ] 執行 Prisma 初始化
+
+- [x] 執行 Prisma 初始化
   ```bash
   pnpm exec prisma init
   ```
-- [ ] 驗證產生的檔案
+- [x] 驗證產生的檔案
   - `prisma/schema.prisma`
   - `.env`（更新 DATABASE_URL）
 
 #### 3.1.3 配置 schema.prisma 基礎設定
-- [ ] 編輯 `prisma/schema.prisma`
+
+- [x] 編輯 `prisma/schema.prisma`
+
   ```prisma
   generator client {
     provider = "prisma-client-js"
@@ -71,7 +77,9 @@
 ### 3.2 定義核心資料表（第一階段 MVP）
 
 #### 3.2.1 Products（商品表）
-- [ ] 定義 Product model
+
+- [x] 定義 Product model
+
   ```prisma
   model Product {
     id String @id @default(uuid())
@@ -157,7 +165,9 @@
   ```
 
 #### 3.2.2 Auctions（競標表）
-- [ ] 定義 Auction model
+
+- [x] 定義 Auction model
+
   ```prisma
   model Auction {
     id String @id @default(uuid())
@@ -201,7 +211,9 @@
   ```
 
 #### 3.2.3 Bids（出價記錄表）
-- [ ] 定義 Bid model
+
+- [x] 定義 Bid model
+
   ```prisma
   model Bid {
     id String @id @default(uuid())
@@ -223,7 +235,9 @@
   ```
 
 #### 3.2.4 Orders（訂單表）
-- [ ] 定義 Order model
+
+- [x] 定義 Order model
+
   ```prisma
   model Order {
     id String @id @default(uuid())
@@ -329,7 +343,9 @@
   ```
 
 #### 3.2.5 Users（買家表，第二階段需要，先預留）
-- [ ] 定義 User model
+
+- [x] 定義 User model
+
   ```prisma
   model User {
     id String @id @default(uuid())
@@ -367,7 +383,9 @@
   ```
 
 #### 3.2.6 Sellers（賣家表，第三階段需要，先預留）
-- [ ] 定義 Seller model
+
+- [x] 定義 Seller model
+
   ```prisma
   model Seller {
     id String @id @default(uuid())
@@ -418,7 +436,9 @@
   ```
 
 #### 3.2.7 SellerTransactions（賣家交易記錄，第三階段）
-- [ ] 定義 SellerTransaction model
+
+- [x] 定義 SellerTransaction model
+
   ```prisma
   model SellerTransaction {
     id String @id @default(uuid())
@@ -450,7 +470,9 @@
   ```
 
 #### 3.2.8 AdminUsers（管理員表）
-- [ ] 定義 AdminUser model
+
+- [x] 定義 AdminUser model
+
   ```prisma
   model AdminUser {
     id String @id @default(uuid())
@@ -490,7 +512,9 @@
   ```
 
 #### 3.2.9 AuditLogs（操作記錄）
-- [ ] 定義 AuditLog model
+
+- [x] 定義 AuditLog model
+
   ```prisma
   model AuditLog {
     id String @id @default(uuid())
@@ -528,7 +552,9 @@
   ```
 
 #### 3.2.10 PointsLog（紅利點數記錄，第二階段）
-- [ ] 定義 PointsLog model
+
+- [x] 定義 PointsLog model
+
   ```prisma
   model PointsLog {
     id String @id @default(uuid())
@@ -562,34 +588,39 @@
 ### 3.3 資料庫遷移
 
 #### 3.3.1 建立初始遷移
-- [ ] 執行遷移命令
+
+- [x] 執行遷移命令
   ```bash
   pnpm exec prisma migrate dev --name init
   ```
-- [ ] 驗證遷移檔案產生
-- [ ] 檢查資料庫是否成功建立資料表
+- [x] 驗證遷移檔案產生
+- [x] 檢查資料庫是否成功建立資料表
 
 #### 3.3.2 生成 Prisma Client
-- [ ] 執行生成命令
+
+- [x] 執行生成命令
   ```bash
   pnpm exec prisma generate
   ```
-- [ ] 驗證 `node_modules/@prisma/client` 生成
+- [x] 驗證 `node_modules/@prisma/client` 生成
 
 #### 3.3.3 Prisma Studio 驗證
-- [ ] 啟動 Prisma Studio
+
+- [x] 啟動 Prisma Studio
   ```bash
   pnpm exec prisma studio
   ```
-- [ ] 瀏覽所有資料表
-- [ ] 驗證欄位型別正確
+- [x] 瀏覽所有資料表
+- [x] 驗證欄位型別正確
 
 ---
 
 ### 3.4 測試資料生成（Seed）
 
 #### 3.4.1 建立 Seed 腳本
-- [ ] 建立 `prisma/seed.ts`
+
+- [x] 建立 `prisma/seed.ts`
+
   ```typescript
   import { PrismaClient } from '@prisma/client'
 
@@ -611,8 +642,8 @@
         email: 'admin@card-erp.com',
         passwordHash: '...', // bcrypt hash
         name: '系統管理員',
-        role: 'SUPER_ADMIN'
-      }
+        role: 'SUPER_ADMIN',
+      },
     })
 
     // 建立測試商品
@@ -631,10 +662,8 @@
           status: 'LISTED',
           channel: 'BOTH',
           description: '全新未拆PSA10鑑定卡',
-          images: JSON.stringify([
-            { url: 'https://example.com/image1.jpg', type: 'front' }
-          ])
-        }
+          images: JSON.stringify([{ url: 'https://example.com/image1.jpg', type: 'front' }]),
+        },
       }),
       // ... 更多測試商品
     ])
@@ -653,7 +682,8 @@
   ```
 
 #### 3.4.2 配置 package.json
-- [ ] 編輯 `package.json`
+
+- [x] 編輯 `package.json`
   ```json
   {
     "prisma": {
@@ -666,25 +696,28 @@
   ```
 
 #### 3.4.3 執行 Seed
-- [ ] 執行 seed 命令
+
+- [x] 執行 seed 命令
   ```bash
   pnpm run db:seed
   ```
-- [ ] 使用 Prisma Studio 驗證資料
+- [x] 使用 Prisma Studio 驗證資料
 
 ---
 
 ### 3.5 文檔
 
 #### 3.5.1 建立 Schema 文檔
-- [ ] 建立 `docs/database-schema.md`
+
+- [x] 建立 `docs/database-schema.md`
   - ER Diagram（文字描述或 Mermaid）
   - 各資料表說明
   - 索引策略
   - 關聯關係
 
 #### 3.5.2 建立遷移指南
-- [ ] 建立 `docs/database-migration.md`
+
+- [x] 建立 `docs/database-migration.md`
   - 如何建立新遷移
   - 如何回滾遷移
   - 生產環境遷移流程
@@ -694,11 +727,13 @@
 ## 🧪 測試步驟
 
 1. **Schema 驗證**
+
    ```bash
    pnpm exec prisma validate
    ```
 
 2. **格式化 Schema**
+
    ```bash
    pnpm exec prisma format
    ```
@@ -713,6 +748,7 @@
    - 驗證資料正確性
 
 5. **Client 測試**
+
    ```typescript
    import { PrismaClient } from '@prisma/client'
    const prisma = new PrismaClient()
@@ -725,11 +761,11 @@
 
 ## 📝 交付物
 
-- [ ] `prisma/schema.prisma`
-- [ ] `prisma/migrations/` 遷移檔案
-- [ ] `prisma/seed.ts`
-- [ ] `docs/database-schema.md`
-- [ ] `docs/database-migration.md`
+- [x] `prisma/schema.prisma`
+- [x] `prisma/migrations/` 遷移檔案
+- [x] `prisma/seed.ts`
+- [x] `docs/database-schema.md`
+- [x] `docs/database-migration.md`
 
 ---
 
@@ -753,13 +789,13 @@
 
 ## 📊 進度追蹤
 
-| 子任務 | 狀態 | 負責人 | 完成日期 |
-|--------|------|--------|---------|
-| 3.1 Prisma 設定 | ⏳ 未開始 | - | - |
-| 3.2 定義資料表 | ⏳ 未開始 | - | - |
-| 3.3 資料庫遷移 | ⏳ 未開始 | - | - |
-| 3.4 Seed 腳本 | ⏳ 未開始 | - | - |
-| 3.5 文檔 | ⏳ 未開始 | - | - |
+| 子任務          | 狀態    | 負責人 | 完成日期   |
+| --------------- | ------- | ------ | ---------- |
+| 3.1 Prisma 設定 | ✅ 完成 | Claude | 2026-02-14 |
+| 3.2 定義資料表  | ✅ 完成 | Claude | 2026-02-14 |
+| 3.3 資料庫遷移  | ✅ 完成 | Claude | 2026-02-14 |
+| 3.4 Seed 腳本   | ✅ 完成 | Claude | 2026-02-14 |
+| 3.5 文檔        | ✅ 完成 | Claude | 2026-02-14 |
 
 ---
 

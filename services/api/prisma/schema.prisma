@@ -1,0 +1,478 @@
+// Card ERP - Database Schema
+// Prisma ORM for PostgreSQL
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Enums
+// ============================================
+
+enum ProductType {
+  CARD
+  ACCESSORY
+}
+
+enum ProductStatus {
+  PENDING
+  LISTED
+  SOLD
+}
+
+enum ProductChannel {
+  ONLINE
+  OFFLINE
+  BOTH
+}
+
+enum GradingStatus {
+  RAW
+  PSA
+  ARS
+  BGS
+}
+
+enum AuctionStatus {
+  UPCOMING
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  LINE_PAY
+  TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum ShippingMethod {
+  SEVEN_ELEVEN
+  FAMILY_MART
+  FACE_TO_FACE
+  IN_STORE
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderChannel {
+  ONLINE
+  POS
+}
+
+enum OAuthProvider {
+  GOOGLE
+  FACEBOOK
+}
+
+enum SellerLevel {
+  BRONZE
+  SILVER
+  GOLD
+}
+
+enum SellerStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum SellerTransactionType {
+  SALE
+  COMMISSION
+  LISTING_FEE
+  WITHDRAWAL
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+}
+
+enum AdminStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum UserType {
+  ADMIN
+  SELLER
+}
+
+enum PointsLogType {
+  EARN
+  REDEEM
+  REFUND
+  EXPIRE
+}
+
+// ============================================
+// Models
+// ============================================
+
+/// 商品表
+model Product {
+  id String @id @default(uuid())
+
+  // 商品類型
+  type ProductType
+
+  // 基本資訊
+  category   String
+  name       String
+  series     String?
+  cardNumber String?
+
+  // 鑑定資訊
+  gradingStatus GradingStatus?
+  gradingScore  Decimal?       @db.Decimal(3, 1)
+
+  // 價格
+  costPrice    Decimal @db.Decimal(10, 2)
+  sellingPrice Decimal @db.Decimal(10, 2)
+
+  // 賣家
+  sellerId String?
+  seller   Seller? @relation(fields: [sellerId], references: [id])
+
+  // 狀態
+  status  ProductStatus  @default(PENDING)
+  channel ProductChannel @default(BOTH)
+
+  // 媒體
+  images Json   @default("[]")
+  video  String?
+
+  // 描述
+  description    String  @db.Text
+  conditionNotes String? @db.Text
+
+  // 進貨資訊
+  supplier        String?
+  supplierContact String?
+
+  // 庫存
+  stockQuantity Int @default(1)
+
+  // 時間戳記
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 關聯
+  auction    Auction?
+  orderItems OrderItem[]
+
+  @@index([status, channel])
+  @@index([sellerId])
+  @@index([category])
+  @@index([createdAt])
+  @@map("products")
+}
+
+/// 競標表
+model Auction {
+  id String @id @default(uuid())
+
+  // 商品關聯
+  productId String  @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // 價格設定
+  startingPrice   Decimal  @db.Decimal(10, 2)
+  buyNowPrice     Decimal? @db.Decimal(10, 2)
+  currentPrice    Decimal  @db.Decimal(10, 2)
+  incrementAmount Decimal  @db.Decimal(10, 2)
+
+  // 當前最高出價者
+  currentBidderId String?
+  currentBidder   User?   @relation(fields: [currentBidderId], references: [id])
+
+  // 時間
+  startTime DateTime
+  endTime   DateTime
+
+  // 狀態
+  status AuctionStatus @default(UPCOMING)
+
+  createdAt DateTime @default(now())
+
+  // 關聯
+  bids Bid[]
+
+  @@index([status, endTime])
+  @@map("auctions")
+}
+
+/// 出價記錄表
+model Bid {
+  id String @id @default(uuid())
+
+  auctionId String
+  auction   Auction @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+
+  bidderId String
+  bidder   User   @relation(fields: [bidderId], references: [id])
+
+  amount Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+
+  @@index([auctionId])
+  @@index([bidderId])
+  @@map("bids")
+}
+
+/// 訂單表
+model Order {
+  id          String @id @default(uuid())
+  orderNumber String @unique
+
+  // 買家
+  buyerId    String?
+  buyer      User?   @relation(fields: [buyerId], references: [id])
+  buyerName  String?
+  buyerEmail String?
+  buyerPhone String?
+
+  // 金額
+  subtotal       Decimal @db.Decimal(10, 2)
+  shippingFee    Decimal @default(0) @db.Decimal(10, 2)
+  discountAmount Decimal @default(0) @db.Decimal(10, 2)
+  finalAmount    Decimal @db.Decimal(10, 2)
+
+  // 付款
+  paymentMethod        PaymentMethod
+  paymentStatus        PaymentStatus @default(PENDING)
+  paymentTransactionId String?
+  paidAt               DateTime?
+
+  // 配送
+  shippingMethod  ShippingMethod
+  shippingAddress Json?
+  trackingNumber  String?
+  shippedAt       DateTime?
+
+  // 狀態
+  status OrderStatus @default(PENDING)
+
+  // 購買通路
+  channel OrderChannel
+
+  // 備註
+  notes String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 關聯
+  items OrderItem[]
+
+  @@index([buyerId])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+/// 訂單項目表
+model OrderItem {
+  id String @id @default(uuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  productName  String
+  productPrice Decimal @db.Decimal(10, 2)
+  sellerId     String?
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+/// 買家表（第二階段需要，先預留）
+model User {
+  id String @id @default(uuid())
+
+  email  String @unique
+  name   String
+  avatar String?
+  phone  String?
+
+  // OAuth
+  provider   OAuthProvider
+  providerId String
+
+  // 會員
+  loyaltyPoints Int    @default(0)
+  memberLevel   String @default("STANDARD")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 關聯
+  orders    Order[]
+  bids      Bid[]
+  auctions  Auction[]
+  pointsLog PointsLog[]
+
+  @@unique([provider, providerId])
+  @@map("users")
+}
+
+/// 賣家表（第三階段需要，先預留）
+model Seller {
+  id String @id @default(uuid())
+
+  email String @unique
+  name  String
+  phone String?
+
+  // 帳號
+  passwordHash String
+
+  // 等級
+  level      SellerLevel @default(BRONZE)
+  totalSales Decimal     @default(0) @db.Decimal(12, 2)
+
+  // 抽成設定
+  commissionRate    Decimal @db.Decimal(5, 2)
+  onlineListingFee  Decimal @db.Decimal(10, 2)
+  offlineListingFee Decimal @db.Decimal(10, 2)
+
+  // 財務
+  balance Decimal @default(0) @db.Decimal(12, 2)
+
+  // 狀態
+  status SellerStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 關聯
+  products     Product[]
+  transactions SellerTransaction[]
+
+  @@index([level])
+  @@map("sellers")
+}
+
+/// 賣家交易記錄（第三階段）
+model SellerTransaction {
+  id String @id @default(uuid())
+
+  sellerId String
+  seller   Seller @relation(fields: [sellerId], references: [id])
+
+  type   SellerTransactionType
+  amount Decimal               @db.Decimal(12, 2)
+
+  orderId   String?
+  productId String?
+
+  description String?
+
+  createdAt DateTime @default(now())
+
+  @@index([sellerId])
+  @@index([type])
+  @@map("seller_transactions")
+}
+
+/// 管理員表
+model AdminUser {
+  id String @id @default(uuid())
+
+  username     String @unique
+  email        String @unique
+  passwordHash String
+
+  name String
+
+  // 權限
+  role        AdminRole @default(ADMIN)
+  permissions Json      @default("[]")
+
+  status AdminStatus @default(ACTIVE)
+
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // 關聯
+  auditLogs AuditLog[]
+
+  @@map("admin_users")
+}
+
+/// 操作記錄
+model AuditLog {
+  id String @id @default(uuid())
+
+  // 操作者
+  userId   String?
+  userType UserType
+  userName String?
+
+  adminUser AdminUser? @relation(fields: [userId], references: [id])
+
+  // 操作
+  action     String
+  entityType String
+  entityId   String?
+
+  // 變更內容
+  changes Json?
+
+  ipAddress String?
+  userAgent String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([userType, userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+/// 紅利點數記錄（第二階段）
+model PointsLog {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  amount Int
+  type   PointsLogType
+
+  orderId String?
+
+  description String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("points_log")
+}
