@@ -6,6 +6,7 @@ import { logger, loggerConfig } from './utils/logger.js'
 import prismaPlugin from './plugins/prisma.js'
 import redisPlugin from './plugins/redis.js'
 import authPlugin from './plugins/auth.js'
+import swaggerPlugin from './plugins/swagger.js'
 
 // Middlewares
 import corsMiddleware from './middlewares/cors.js'
@@ -25,27 +26,42 @@ export async function buildServer() {
   await server.register(redisPlugin)
   await server.register(authPlugin)
 
+  // Swagger（在 routes 之前註冊）
+  await server.register(swaggerPlugin)
+
   // 註冊 middlewares
   await server.register(corsMiddleware)
   await server.register(rateLimiterMiddleware)
   await server.register(errorHandlerMiddleware)
 
   // Health check
-  server.get('/health', async () => {
-    return { status: 'ok', timestamp: new Date().toISOString() }
-  })
+  server.get(
+    '/health',
+    {
+      schema: { tags: ['System'], summary: '健康檢查' },
+    },
+    async () => {
+      return { status: 'ok', timestamp: new Date().toISOString() }
+    }
+  )
 
   // 業務路由
   await server.register(productsRoutes, { prefix: '/api/products' })
 
   // API 版本資訊
-  server.get('/api', async () => {
-    return {
-      name: 'Card ERP API',
-      version: '0.1.0',
-      environment: config.NODE_ENV,
+  server.get(
+    '/api',
+    {
+      schema: { tags: ['System'], summary: 'API 版本資訊' },
+    },
+    async () => {
+      return {
+        name: 'Card ERP API',
+        version: '0.1.0',
+        environment: config.NODE_ENV,
+      }
     }
-  })
+  )
 
   return server
 }

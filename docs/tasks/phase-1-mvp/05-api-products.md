@@ -781,7 +781,7 @@
 - [x] `src/utils/qrcode-generator.ts`
 - [x] `tests/modules/products/products.service.test.ts`
 - [x] `tests/modules/products/products.routes.test.ts`
-- [ ] API 文檔（OpenAPI/Swagger，可選）
+- [x] API 文檔（Swagger UI at `/docs`）
 
 ---
 

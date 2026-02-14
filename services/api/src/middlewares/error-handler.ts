@@ -24,6 +24,21 @@ const errorHandlerPlugin: FastifyPluginAsync = async (server) => {
       })
     }
 
+    // Fastify schema 驗證錯誤（FST_ERR_VALIDATION）
+    if (error.code === 'FST_ERR_VALIDATION') {
+      return reply.code(400).send({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: '請求參數驗證失敗',
+          details:
+            config.NODE_ENV !== 'production'
+              ? { validation: (error as unknown as { validation: unknown }).validation }
+              : undefined,
+        },
+      })
+    }
+
     // Fastify 錯誤（含 rate limit 429 等）
     if (error.statusCode) {
       return reply.code(error.statusCode).send({

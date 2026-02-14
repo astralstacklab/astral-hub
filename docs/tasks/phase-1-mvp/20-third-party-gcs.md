@@ -99,10 +99,7 @@ export class StorageService {
   /**
    * 上傳圖片（支援 Buffer 或 Base64）
    */
-  async uploadImage(
-    file: Buffer | string,
-    options: UploadOptions = {}
-  ): Promise<string> {
+  async uploadImage(file: Buffer | string, options: UploadOptions = {}): Promise<string> {
     const { folder = 'products', maxWidth = 1200, quality = 85 } = options
 
     // 轉換 base64 為 Buffer
@@ -149,7 +146,7 @@ export class StorageService {
     files: Array<Buffer | string>,
     options: UploadOptions = {}
   ): Promise<string[]> {
-    const uploadPromises = files.map(file => this.uploadImage(file, options))
+    const uploadPromises = files.map((file) => this.uploadImage(file, options))
     return await Promise.all(uploadPromises)
   }
 
@@ -170,7 +167,7 @@ export class StorageService {
    * 批量刪除圖片
    */
   async deleteImages(imageUrls: string[]): Promise<void> {
-    const deletePromises = imageUrls.map(url => this.deleteImage(url))
+    const deletePromises = imageUrls.map((url) => this.deleteImage(url))
     await Promise.all(deletePromises)
   }
 
@@ -352,7 +349,7 @@ app.register(uploadRoutes, { prefix: '/api/upload' })
         :key="index"
         class="relative aspect-square overflow-hidden rounded-md border-2 border-gray-300"
       >
-        <img :src="image" :alt="`圖片 ${index + 1}`" class="w-full h-full object-cover">
+        <img :src="image" :alt="`圖片 ${index + 1}`" class="w-full h-full object-cover" />
         <button
           type="button"
           class="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
@@ -374,16 +371,13 @@ app.register(uploadRoutes, { prefix: '/api/upload' })
         class="hidden"
         :disabled="uploading"
         @change="handleFileSelect"
-      >
-      <button
-        type="button"
-        class="btn btn-secondary"
-        :disabled="uploading"
-        @click="openFileDialog"
-      >
+      />
+      <button type="button" class="btn btn-secondary" :disabled="uploading" @click="openFileDialog">
         {{ uploading ? '上傳中...' : '選擇圖片' }}
       </button>
-      <p class="text-sm text-gray-500 mt-2">支援 JPG、PNG 格式，最多 {{ maxFiles }} 張，單檔最大 5MB</p>
+      <p class="text-sm text-gray-500 mt-2">
+        支援 JPG、PNG 格式，最多 {{ maxFiles }} 張，單檔最大 5MB
+      </p>
     </div>
 
     <p v-if="error" class="text-sm text-red-600 mt-2">{{ error }}</p>
@@ -468,7 +462,7 @@ const handleFileSelect = async (event: Event): Promise<void> => {
       throw new Error('上傳失敗')
     }
 
-    const data = await response.json() as { urls: string[] }
+    const data = (await response.json()) as { urls: string[] }
     images.value.push(...data.urls)
     emit('update:modelValue', images.value)
   } catch (err) {
@@ -502,9 +496,12 @@ const removeImage = async (index: number): Promise<void> => {
   }
 }
 
-watch(() => props.modelValue, (newValue) => {
-  images.value = [...newValue]
-})
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    images.value = [...newValue]
+  }
+)
 </script>
 ```
 
@@ -566,6 +563,7 @@ gsutil iam ch allUsers:objectViewer gs://card-erp-images
 ```
 
 或透過 Console：
+
 1. 進入 Bucket 詳情頁
 2. 點選「權限」分頁
 3. 點選「授予存取權」
@@ -733,7 +731,18 @@ app.register(fastifyStatic, {
 
 ---
 
-## 十二、後續任務
+## 十二、待回補項目
+
+> **重要提醒**：完成 GCS 整合後，必須回頭處理以下 Task 05 遺留的預留項目：
+>
+> 1. **`services/api/src/modules/products/products.routes.ts`** — `POST /:id/images` 目前回傳 `501 NOT_IMPLEMENTED`，需改為實際呼叫 GCS StorageService 上傳圖片並更新商品的 `images` JSONB 欄位
+> 2. **`services/api/src/modules/products/products.service.ts`** — `addProductImage()` 方法目前接受 URL 字串，需整合 GCS upload flow
+> 3. **`docs/tasks/phase-1-mvp/05-api-products.md`** — 成功標準中「圖片上傳成功並返回 URL」尚未勾選
+> 4. 補充圖片上傳的測試（service + routes）
+
+---
+
+## 十三、後續任務
 
 - **Task 21**: Testing（單元測試與 E2E 測試）
 - **Task 22**: Deployment（GCP Cloud Run 部署）
