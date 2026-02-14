@@ -13,23 +13,25 @@
 
 ## 🎯 成功標準
 
-- [ ] Fastify 伺服器可正常啟動並監聽指定端口
-- [ ] Prisma Client 整合成功
-- [ ] Redis Client 整合成功
-- [ ] JWT 認證機制運作正常
-- [ ] 錯誤處理中間件正確捕捉並格式化錯誤
-- [ ] 日誌系統記錄所有請求與錯誤
-- [ ] CORS 配置正確
-- [ ] Health check endpoint 正常運作
+- [x] Fastify 伺服器可正常啟動並監聽指定端口
+- [x] Prisma Client 整合成功
+- [x] Redis Client 整合成功
+- [x] JWT 認證機制運作正常
+- [x] 錯誤處理中間件正確捕捉並格式化錯誤
+- [x] 日誌系統記錄所有請求與錯誤
+- [x] CORS 配置正確
+- [x] Health check endpoint 正常運作
 
 ## 📦 前置條件
 
 **前置任務**:
+
 - [x] 01 - 環境建置完成
 - [x] 02 - shared-types 套件完成
 - [x] 03 - 資料庫設計完成
 
 **技術需求**:
+
 - Fastify 4.x
 - Prisma Client
 - ioredis
@@ -42,7 +44,8 @@
 ### 4.1 專案結構建立
 
 #### 4.1.1 建立 API 專案結構
-- [ ] 建立 `services/api/` 目錄結構
+
+- [x] 建立 `services/api/` 目錄結構
   ```
   services/api/
   ├── src/
@@ -72,7 +75,8 @@
   ```
 
 #### 4.1.2 配置 package.json
-- [ ] 建立 `services/api/package.json`
+
+- [x] 建立 `services/api/package.json`
   ```json
   {
     "name": "@card-erp/api",
@@ -107,7 +111,8 @@
   ```
 
 #### 4.1.3 配置 TypeScript
-- [ ] 建立 `services/api/tsconfig.json`
+
+- [x] 建立 `services/api/tsconfig.json`
   ```json
   {
     "extends": "../../tsconfig.json",
@@ -130,7 +135,9 @@
 ### 4.2 配置系統
 
 #### 4.2.1 建立配置管理
-- [ ] 建立 `src/config/index.ts`
+
+- [x] 建立 `src/config/index.ts`
+
   ```typescript
   import { z } from 'zod'
 
@@ -151,15 +158,18 @@
   ```
 
 #### 4.2.2 驗證配置
-- [ ] 確保所有必要環境變數存在
-- [ ] 啟動時驗證配置正確性
+
+- [x] 確保所有必要環境變數存在
+- [x] 啟動時驗證配置正確性
 
 ---
 
 ### 4.3 Logger（日誌系統）
 
 #### 4.3.1 建立 Logger
-- [ ] 建立 `src/utils/logger.ts`
+
+- [x] 建立 `src/utils/logger.ts`
+
   ```typescript
   import pino from 'pino'
   import { config } from '@/config'
@@ -181,10 +191,11 @@
   ```
 
 #### 4.3.2 整合到 Fastify
-- [ ] 在伺服器初始化時註冊 logger
+
+- [x] 在伺服器初始化時註冊 logger
   ```typescript
   const server = fastify({
-    logger: logger
+    logger: logger,
   })
   ```
 
@@ -193,7 +204,9 @@
 ### 4.4 Plugins（插件）
 
 #### 4.4.1 Prisma Plugin
-- [ ] 建立 `src/plugins/prisma.ts`
+
+- [x] 建立 `src/plugins/prisma.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import fp from 'fastify-plugin'
@@ -223,7 +236,9 @@
   ```
 
 #### 4.4.2 Redis Plugin
-- [ ] 建立 `src/plugins/redis.ts`
+
+- [x] 建立 `src/plugins/redis.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import fp from 'fastify-plugin'
@@ -260,7 +275,9 @@
   ```
 
 #### 4.4.3 Auth Plugin (JWT)
-- [ ] 建立 `src/plugins/auth.ts`
+
+- [x] 建立 `src/plugins/auth.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import fp from 'fastify-plugin'
@@ -292,10 +309,7 @@
 
   declare module 'fastify' {
     interface FastifyInstance {
-      authenticate: (
-        request: FastifyRequest,
-        reply: FastifyReply
-      ) => Promise<void>
+      authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>
     }
   }
 
@@ -307,7 +321,9 @@
 ### 4.5 Middlewares（中間件）
 
 #### 4.5.1 CORS 中間件
-- [ ] 建立 `src/middlewares/cors.ts`
+
+- [x] 建立 `src/middlewares/cors.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import cors from '@fastify/cors'
@@ -327,7 +343,9 @@
   ```
 
 #### 4.5.2 Rate Limiter 中間件
-- [ ] 建立 `src/middlewares/rate-limiter.ts`
+
+- [x] 建立 `src/middlewares/rate-limiter.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import rateLimit from '@fastify/rate-limit'
@@ -344,7 +362,9 @@
   ```
 
 #### 4.5.3 錯誤處理中間件
-- [ ] 建立 `src/middlewares/error-handler.ts`
+
+- [x] 建立 `src/middlewares/error-handler.ts`
+
   ```typescript
   import { FastifyPluginAsync, FastifyError } from 'fastify'
   import { ZodError } from 'zod'
@@ -395,14 +415,13 @@
 ### 4.6 工具函數
 
 #### 4.6.1 回應格式化工具
-- [ ] 建立 `src/utils/response.ts`
+
+- [x] 建立 `src/utils/response.ts`
+
   ```typescript
   import type { SuccessResponse, ErrorResponse } from '@card-erp/shared-types'
 
-  export function successResponse<T>(
-    data: T,
-    meta?: Record<string, unknown>
-  ): SuccessResponse<T> {
+  export function successResponse<T>(data: T, meta?: Record<string, unknown>): SuccessResponse<T> {
     return {
       success: true,
       data,
@@ -431,7 +450,9 @@
 ### 4.7 伺服器入口
 
 #### 4.7.1 建立 server.ts
-- [ ] 建立 `src/server.ts`
+
+- [x] 建立 `src/server.ts`
+
   ```typescript
   import Fastify from 'fastify'
   import { config } from './config'
@@ -493,16 +514,19 @@
   ```
 
 #### 4.7.2 測試伺服器啟動
-- [ ] 執行 `pnpm --filter @card-erp/api dev`
-- [ ] 驗證伺服器啟動成功
-- [ ] 測試 `/health` endpoint
+
+- [x] 執行 `pnpm --filter @card-erp/api dev`
+- [x] 驗證伺服器啟動成功
+- [x] 測試 `/health` endpoint
 
 ---
 
 ### 4.8 測試
 
 #### 4.8.1 建立測試輔助函數
-- [ ] 建立 `tests/helpers.ts`
+
+- [x] 建立 `tests/helpers.ts`
+
   ```typescript
   import { FastifyInstance } from 'fastify'
   import { buildServer } from '@/server'
@@ -518,7 +542,9 @@
   ```
 
 #### 4.8.2 建立基礎測試
-- [ ] 建立 `tests/server.test.ts`
+
+- [x] 建立 `tests/server.test.ts`
+
   ```typescript
   import { describe, it, expect, beforeAll, afterAll } from 'vitest'
   import { buildTestServer, closeTestServer } from './helpers'
@@ -558,7 +584,8 @@
 ### 4.9 文檔
 
 #### 4.9.1 建立 API 開發指南
-- [ ] 建立 `services/api/README.md`
+
+- [x] 建立 `services/api/README.md`
   - 專案結構說明
   - 如何啟動開發伺服器
   - 如何新增路由
@@ -566,7 +593,8 @@
   - 如何使用 Redis
 
 #### 4.9.2 建立錯誤碼文檔
-- [ ] 建立 `docs/api/error-codes.md`
+
+- [x] 建立 `docs/api/error-codes.md`
   - 列出所有錯誤碼
   - 錯誤訊息格式
   - 錯誤處理最佳實踐
@@ -576,16 +604,19 @@
 ## 🧪 測試步驟
 
 1. **環境變數測試**
+
    ```bash
    pnpm --filter @card-erp/api validate-env
    ```
 
 2. **啟動測試**
+
    ```bash
    pnpm --filter @card-erp/api dev
    ```
 
 3. **Health Check 測試**
+
    ```bash
    curl http://localhost:3000/health
    ```
@@ -616,16 +647,16 @@
 
 ## 📝 交付物
 
-- [ ] `services/api/src/` 完整目錄結構
-- [ ] `src/server.ts`
-- [ ] `src/plugins/` 所有 plugins
-- [ ] `src/middlewares/` 所有 middlewares
-- [ ] `src/utils/logger.ts`
-- [ ] `src/utils/response.ts`
-- [ ] `src/config/index.ts`
-- [ ] `tests/server.test.ts`
-- [ ] `services/api/README.md`
-- [ ] `docs/api/error-codes.md`
+- [x] `services/api/src/` 完整目錄結構
+- [x] `src/server.ts`
+- [x] `src/plugins/` 所有 plugins
+- [x] `src/middlewares/` 所有 middlewares
+- [x] `src/utils/logger.ts`
+- [x] `src/utils/response.ts`
+- [x] `src/config/index.ts`
+- [x] `tests/server.test.ts`
+- [x] `services/api/README.md`
+- [x] `docs/api/error-codes.md`
 
 ---
 
@@ -650,17 +681,17 @@
 
 ## 📊 進度追蹤
 
-| 子任務 | 狀態 | 負責人 | 完成日期 |
-|--------|------|--------|---------|
-| 4.1 專案結構 | ⏳ 未開始 | - | - |
-| 4.2 配置系統 | ⏳ 未開始 | - | - |
-| 4.3 Logger | ⏳ 未開始 | - | - |
-| 4.4 Plugins | ⏳ 未開始 | - | - |
-| 4.5 Middlewares | ⏳ 未開始 | - | - |
-| 4.6 工具函數 | ⏳ 未開始 | - | - |
-| 4.7 伺服器入口 | ⏳ 未開始 | - | - |
-| 4.8 測試 | ⏳ 未開始 | - | - |
-| 4.9 文檔 | ⏳ 未開始 | - | - |
+| 子任務          | 狀態    | 負責人 | 完成日期   |
+| --------------- | ------- | ------ | ---------- |
+| 4.1 專案結構    | ✅ 完成 | Claude | 2026-02-14 |
+| 4.2 配置系統    | ✅ 完成 | Claude | 2026-02-14 |
+| 4.3 Logger      | ✅ 完成 | Claude | 2026-02-14 |
+| 4.4 Plugins     | ✅ 完成 | Claude | 2026-02-14 |
+| 4.5 Middlewares | ✅ 完成 | Claude | 2026-02-14 |
+| 4.6 工具函數    | ✅ 完成 | Claude | 2026-02-14 |
+| 4.7 伺服器入口  | ✅ 完成 | Claude | 2026-02-14 |
+| 4.8 測試        | ✅ 完成 | Claude | 2026-02-14 |
+| 4.9 文檔        | ✅ 完成 | Claude | 2026-02-14 |
 
 ---
 
