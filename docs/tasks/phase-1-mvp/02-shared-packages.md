@@ -16,9 +16,9 @@
 - [x] shared-types 套件可被前後端專案引用
 - [x] 所有型別定義完整且無 `any` 型別（測試除外）
 - [x] ui-components 元件可在 Vue 3 專案中正常使用
-- [ ] utils 工具函數有完整的單元測試
-- [ ] 所有套件有清楚的 README 與使用範例
-- [ ] TypeScript 型別檢查通過
+- [x] utils 工具函數有完整的單元測試
+- [x] 所有套件有清楚的 README 與使用範例
+- [x] TypeScript 型別檢查通過
 
 ## 📦 前置條件
 
@@ -502,8 +502,8 @@
 
 #### 2.3.5 建立字串處理工具（string/）
 
-- [ ] `string/slug.ts`
-- [ ] `string/sanitize.ts`
+- [x] `string/slug.ts`
+- [x] `string/sanitize.ts`
 
 #### 2.3.6 單元測試
 
@@ -525,7 +525,7 @@
   })
   ```
 
-- [ ] 目標：測試覆蓋率 > 90%
+- [x] 目標：測試覆蓋率 > 90%
 
 ---
 
@@ -579,10 +579,10 @@
 
 - [x] `packages/shared-types/` 完整套件
 - [x] `packages/ui-components/` 完整套件
-- [ ] `packages/utils/` 完整套件
-- [ ] 每個套件的 README.md
-- [ ] 單元測試（utils）
-- [ ] 使用範例文檔
+- [x] `packages/utils/` 完整套件
+- [x] 每個套件的 README.md
+- [x] 單元測試（utils）
+- [x] 使用範例文檔
 
 ---
 
@@ -610,7 +610,7 @@
 | ----------------- | --------- | ------------------- | ---------- |
 | 2.1 shared-types  | ✅ 完成   | Gemini CLI + Claude | 2026-02-08 |
 | 2.2 ui-components | ✅ 完成   | Gemini CLI + Codex  | 2026-02-13 |
-| 2.3 utils         | ⏳ 未開始 | -                   | -          |
+| 2.3 utils         | ✅ 完成   | Codex + Gemini      | 2026-02-14 |
 | 2.4 整合測試      | ⏳ 未開始 | -                   | -          |
 
 ---
