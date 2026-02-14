@@ -59,7 +59,7 @@
 
 #### 6.1.1 建立 Zod Schema
 
-- [ ] 建立 `src/modules/auctions/auctions.schema.ts`
+- [x] 建立 `src/modules/auctions/auctions.schema.ts`
 
   ```typescript
   import { z } from 'zod/v4'
@@ -123,7 +123,7 @@
 
 #### 6.2.1 建立 Auctions Service
 
-- [ ] 建立 `src/modules/auctions/auctions.service.ts`
+- [x] 建立 `src/modules/auctions/auctions.service.ts`
 
   ```typescript
   import type { PrismaClient, Auction, Bid, Prisma } from '../../../src/generated/prisma/client.js'
@@ -900,7 +900,7 @@
 
 #### 6.6.1 Service 單元測試
 
-- [ ] 建立 `tests/modules/auctions/auctions.service.test.ts`
+- [x] 建立 `tests/modules/auctions/auctions.service.test.ts`（16 tests passed）
   - 測試建立競標（正常 / 商品不存在 / 商品已售出 / 已有競標）
   - 測試出價邏輯（正常 / 金額不足 / 競標未開始 / 競標不存在）
   - 測試樂觀鎖行為
@@ -949,8 +949,8 @@
 
 ## 📝 交付物
 
-- [ ] `src/modules/auctions/auctions.schema.ts`
-- [ ] `src/modules/auctions/auctions.service.ts`
+- [x] `src/modules/auctions/auctions.schema.ts`
+- [x] `src/modules/auctions/auctions.service.ts`
 - [ ] `src/modules/auctions/auctions.routes.ts`
 - [ ] `src/modules/auctions/auction-rooms.ts`
 - [ ] `src/modules/auctions/index.ts`
@@ -983,14 +983,14 @@
 
 ## 📊 進度追蹤
 
-| 子任務        | 狀態      | 負責人 | 完成日期 |
-| ------------- | --------- | ------ | -------- |
-| 6.1 Schema    | ⏳ 未開始 | -      | -        |
-| 6.2 Service   | ⏳ 未開始 | -      | -        |
-| 6.3 WebSocket | ⏳ 未開始 | -      | -        |
-| 6.4 Routes    | ⏳ 未開始 | -      | -        |
-| 6.5 定時任務  | ⏳ 未開始 | -      | -        |
-| 6.6 測試      | ⏳ 未開始 | -      | -        |
+| 子任務        | 狀態                           | 負責人 | 完成日期   |
+| ------------- | ------------------------------ | ------ | ---------- |
+| 6.1 Schema    | ✅ 完成                        | Codex  | 2026-02-14 |
+| 6.2 Service   | ✅ 完成                        | Codex  | 2026-02-14 |
+| 6.3 WebSocket | ⏳ 未開始                      | -      | -          |
+| 6.4 Routes    | ⏳ 未開始                      | -      | -          |
+| 6.5 定時任務  | ⏳ 未開始                      | -      | -          |
+| 6.6 測試      | 🔄 部分完成（service test ✅） | Codex  | -          |
 
 ---
 
