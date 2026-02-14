@@ -399,7 +399,14 @@ Coordinator 透過關鍵字觸發 Agent 角色：
 
 每次新任務啟動時，Planner 覆寫 `MISSION_CONTROL.md`，後續 Agent 依序覆寫各自的產物。前一次任務的內容不保留。
 
-歸檔階段（Phase 4），Planner 將有價值的結論（架構決策、設計取捨）寫回 Task 文件或 AGENTS.md，確保永久紀錄存放在版控內的文件中。
+歸檔階段（Phase 4），Planner（Claude）負責：
+
+1. 獨立執行驗證指令（不信任 Executor 報告，重新跑一次）
+2. 將程式碼變更提交至版控（`git commit`）
+3. 更新任務文件中的 checkbox、進度追蹤表、交付物、成功標準
+4. 將有價值的結論（架構決策、設計取捨）寫回 Task 文件或 AGENTS.md
+
+> **⚠️ 重要**：任務文件（`docs/tasks/`）的 checkbox 勾選、進度更新等操作**專屬於 Planner（Claude）**。Executor 和 Reviewer **不得**修改任務文件。
 
 ### 版控
 

@@ -246,6 +246,8 @@ main            # 生產環境（保護分支）
 - `EXECUTION_LOG.md` — 執行者產出，記錄操作步驟與決策理由
 - `REVIEW_REPORT.md` — 審查者產出，結構化差異分析與改進建議
 
+**歸檔職責**：任務文件（`docs/tasks/`）的 checkbox 勾選、進度更新、版控提交**專屬於 Claude（Planner/Archiver）**。Executor 和 Reviewer 不得修改任務文件。
+
 **完整協定**：[`docs/MULTI_AGENT_PROTOCOL.md`](./docs/MULTI_AGENT_PROTOCOL.md)
 
 ### Executor 失敗熔斷機制

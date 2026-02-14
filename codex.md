@@ -136,6 +136,7 @@
 ## 注意事項
 
 - **不要執行 `git commit` 或 `git push`**，版控操作由 Claude 負責
+- **不要修改任務文件**（`docs/tasks/` 下的 checkbox 勾選、進度更新），這是 Claude 的歸檔職責
 - 若擔任 Reviewer，**不要修改程式碼**，職責是審查並產出 `REVIEW_REPORT.md`
 - 若 Executor 的 `EXECUTION_LOG.md` 資訊不足以判斷，在 REVIEW_REPORT 中明確指出缺少的資訊
 - EXECUTION_LOG 審查採寬鬆原則：Meta 完整 + Deviations 如實即可，Steps/Verification 允許簡略
