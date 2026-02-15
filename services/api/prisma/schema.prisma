@@ -60,6 +60,18 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum PaymentProvider {
+  ECPAY
+  MANUAL
+  CASH
+}
+
+enum PaymentLogStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
 enum ShippingMethod {
   SEVEN_ELEVEN
   FAMILY_MART
@@ -287,7 +299,8 @@ model Order {
   updatedAt DateTime @updatedAt
 
   // 關聯
-  items OrderItem[]
+  items       OrderItem[]
+  paymentLogs PaymentLog[]
 
   @@index([buyerId])
   @@index([orderNumber])
@@ -312,6 +325,27 @@ model OrderItem {
 
   @@index([orderId])
   @@map("order_items")
+}
+
+model PaymentLog {
+  id            String @id @default(uuid())
+  orderId       String
+  order         Order  @relation(fields: [orderId], references: [id])
+  provider      PaymentProvider
+  method        String
+  amount        Decimal        @db.Decimal(10, 2)
+  status        PaymentLogStatus
+  transactionId String?
+  requestData   Json?
+  responseData  Json?
+  errorCode     String?
+  errorMessage  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([transactionId])
+  @@map("payment_logs")
 }
 
 /// 買家表（第二階段需要，先預留）

@@ -24,11 +24,64 @@
 ## 📦 前置條件
 
 **前置任務**:
+
 - [x] 04 - API 基礎架構完成
 - [x] 07 - 訂單 API 完成
 
 **技術需求**:
-- crypto-js（HMAC 驗證）
+
+- Node.js 內建 `crypto` 模組（SHA256 HMAC 驗證，不需額外安裝 crypto-js）
+
+**技術環境**:
+
+- Fastify v5 + Zod v4 + Prisma v6
+- ESM（所有 import 須加 `.js` 副檔名）
+
+---
+
+## ⚠️ 勘誤（與現有 codebase 不一致之處）
+
+> 以下程式碼區塊保留原貌作為參考，實際實作時請依本勘誤修正。
+
+### A. Zod 相關
+
+| 原始寫法                  | 正確寫法                     | 說明                                    |
+| ------------------------- | ---------------------------- | --------------------------------------- |
+| `import { z } from 'zod'` | `import { z } from 'zod/v4'` | 專案統一 Zod v4                         |
+| `z.infer<typeof Schema>`  | `z.infer<typeof Schema>`     | 寫法相同，但確保 import 來源為 `zod/v4` |
+
+### B. Prisma / Import 相關
+
+| 原始寫法                                                    | 正確寫法                                                                           | 說明                             |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------- |
+| `import { PrismaClient, PaymentLog } from '@prisma/client'` | `import type { PrismaClient, PaymentLog } from '../../generated/prisma/client.js'` | 使用本地生成路徑 + `import type` |
+| `import { Prisma } from '@prisma/client'`                   | `import { Prisma } from '../../generated/prisma/client.js'`                        | 需要 runtime value 時不加 type   |
+| `import ... from './payments.schema'`                       | `import ... from './payments.schema.js'`                                           | ESM 須加 `.js` 副檔名            |
+| `import ... from '@/utils/response'`                        | `import { successResponse, errorResponse } from '../../utils/response.js'`         | 無 `@/` alias，用相對路徑        |
+| `import ... from '@/config'`                                | `import { config } from '../../config/index.js'`                                   | 同上                             |
+| `import ... from '@/modules/...'`                           | 相對路徑 + `.js`                                                                   | 同上                             |
+
+### C. 邏輯 / 模式相關
+
+| 原始寫法                                            | 正確寫法                                                        | 說明                                        |
+| --------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------- |
+| `import { FastifyPluginAsync } from 'fastify'`      | `import type { FastifyPluginAsync } from 'fastify'`             | 純型別用 `import type`                      |
+| Routes 內 `try/catch` + `reply.code(500)`           | 移除 try/catch，讓 error 拋到全域 errorHandler                  | 與 products/auctions/orders routes 一致     |
+| `throw new Error('...')`                            | `throw this.httpError(statusCode, '...')`                       | Service 用 httpError helper 附加 statusCode |
+| `const prisma = new PrismaClient()` (測試)          | `buildTestServer()` + `server.prisma`                           | 測試統一用 buildTestServer pattern          |
+| `import CryptoJS from 'crypto-js'`                  | `import { createHash } from 'node:crypto'`                      | 使用 Node.js 內建 crypto，不裝 crypto-js    |
+| `schema: { body: UpdatePaymentStatusSchema }` (Zod) | 需轉為 JSON Schema 物件或用 Zod schema 的 `.shape` 搭配 Swagger | Fastify native schema 是 JSON Schema        |
+| barrel export 缺失                                  | 需建 `index.ts` 做 barrel export                                | 與 products/auctions/orders 一致            |
+
+### D. ECPay 回調端點特殊處理
+
+- ECPay callback (`POST /ecpay/callback`) **不需認證**，但回應格式必須是純文字 `1|OK` 或 `0|Error`
+- 此端點的 try/catch 是**合理的**（因為需要確保任何錯誤都回應 `0|Error` 給綠界），不適用全域 errorHandler
+
+### E. 新增資料表
+
+- PaymentLog model 尚未存在於 `prisma/schema.prisma`，需新增並執行 migration
+- 需在 Order model 加上 `paymentLogs PaymentLog[]` relation
 
 ---
 
@@ -37,7 +90,9 @@
 ### 8.1 資料驗證 Schema
 
 #### 8.1.1 建立 Zod Schema
+
 - [ ] 建立 `src/modules/payments/payments.schema.ts`
+
   ```typescript
   import { z } from 'zod'
 
@@ -83,7 +138,9 @@
 ### 8.2 資料表設計
 
 #### 8.2.1 建立 PaymentLogs 表
+
 - [ ] 編輯 `prisma/schema.prisma`
+
   ```prisma
   model PaymentLog {
     id String @id @default(uuid())
@@ -139,7 +196,9 @@
 ### 8.3 Service 層
 
 #### 8.3.1 建立 Payments Service
+
 - [ ] 建立 `src/modules/payments/payments.service.ts`
+
   ```typescript
   import { PrismaClient, PaymentLog } from '@prisma/client'
   import type { UpdatePaymentStatusInput, CreatePaymentLogInput } from './payments.schema'
@@ -295,13 +354,9 @@
 ### 8.4 工具函數
 
 #### 8.4.1 建立 CheckMacValue 驗證工具
-- [ ] 安裝依賴
-  ```bash
-  pnpm add crypto-js
-  pnpm add -D @types/crypto-js
-  ```
 
-- [ ] 建立 `src/utils/ecpay-validator.ts`
+- [ ] 建立 `src/utils/ecpay-validator.ts`（使用 Node.js 內建 `crypto`，無需安裝 crypto-js）
+
   ```typescript
   import CryptoJS from 'crypto-js'
   import { config } from '@/config'
@@ -310,18 +365,19 @@
     // 1. 過濾掉 CheckMacValue 欄位
     const filteredParams = Object.keys(params)
       .filter((key) => key !== 'CheckMacValue')
-      .reduce((obj, key) => {
-        obj[key] = params[key]
-        return obj
-      }, {} as Record<string, string>)
+      .reduce(
+        (obj, key) => {
+          obj[key] = params[key]
+          return obj
+        },
+        {} as Record<string, string>
+      )
 
     // 2. 依照字母順序排序
     const sortedKeys = Object.keys(filteredParams).sort()
 
     // 3. 組合成 key1=value1&key2=value2... 格式
-    const paramString = sortedKeys
-      .map((key) => `${key}=${filteredParams[key]}`)
-      .join('&')
+    const paramString = sortedKeys.map((key) => `${key}=${filteredParams[key]}`).join('&')
 
     // 4. 前後加上 HashKey 和 HashIV
     const rawString = `HashKey=${config.ECPAY_HASH_KEY}&${paramString}&HashIV=${config.ECPAY_HASH_IV}`
@@ -349,14 +405,13 @@
 ### 8.5 Routes 層
 
 #### 8.5.1 建立 Payments Routes
+
 - [ ] 建立 `src/modules/payments/payments.routes.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import { PaymentsService } from './payments.service'
-  import {
-    UpdatePaymentStatusSchema,
-    ECPayCallbackSchema,
-  } from './payments.schema'
+  import { UpdatePaymentStatusSchema, ECPayCallbackSchema } from './payments.schema'
   import { successResponse, errorResponse } from '@/utils/response'
   import { verifyCheckMacValue } from '@/utils/ecpay-validator'
 
@@ -410,33 +465,30 @@
     )
 
     // POST /payments/ecpay/callback - 綠界回調（無需認證）
-    server.post(
-      '/ecpay/callback',
-      async (request, reply) => {
-        try {
-          const callbackData = request.body as Record<string, string>
+    server.post('/ecpay/callback', async (request, reply) => {
+      try {
+        const callbackData = request.body as Record<string, string>
 
-          server.log.info('ECPay callback received:', callbackData)
+        server.log.info('ECPay callback received:', callbackData)
 
-          // 驗證 CheckMacValue
-          const isValid = verifyCheckMacValue(callbackData)
+        // 驗證 CheckMacValue
+        const isValid = verifyCheckMacValue(callbackData)
 
-          if (!isValid) {
-            server.log.error('Invalid CheckMacValue')
-            return reply.send('0|Invalid CheckMacValue')
-          }
-
-          // 處理回調
-          await paymentsService.handleECPayCallback(callbackData)
-
-          // 綠界要求回應 "1|OK"
-          return reply.send('1|OK')
-        } catch (error) {
-          server.log.error('ECPay callback error:', error)
-          return reply.send('0|Error')
+        if (!isValid) {
+          server.log.error('Invalid CheckMacValue')
+          return reply.send('0|Invalid CheckMacValue')
         }
+
+        // 處理回調
+        await paymentsService.handleECPayCallback(callbackData)
+
+        // 綠界要求回應 "1|OK"
+        return reply.send('1|OK')
+      } catch (error) {
+        server.log.error('ECPay callback error:', error)
+        return reply.send('0|Error')
       }
-    )
+    })
 
     // GET /payments/logs/:orderId - 查詢訂單付款記錄（需認證）
     server.get(
@@ -473,7 +525,9 @@
   ```
 
 #### 8.5.2 整合到主 server
+
 - [ ] 編輯 `src/server.ts`
+
   ```typescript
   import paymentsRoutes from './modules/payments/payments.routes'
 
@@ -485,7 +539,9 @@
 ### 8.6 測試
 
 #### 8.6.1 單元測試
+
 - [ ] 建立 `tests/modules/payments/payments.service.test.ts`
+
   ```typescript
   import { describe, it, expect, beforeEach, afterEach } from 'vitest'
   import { PrismaClient } from '@prisma/client'
@@ -599,7 +655,9 @@
   ```
 
 #### 8.6.2 CheckMacValue 驗證測試
+
 - [ ] 建立 `tests/utils/ecpay-validator.test.ts`
+
   ```typescript
   import { describe, it, expect } from 'vitest'
   import { generateCheckMacValue, verifyCheckMacValue } from '@/utils/ecpay-validator'
@@ -710,14 +768,23 @@
 
 ## 📊 進度追蹤
 
-| 子任務 | 狀態 | 負責人 | 完成日期 |
-|--------|------|--------|---------|
-| 8.1 Schema | ⏳ 未開始 | - | - |
-| 8.2 資料表 | ⏳ 未開始 | - | - |
-| 8.3 Service | ⏳ 未開始 | - | - |
-| 8.4 工具函數 | ⏳ 未開始 | - | - |
-| 8.5 Routes | ⏳ 未開始 | - | - |
-| 8.6 測試 | ⏳ 未開始 | - | - |
+| 子任務       | 狀態      | 負責人 | 完成日期   |
+| ------------ | --------- | ------ | ---------- |
+| 8.1 Schema   | ✅ 完成   | Codex  | 2026-02-15 |
+| 8.2 資料表   | ✅ 完成   | Codex  | 2026-02-15 |
+| 8.3 Service  | ✅ 完成   | Codex  | 2026-02-15 |
+| 8.4 工具函數 | ✅ 完成   | Codex  | 2026-02-15 |
+| 8.5 Routes   | ⏳ 未開始 | -      | -          |
+| 8.6 測試 (A) | ✅ 完成   | Codex  | 2026-02-15 |
+
+---
+
+## 🔀 Multi-Mission 分割
+
+| Mission | 範圍                                                             | 新增/修改檔案                            | 測試數(預估)             |
+| ------- | ---------------------------------------------------------------- | ---------------------------------------- | ------------------------ |
+| A       | Schema + PaymentLog migration + Service + ecpay-validator + Test | 5 new + 2 modify (schema.prisma, config) | ✅ 12 tests (2026-02-15) |
+| B       | Routes + barrel export + server 整合 + Routes Test               | 3 new + 1 modify (server.ts)             | ~8                       |
 
 ---
 

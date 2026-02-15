@@ -9,6 +9,8 @@ const configSchema = z.object({
   REDIS_URL: z.string().default('redis://localhost:6379'),
   JWT_SECRET: z.string().min(32),
   JWT_EXPIRES_IN: z.string().default('7d'),
+  ECPAY_HASH_KEY: z.string().default('5294y06JbISpM5x9'),
+  ECPAY_HASH_IV: z.string().default('v77hoKGq4kWxNNIS'),
 })
 
 export type Config = z.infer<typeof configSchema>
