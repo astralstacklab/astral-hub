@@ -14,8 +14,9 @@
 ## 🎯 成功標準
 
 - [ ] 所有競標 API endpoints 正常運作
-- [ ] WebSocket 即時通知運作正常
-- [ ] 出價樂觀鎖防止併發問題
+- [ ] Proxy Bidding（代理出價）機制正確：maxBid 隱藏、自動跟價、先出價者優先
+- [ ] WebSocket 即時通知運作正常（僅推送 currentPrice，不洩漏 maxBid）
+- [ ] 分散式鎖防止併發出價問題
 - [ ] 競標結束定時任務正常執行
 - [ ] Redis 即時資料同步正確
 - [ ] 單元測試覆蓋率 > 80%
@@ -90,10 +91,10 @@
   export type CreateAuctionInput = z.infer<typeof CreateAuctionSchema>
 
   // ============================================
-  // Place Bid
+  // Place Bid (Proxy Bidding)
   // ============================================
   export const PlaceBidSchema = z.object({
-    amount: z.number().positive(),
+    maxBid: z.number().positive(),
   })
 
   export type PlaceBidInput = z.infer<typeof PlaceBidSchema>
@@ -222,66 +223,128 @@
       }
     }
 
-    async placeBid(auctionId: string, bidderId: string, amount: number): Promise<Bid> {
-      // 使用 Redis SETNX 實現分散式鎖
-      const lockKey = `auction:${auctionId}:lock`
-      const lockValue = Date.now().toString()
-      const locked = await this.redis.set(lockKey, lockValue, 'PX', 5000, 'NX')
+    async placeBid(auctionId: string, bidderId: string, maxBidAmount: number): Promise<Bid> {
+      // 使用 Redis SETNX 實現分散式鎖（Proxy 跟價必須在鎖內原子完成）
+      const lockKey = `auction:${auctionId}:bid-lock`
+      const lockOwner = `${bidderId}:${Date.now()}:${Math.random().toString(36).slice(2)}`
+      const locked = await this.redis.set(lockKey, lockOwner, 'PX', 5000, 'NX')
 
       if (!locked) {
-        throw new Error('系統繁忙，請稍後再試')
+        throw new Error('系統忙碌，請稍後再試')
       }
 
       try {
-        // 從資料庫獲取競標資訊（以 DB 為 source of truth）
-        const auction = await this.prisma.auction.findUnique({
-          where: { id: auctionId },
-        })
-
-        if (!auction) {
-          throw new Error('競標不存在')
-        }
-
-        if (auction.status !== 'ACTIVE') {
-          throw new Error('競標尚未開始或已結束')
-        }
+        const auction = await this.prisma.auction.findUnique({ where: { id: auctionId } })
+        if (!auction) throw new Error('競標不存在')
+        if (auction.status !== 'ACTIVE') throw new Error('競標尚未開始或已結束')
 
         const currentPrice = auction.currentPrice.toNumber()
-        const incrementAmount = auction.incrementAmount.toNumber()
+        const increment = auction.incrementAmount.toNumber()
 
-        // 驗證出價金額
-        if (amount < currentPrice + incrementAmount) {
-          throw new Error(`出價必須至少 ${currentPrice + incrementAmount} 元`)
+        // maxBid 必須 >= currentPrice + increment
+        if (maxBidAmount < currentPrice + increment) {
+          throw new Error(`最高出價必須至少 ${currentPrice + increment}`)
         }
 
-        // 建立出價記錄 + 更新競標（使用 transaction 確保一致性）
-        const [bid] = await this.prisma.$transaction([
-          this.prisma.bid.create({
-            data: { auctionId, bidderId, amount },
-          }),
-          this.prisma.auction.update({
-            where: { id: auctionId },
-            data: {
-              currentPrice: amount,
-              currentBidderId: bidderId,
-            },
-          }),
-        ])
+        // buyNowPrice 邏輯：若 maxBid >= buyNowPrice，直接以 buyNowPrice 結標
+        if (auction.buyNowPrice && maxBidAmount >= auction.buyNowPrice.toNumber()) {
+          // TODO: 直接結標邏輯（建立訂單），MVP 暫不實作
+        }
 
-        // 同步到 Redis（非關鍵路徑，失敗不影響出價結果）
-        await this.redis
-          .hset(`auction:${auctionId}:info`, {
-            currentPrice: amount.toString(),
-            currentBidderId: bidderId,
+        // 找出目前的 proxy 領先者（isActive = true）
+        const defender = await this.prisma.bid.findFirst({
+          where: { auctionId, isActive: true },
+          orderBy: { maxBid: 'desc' },
+        })
+
+        // 同一用戶追加 maxBid
+        if (defender && defender.bidderId === bidderId) {
+          if (maxBidAmount <= defender.maxBid.toNumber()) {
+            throw new Error('追加金額必須高於目前的最高出價')
+          }
+          // 更新 maxBid，不觸發跟價
+          const updated = await this.prisma.bid.update({
+            where: { id: defender.id },
+            data: { maxBid: maxBidAmount },
           })
-          .catch(() => {}) // 靜默失敗
+          return updated
+        }
+
+        // Proxy Bidding 跟價計算
+        let newPrice: number
+        let winnerId: string
+        let defenderActive = true
+
+        if (!defender) {
+          // 首位出價者 → 顯示價 = 底標
+          newPrice = auction.startingPrice.toNumber()
+          winnerId = bidderId
+        } else {
+          const defenderMax = defender.maxBid.toNumber()
+
+          if (maxBidAmount > defenderMax) {
+            // challenger 勝出
+            newPrice = Math.min(defenderMax + increment, maxBidAmount)
+            winnerId = bidderId
+            defenderActive = false
+          } else if (maxBidAmount < defenderMax) {
+            // defender 維持領先
+            newPrice = Math.min(maxBidAmount + increment, defenderMax)
+            winnerId = defender.bidderId
+          } else {
+            // 平手 → 先出價者優先（defender）
+            newPrice = defenderMax
+            winnerId = defender.bidderId
+          }
+        }
+
+        // Transaction：建立 bid + 更新 auction + 更新舊 defender
+        const bid = await this.prisma.$transaction(async (tx) => {
+          // 若 defender 被超越，標記 isActive = false
+          if (defender && !defenderActive) {
+            await tx.bid.update({ where: { id: defender.id }, data: { isActive: false } })
+          }
+
+          const createdBid = await tx.bid.create({
+            data: {
+              auctionId,
+              bidderId,
+              maxBid: maxBidAmount,
+              amount: newPrice,
+              isActive: winnerId === bidderId,
+            },
+          })
+
+          await tx.auction.update({
+            where: { id: auctionId },
+            data: { currentPrice: newPrice, currentBidderId: winnerId },
+          })
+
+          return createdBid
+        })
+
+        // Redis 同步（非關鍵路徑）
+        try {
+          await this.redis.hset(`auction:${auctionId}:info`, {
+            currentPrice: newPrice.toString(),
+            currentBidderId: winnerId,
+          })
+        } catch {
+          // 靜默失敗
+        }
 
         return bid
       } finally {
-        // 釋放鎖（僅釋放自己的鎖）
-        const currentValue = await this.redis.get(lockKey)
-        if (currentValue === lockValue) {
-          await this.redis.del(lockKey)
+        // Lua script 安全釋鎖
+        try {
+          await this.redis.eval(
+            "if redis.call('GET', KEYS[1]) == ARGV[1] then return redis.call('DEL', KEYS[1]) else return 0 end",
+            1,
+            lockKey,
+            lockOwner
+          )
+        } catch {
+          // TTL 自動回收
         }
       }
     }
@@ -329,13 +392,15 @@
   }
   ```
 
-  **相較原版的關鍵修正**:
+  **關鍵設計**:
+  - ✅ **Proxy Bidding**：用戶輸入 maxBid，系統自動跟價計算 currentPrice
   - ✅ 從 generated prisma client 匯入型別
   - ✅ `Decimal.toNumber()` 做數值比較
-  - ✅ 出價使用 `prisma.$transaction` 確保一致性
-  - ✅ 鎖釋放前驗證 owner（防止誤刪其他人的鎖）
-  - ✅ Redis 同步以 `catch(() => {})` 靜默失敗（非關鍵路徑）
-  - ✅ 移除 `product.images` 引用（不存在）
+  - ✅ 出價使用 `prisma.$transaction` 確保一致性（bid create + auction update + defender deactivate）
+  - ✅ Lua script 安全釋鎖（防止誤刪其他人的鎖）
+  - ✅ Redis 同步以 try/catch 靜默失敗（非關鍵路徑）
+  - ✅ 同一用戶追加 maxBid 不觸發跟價
+  - ✅ 平手時先出價者優先（defender wins tie）
   - ✅ 使用 `Prisma.AuctionWhereInput` 型別
 
 ---
@@ -661,14 +726,14 @@
           },
           body: {
             type: 'object',
-            required: ['amount'],
+            required: ['maxBid'],
             properties: {
-              amount: { type: 'number', exclusiveMinimum: 0 },
+              maxBid: { type: 'number', exclusiveMinimum: 0, description: '最高願付金額（隱藏）' },
             },
           },
           response: {
             201: {
-              description: '出價成功',
+              description: '出價成功（回傳 currentPrice，不暴露 maxBid）',
               type: 'object',
               properties: {
                 success: { type: 'boolean', enum: [true] },
@@ -683,19 +748,31 @@
       },
       async (request, reply) => {
         const { id } = AuctionIdParamSchema.parse(request.params)
-        const { amount } = PlaceBidSchema.parse(request.body)
+        const { maxBid } = PlaceBidSchema.parse(request.body)
         const bidderId = request.user.id
 
-        const bid = await auctionsService.placeBid(id, bidderId, amount)
+        const bid = await auctionsService.placeBid(id, bidderId, maxBid)
 
-        // 廣播給訂閱該競標的 WebSocket client
+        // 廣播給訂閱該競標的 WebSocket client（只推 currentPrice，不暴露 maxBid）
         auctionRooms.broadcast(id, {
           type: 'NEW_BID',
           auctionId: id,
-          bid: { amount, bidderId, timestamp: new Date().toISOString() },
+          currentPrice: bid.amount.toNumber(), // amount = 觸發後的顯示價
+          leaderId: bid.isActive ? bidderId : undefined,
+          timestamp: new Date().toISOString(),
         })
 
-        return reply.code(201).send(successResponse(bid))
+        // 回傳時：出價者本人可看到 maxBid，其他人只能看到 amount
+        return reply.code(201).send(
+          successResponse({
+            id: bid.id,
+            auctionId: bid.auctionId,
+            maxBid: bid.maxBid, // 僅本人可見（前端需做 access control）
+            currentPrice: bid.amount, // 顯示價
+            isActive: bid.isActive,
+            createdAt: bid.createdAt,
+          })
+        )
       }
     )
 
@@ -963,12 +1040,14 @@
 
 ## 🚨 注意事項
 
-1. **樂觀鎖**: 使用 Redis SETNX + owner 驗證實現分散式鎖，防止併發出價問題
-2. **Prisma Decimal**: 價格欄位是 `Decimal(10,2)`，做數值運算時需 `.toNumber()` 轉換
-3. **WebSocket 連線管理**: 使用 room-based 管理器（`auction-rooms.ts`），斷線時自動清理
-4. **定時任務**: 確保只有一個實例執行定時任務（分散式環境需考慮 leader election）
-5. **Error handling**: 業務錯誤（商品不存在、出價過低）直接 `throw new Error()`，由全域 error-handler 統一處理。後續可引入自定義 Error 類別區分業務 vs 系統錯誤
-6. **@fastify/websocket API**: Fastify v5 的 WebSocket handler 簽名可能與文檔不同，實作時需以安裝版本的實際 API 為準
+1. **Proxy Bidding（代理出價）**: 採用 eBay 機制，用戶輸入 maxBid，系統自動以最低必要金額跟價。maxBid 對外隱藏，API/WebSocket 只暴露 currentPrice。詳見 `docs/plans/2026-02-14-auctions-api.md` 的跟價規則
+2. **分散式鎖**: 使用 Redis SETNX + Lua script owner 驗證，proxy 跟價計算在鎖內原子完成
+3. **Prisma Decimal**: 價格欄位是 `Decimal(10,2)`，做數值運算時需 `.toNumber()` 轉換
+4. **WebSocket 連線管理**: 使用 room-based 管理器（`auction-rooms.ts`），斷線時自動清理
+5. **定時任務**: 確保只有一個實例執行定時任務（分散式環境需考慮 leader election）
+6. **Error handling**: 業務錯誤（商品不存在、出價過低）直接 `throw new Error()`，由全域 error-handler 統一處理。後續可引入自定義 Error 類別區分業務 vs 系統錯誤
+7. **@fastify/websocket API**: Fastify v5 的 WebSocket handler 簽名可能與文檔不同，實作時需以安裝版本的實際 API 為準
+8. **WebSocket 跨 Instance 同步（技術債）**: 目前 `auctionRooms` 為單 process 記憶體 Map，多 instance 部署時需透過 Redis Pub/Sub 廣播事件。已記錄於 `docs/roadmap/PHASE-2-3-OVERVIEW.md` 與 `TECHNICAL-EVOLUTION.md`
 
 ---
 
@@ -1004,14 +1083,15 @@
 
 **建議拆分**:
 
-| Mission                  | 範圍                               | 檔案數 | 依賴              |
-| ------------------------ | ---------------------------------- | ------ | ----------------- |
-| **A: Schema + Service**  | 6.1 + 6.2 + service test           | 3      | 無                |
-| **B: WebSocket + Rooms** | 6.3 + auction-rooms.ts             | 3      | 無（可與 A 平行） |
-| **C: Routes + 整合**     | 6.4 + server.ts 修改 + routes test | 4      | A, B              |
-| **D: Cron Job**          | 6.5 + server.ts start() 修改       | 2      | A                 |
+| Mission                  | 範圍                                                  | 檔案數 | 依賴 | 狀態      |
+| ------------------------ | ----------------------------------------------------- | ------ | ---- | --------- |
+| **A: Schema + Service**  | 6.1 + 6.2 + service test                              | 3      | 無   | ✅ 完成   |
+| **B: WebSocket + Rooms** | 6.3 + auction-rooms.ts                                | 3      | 無   | ✅ 完成   |
+| **C: Routes + 整合**     | 6.4 + server.ts 修改 + routes test                    | 4      | A, B | ✅ 完成   |
+| **C.5: Proxy Bidding**   | DB migration + schema + service + routes + tests 重構 | 6      | C    | ⏳ 未開始 |
+| **D: Cron Job**          | 6.5 + server.ts start() 修改                          | 2      | C.5  | ⏳ 未開始 |
 
-Mission A 和 B 可平行執行，C 和 D 分別在其依賴完成後執行。
+依賴圖：A + B → C → C.5 → D
 
 ---
 

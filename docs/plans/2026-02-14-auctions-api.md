@@ -23,11 +23,44 @@
 
 ### 競標特有
 
-- **出價鎖**: Redis SETNX + owner 驗證，避免併發問題
+- **Proxy Bidding（代理出價）**: 採 eBay 機制，用戶輸入 maxBid（最高願付），系統自動以最低必要金額跟價
+- **出價鎖**: Redis SETNX + owner 驗證，proxy 跟價計算在鎖內原子完成
 - **出價一致性**: `prisma.$transaction` 確保 bid create + auction update 原子操作
+- **maxBid 隱藏**: API response 與 WebSocket broadcast 僅包含 currentPrice，不暴露任何人的 maxBid
 - **WebSocket**: Room-based 管理（每 auction 一個 room），只通知訂閱者
 - **定時結標**: Cron 每分鐘掃描（MVP 可接受 ~60s 延遲）
 - **Decimal 處理**: Prisma Decimal 欄位用 `.toNumber()` 做數值比較
+
+### Proxy Bidding 跟價規則
+
+```
+當 challenger 以 maxBid 進入出價：
+
+1. 找出目前 isActive=true 的 proxy 領先者 (defender)
+
+2. 無 defender（首位出價）：
+   currentPrice = startingPrice
+   winner = challenger
+
+3. challenger.maxBid > defender.maxBid：
+   currentPrice = min(defender.maxBid + increment, challenger.maxBid)
+   winner = challenger（defender.isActive = false）
+
+4. challenger.maxBid < defender.maxBid：
+   currentPrice = min(challenger.maxBid + increment, defender.maxBid)
+   winner = defender（不變）
+
+5. challenger.maxBid == defender.maxBid：
+   winner = defender（先出價者優先）
+   currentPrice = defender.maxBid
+
+6. 同一用戶追加 maxBid：
+   更新其 Bid.maxBid（僅允許加碼），不建立新 record
+   不觸發跟價（無競爭者變動）
+
+7. maxBid >= buyNowPrice（若設定）：
+   直接以 buyNowPrice 結標
+```
 
 ### API Endpoints
 
@@ -79,6 +112,20 @@
 **依賴**: Mission A + Mission B
 **驗證**: `pnpm --filter @card-erp/api exec tsc --noEmit` + `pnpm --filter @card-erp/api test`
 
+### Mission C.5: Proxy Bidding 機制
+
+**範圍**: 6 個檔案（DB migration + schema + service + routes + tests）
+
+- `services/api/prisma/schema.prisma` — Bid model 新增 maxBid / isActive 欄位
+- `services/api/src/modules/auctions/auctions.schema.ts` — PlaceBidSchema 改用 maxBid
+- `services/api/src/modules/auctions/auctions.service.ts` — placeBid 重寫為 proxy bidding 邏輯
+- `services/api/src/modules/auctions/auctions.routes.ts` — bid handler 欄位調整 + maxBid 隱藏
+- `services/api/tests/modules/auctions/auctions.service.test.ts` — proxy bidding 測試案例
+- `services/api/tests/modules/auctions/auctions.routes.test.ts` — 更新 bid 相關測試
+
+**依賴**: Mission C（Routes 已建立）
+**驗證**: `prisma migrate dev` + `pnpm --filter @card-erp/api exec tsc --noEmit` + `pnpm --filter @card-erp/api test`
+
 ### Mission D: Cron Job
 
 **範圍**: 2 個檔案（子任務 6.5）
@@ -87,7 +134,7 @@
 - `services/api/src/server.ts` — start() 函數加入 cron 啟動
 - `services/api/package.json` — 新增 node-cron + @types/node-cron 依賴
 
-**依賴**: Mission A（使用 AuctionsService）
+**依賴**: Mission C.5（使用更新後的 AuctionsService）
 **驗證**: `pnpm --filter @card-erp/api exec tsc --noEmit` + `pnpm --filter @card-erp/api test`
 
 ---
@@ -96,13 +143,17 @@
 
 ```
 A: Schema + Service + Test  ─┬─→  C: Routes + 整合 + Test
-B: WebSocket + Rooms         ─┘
-A ───────────────────────────────→  D: Cron Job
+B: WebSocket + Rooms         ─┘         │
+                                        ↓
+                               C.5: Proxy Bidding
+                                        │
+A ──────────────────────────────────→  D: Cron Job
 ```
 
 - A、B 可平行
 - C 需 A + B 完成
-- D 只需 A 完成
+- C.5 需 C 完成（在現有明標基礎上重構為 proxy bidding）
+- D 需 C.5 完成（使用更新後的 service）
 
 ---
 

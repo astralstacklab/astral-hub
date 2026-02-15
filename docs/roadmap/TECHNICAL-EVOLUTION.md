@@ -49,6 +49,7 @@ Manual Deploy     →    CI/CD (GitHub Actions) →    GitOps + Auto-scaling
 ```
 
 **特性**:
+
 - 4 個獨立部署的應用
 - 共享資料庫
 - 基礎快取策略
@@ -85,6 +86,7 @@ Manual Deploy     →    CI/CD (GitHub Actions) →    GitOps + Auto-scaling
 ```
 
 **特性**:
+
 - OAuth 2.0 整合
 - Elasticsearch 全文搜尋
 - Redis 多用途（Session、Cache、Queue）
@@ -144,6 +146,7 @@ Manual Deploy     →    CI/CD (GitHub Actions) →    GitOps + Auto-scaling
 ```
 
 **特性**:
+
 - Kubernetes 自動擴展
 - 服務拆分（選配）
 - 事件驅動架構
@@ -197,12 +200,14 @@ DiscountCode
 
 **總表數**: ~24 tables (+14)
 **新增特性**:
+
 - 多對多關係增加
 - JSON 欄位（通知內容、優惠券條件）
 - 全文搜尋索引（商品名稱、描述）
 - 時間序列資料（點數交易、通知）
 
 **Schema 調整**:
+
 ```sql
 -- User 表擴展
 ALTER TABLE "User" ADD COLUMN "memberLevelId" TEXT;
@@ -236,12 +241,14 @@ AnalyticsSnapshot
 
 **總表數**: ~34 tables (+10)
 **新增特性**:
+
 - 多語系支援（Translation table 或 JSONB）
 - 審計日誌（Audit logs）
 - 分區表（Partitioning for analytics）
 - 物化視圖（Materialized views for reports）
 
 **Schema 調整**:
+
 ```sql
 -- 多語系支援
 CREATE TABLE "Translation" (
@@ -265,18 +272,19 @@ CREATE TABLE "Order_2026" PARTITION OF "Order"
 
 ### 後端 (API)
 
-| 技術層 | Phase 1 | Phase 2 | Phase 3 |
-|--------|---------|---------|---------|
-| **框架** | Fastify 4 | Fastify 4 | Fastify 4 / NestJS* |
-| **語言** | TypeScript 5 | TypeScript 5 | TypeScript 5 |
-| **ORM** | Prisma 5 | Prisma 5 | Prisma 5 + TypeORM* |
-| **驗證** | Zod | Zod | Zod |
-| **認證** | JWT (Admin only) | JWT + OAuth 2.0 | OAuth + SSO + MFA |
-| **API 文件** | 手動 | Swagger/OpenAPI | Swagger + GraphQL* |
-| **快取** | Redis (basic) | Redis (advanced) | Redis Cluster |
-| **搜尋** | PostgreSQL LIKE | Elasticsearch | Elasticsearch + AI |
-| **佇列** | - | Redis Bull | Pub/Sub |
-| **測試** | Vitest (80%) | Vitest (85%) | Vitest (90%) |
+| 技術層        | Phase 1                 | Phase 2                        | Phase 3                        |
+| ------------- | ----------------------- | ------------------------------ | ------------------------------ |
+| **框架**      | Fastify 4               | Fastify 4                      | Fastify 4 / NestJS\*           |
+| **語言**      | TypeScript 5            | TypeScript 5                   | TypeScript 5                   |
+| **ORM**       | Prisma 5                | Prisma 5                       | Prisma 5 + TypeORM\*           |
+| **驗證**      | Zod                     | Zod                            | Zod                            |
+| **認證**      | JWT (Admin only)        | JWT + OAuth 2.0                | OAuth + SSO + MFA              |
+| **API 文件**  | 手動                    | Swagger/OpenAPI                | Swagger + GraphQL\*            |
+| **快取**      | Redis (basic)           | Redis (advanced)               | Redis Cluster                  |
+| **WebSocket** | 單 Instance 記憶體 Room | Redis Pub/Sub 跨 Instance 同步 | Redis Cluster + Sticky Session |
+| **搜尋**      | PostgreSQL LIKE         | Elasticsearch                  | Elasticsearch + AI             |
+| **佇列**      | -                       | Redis Bull                     | Pub/Sub                        |
+| **測試**      | Vitest (80%)            | Vitest (85%)                   | Vitest (90%)                   |
 
 \* 選配，依需求決定
 
@@ -284,46 +292,46 @@ CREATE TABLE "Order_2026" PARTITION OF "Order"
 
 ### 前端 (Web)
 
-| 技術層 | Phase 1 | Phase 2 | Phase 3 |
-|--------|---------|---------|---------|
-| **框架** | Nuxt 3 | Nuxt 3 | Nuxt 3 |
-| **UI 庫** | TailwindCSS | TailwindCSS + shadcn | TailwindCSS + shadcn |
-| **狀態管理** | Pinia | Pinia | Pinia |
-| **表單** | VeeValidate + Zod | VeeValidate + Zod | VeeValidate + Zod |
-| **圖表** | - | Chart.js | Chart.js / D3.js |
-| **國際化** | - | vue-i18n (繁中) | vue-i18n (多語系) |
-| **PWA** | 基本設定 | 完整支援 | 完整支援 + 離線 |
-| **測試** | Vitest + Playwright | Vitest + Playwright | Vitest + Playwright |
-| **SSR** | SSR | SSR + SSG | SSR + SSG + ISR |
+| 技術層       | Phase 1             | Phase 2              | Phase 3              |
+| ------------ | ------------------- | -------------------- | -------------------- |
+| **框架**     | Nuxt 3              | Nuxt 3               | Nuxt 3               |
+| **UI 庫**    | TailwindCSS         | TailwindCSS + shadcn | TailwindCSS + shadcn |
+| **狀態管理** | Pinia               | Pinia                | Pinia                |
+| **表單**     | VeeValidate + Zod   | VeeValidate + Zod    | VeeValidate + Zod    |
+| **圖表**     | -                   | Chart.js             | Chart.js / D3.js     |
+| **國際化**   | -                   | vue-i18n (繁中)      | vue-i18n (多語系)    |
+| **PWA**      | 基本設定            | 完整支援             | 完整支援 + 離線      |
+| **測試**     | Vitest + Playwright | Vitest + Playwright  | Vitest + Playwright  |
+| **SSR**      | SSR                 | SSR + SSG            | SSR + SSG + ISR      |
 
 ---
 
 ### 行動應用
 
-| 技術層 | Phase 1 | Phase 2 | Phase 3 |
-|--------|---------|---------|---------|
-| **平台** | - | - | React Native |
-| **框架** | - | - | Expo |
-| **導航** | - | - | React Navigation |
-| **狀態** | - | - | Redux Toolkit |
-| **推播** | - | - | Firebase CM |
-| **認證** | - | - | Biometric |
+| 技術層   | Phase 1 | Phase 2 | Phase 3          |
+| -------- | ------- | ------- | ---------------- |
+| **平台** | -       | -       | React Native     |
+| **框架** | -       | -       | Expo             |
+| **導航** | -       | -       | React Navigation |
+| **狀態** | -       | -       | Redux Toolkit    |
+| **推播** | -       | -       | Firebase CM      |
+| **認證** | -       | -       | Biometric        |
 
 ---
 
 ### DevOps & 基礎設施
 
-| 項目 | Phase 1 | Phase 2 | Phase 3 |
-|------|---------|---------|---------|
-| **容器編排** | Cloud Run | Cloud Run | GKE (Kubernetes) |
-| **CI/CD** | GitHub Actions | GitHub Actions | GitHub Actions + ArgoCD |
-| **監控** | Cloud Logging | Cloud Logging + Sentry | Prometheus + Grafana |
-| **告警** | 手動 | Cloud Monitoring | PagerDuty / Opsgenie |
-| **日誌** | Cloud Logging | Cloud Logging | ELK Stack / Loki |
-| **追蹤** | - | - | Jaeger / Zipkin |
-| **Secret 管理** | Secret Manager | Secret Manager | Secret Manager + Vault* |
-| **IaC** | 手動 | Terraform (basic) | Terraform (full) |
-| **備份** | Daily backup | Daily + Point-in-time | Multi-region backup |
+| 項目            | Phase 1        | Phase 2                | Phase 3                  |
+| --------------- | -------------- | ---------------------- | ------------------------ |
+| **容器編排**    | Cloud Run      | Cloud Run              | GKE (Kubernetes)         |
+| **CI/CD**       | GitHub Actions | GitHub Actions         | GitHub Actions + ArgoCD  |
+| **監控**        | Cloud Logging  | Cloud Logging + Sentry | Prometheus + Grafana     |
+| **告警**        | 手動           | Cloud Monitoring       | PagerDuty / Opsgenie     |
+| **日誌**        | Cloud Logging  | Cloud Logging          | ELK Stack / Loki         |
+| **追蹤**        | -              | -                      | Jaeger / Zipkin          |
+| **Secret 管理** | Secret Manager | Secret Manager         | Secret Manager + Vault\* |
+| **IaC**         | 手動           | Terraform (basic)      | Terraform (full)         |
+| **備份**        | Daily backup   | Daily + Point-in-time  | Multi-region backup      |
 
 ---
 
@@ -331,19 +339,20 @@ CREATE TABLE "Order_2026" PARTITION OF "Order"
 
 ### 目標效能指標
 
-| 指標 | Phase 1 (MVP) | Phase 2 | Phase 3 |
-|------|---------------|---------|---------|
-| **API 響應時間 (P95)** | < 500ms | < 300ms | < 200ms |
-| **頁面載入時間 (FCP)** | < 2.5s | < 2s | < 1.5s |
-| **同時在線用戶** | 100 | 1,000 | 10,000+ |
-| **每秒請求 (RPS)** | 50 | 500 | 5,000+ |
-| **資料庫查詢時間** | < 100ms | < 50ms | < 30ms |
-| **系統可用性** | 99.5% | 99.7% | 99.9% |
-| **錯誤率** | < 1% | < 0.5% | < 0.1% |
+| 指標                   | Phase 1 (MVP) | Phase 2 | Phase 3 |
+| ---------------------- | ------------- | ------- | ------- |
+| **API 響應時間 (P95)** | < 500ms       | < 300ms | < 200ms |
+| **頁面載入時間 (FCP)** | < 2.5s        | < 2s    | < 1.5s  |
+| **同時在線用戶**       | 100           | 1,000   | 10,000+ |
+| **每秒請求 (RPS)**     | 50            | 500     | 5,000+  |
+| **資料庫查詢時間**     | < 100ms       | < 50ms  | < 30ms  |
+| **系統可用性**         | 99.5%         | 99.7%   | 99.9%   |
+| **錯誤率**             | < 1%          | < 0.5%  | < 0.1%  |
 
 ### 效能優化策略
 
 **Phase 1 → Phase 2:**
+
 - ✅ Redis 快取命中率 > 80%
 - ✅ Elasticsearch 搜尋優化
 - ✅ CDN 靜態資源快取
@@ -351,6 +360,7 @@ CREATE TABLE "Order_2026" PARTITION OF "Order"
 - ✅ API response compression
 
 **Phase 2 → Phase 3:**
+
 - ✅ Database read replicas（讀寫分離）
 - ✅ Redis Cluster（分散式快取）
 - ✅ Multi-region deployment
@@ -607,6 +617,7 @@ CREATE TABLE "MemberLevel" (...);
 ```
 
 **遷移策略**:
+
 - ✅ Zero-downtime migration
 - ✅ 向後相容
 - ✅ Rollback plan 準備
@@ -630,6 +641,7 @@ CREATE MATERIALIZED VIEW "DailySalesStats" AS
 ```
 
 **遷移策略**:
+
 - ✅ Blue-green deployment
 - ✅ 資料備份（完整）
 - ✅ 段階式遷移（critical tables 優先）
@@ -728,30 +740,30 @@ Week 24-26 │ Phase 3: K8s 遷移 & 優化
 
 ### Phase 1 風險
 
-| 風險 | 影響 | 機率 | 緩解策略 |
-|------|------|------|----------|
-| ECPay 整合困難 | 高 | 中 | 提前測試、完整文件、預留時間 |
-| Cloud Run 冷啟動 | 中 | 高 | min-instances=1 for critical services |
-| Prisma 效能問題 | 中 | 低 | Query optimization、索引策略 |
-| WebSocket 穩定性 | 中 | 中 | Fallback to polling、心跳機制 |
+| 風險             | 影響 | 機率 | 緩解策略                              |
+| ---------------- | ---- | ---- | ------------------------------------- |
+| ECPay 整合困難   | 高   | 中   | 提前測試、完整文件、預留時間          |
+| Cloud Run 冷啟動 | 中   | 高   | min-instances=1 for critical services |
+| Prisma 效能問題  | 中   | 低   | Query optimization、索引策略          |
+| WebSocket 穩定性 | 中   | 中   | Fallback to polling、心跳機制         |
 
 ### Phase 2 風險
 
-| 風險 | 影響 | 機率 | 緩解策略 |
-|------|------|------|----------|
-| Elasticsearch 成本 | 中 | 中 | 評估替代方案（Algolia）、成本監控 |
-| OAuth 整合複雜度 | 中 | 中 | 使用成熟 library、詳細測試 |
-| 資料遷移錯誤 | 高 | 低 | 完整備份、段階式遷移、驗證腳本 |
-| 效能下降 | 高 | 中 | 效能測試、監控、快取策略 |
+| 風險               | 影響 | 機率 | 緩解策略                          |
+| ------------------ | ---- | ---- | --------------------------------- |
+| Elasticsearch 成本 | 中   | 中   | 評估替代方案（Algolia）、成本監控 |
+| OAuth 整合複雜度   | 中   | 中   | 使用成熟 library、詳細測試        |
+| 資料遷移錯誤       | 高   | 低   | 完整備份、段階式遷移、驗證腳本    |
+| 效能下降           | 高   | 中   | 效能測試、監控、快取策略          |
 
 ### Phase 3 風險
 
-| 風險 | 影響 | 機率 | 緩解策略 |
-|------|------|------|----------|
-| K8s 學習曲線 | 中 | 高 | 培訓、外部顧問、或維持 Cloud Run |
-| Microservices 複雜度 | 高 | 中 | 評估必要性、保持 monolith 優先 |
-| 多區域部署成本 | 高 | 中 | 段階式部署、成本分析 |
-| App Store 審核延遲 | 中 | 中 | 提前送審、預留緩衝時間 |
+| 風險                 | 影響 | 機率 | 緩解策略                         |
+| -------------------- | ---- | ---- | -------------------------------- |
+| K8s 學習曲線         | 中   | 高   | 培訓、外部顧問、或維持 Cloud Run |
+| Microservices 複雜度 | 高   | 中   | 評估必要性、保持 monolith 優先   |
+| 多區域部署成本       | 高   | 中   | 段階式部署、成本分析             |
+| App Store 審核延遲   | 中   | 中   | 提前送審、預留緩衝時間           |
 
 ---
 
@@ -792,6 +804,7 @@ Cloud Run 限制遇到瓶頸？
 ## 📚 技術文件清單
 
 ### Phase 1 必備文件
+
 - [x] API 文件（OpenAPI spec）
 - [x] 資料庫 Schema 文件（Prisma schema）
 - [x] 部署指南（README）
@@ -800,6 +813,7 @@ Cloud Run 限制遇到瓶頸？
 - [ ] 測試指南
 
 ### Phase 2 新增文件
+
 - [ ] OAuth 整合指南
 - [ ] Elasticsearch 索引策略
 - [ ] Redis 快取策略
@@ -807,6 +821,7 @@ Cloud Run 限制遇到瓶頸？
 - [ ] 多語系翻譯流程
 
 ### Phase 3 新增文件
+
 - [ ] Kubernetes 部署指南
 - [ ] Microservices 溝通協議
 - [ ] API 使用文件（對外）
@@ -821,17 +836,20 @@ Cloud Run 限制遇到瓶頸？
 ### 學習資源
 
 **Phase 1:**
+
 - [Fastify 官方文件](https://www.fastify.io/)
 - [Nuxt 3 官方文件](https://nuxt.com/)
 - [Prisma 最佳實踐](https://www.prisma.io/docs)
 - [GCP Cloud Run 指南](https://cloud.google.com/run/docs)
 
 **Phase 2:**
+
 - [OAuth 2.0 完全指南](https://oauth.net/2/)
 - [Elasticsearch 入門](https://www.elastic.co/guide/)
 - [Redis 最佳實踐](https://redis.io/docs/manual/)
 
 **Phase 3:**
+
 - [Kubernetes 官方教學](https://kubernetes.io/docs/)
 - [Microservices 模式](https://microservices.io/)
 - [React Native 文件](https://reactnative.dev/)

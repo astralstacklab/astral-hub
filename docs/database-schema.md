@@ -76,15 +76,17 @@ erDiagram
 | status          | AuctionStatus  | 狀態（UPCOMING / ACTIVE / ENDED / CANCELLED） |
 | createdAt       | DateTime       | 建立時間                                      |
 
-### Bid（出價記錄表）
+### Bid（出價記錄表）— Proxy Bidding
 
-| 欄位      | 型別          | 說明      |
-| --------- | ------------- | --------- |
-| id        | UUID          | 主鍵      |
-| auctionId | UUID          | 競標 ID   |
-| bidderId  | UUID          | 出價者 ID |
-| amount    | Decimal(10,2) | 出價金額  |
-| createdAt | DateTime      | 出價時間  |
+| 欄位      | 型別          | 說明                                            |
+| --------- | ------------- | ----------------------------------------------- |
+| id        | UUID          | 主鍵                                            |
+| auctionId | UUID          | 競標 ID                                         |
+| bidderId  | UUID          | 出價者 ID                                       |
+| maxBid    | Decimal(10,2) | 用戶的最高出價上限（隱藏，僅出價者本人可見）    |
+| amount    | Decimal(10,2) | 該次出價觸發後的顯示價（currentPrice 快照）     |
+| isActive  | Boolean       | 是否為有效 proxy（被超越後設 false），預設 true |
+| createdAt | DateTime      | 出價時間                                        |
 
 ### Order（訂單表）
 
