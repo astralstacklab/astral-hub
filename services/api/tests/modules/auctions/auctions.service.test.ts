@@ -371,6 +371,19 @@ describe('AuctionsService', () => {
       )
     })
 
+    it('endTime 已過但狀態仍為 ACTIVE 時應拋錯', async () => {
+      const now = Date.now()
+      const auction = await service.createAuction({
+        productId: baseProductId,
+        startingPrice: 100,
+        incrementAmount: 10,
+        startTime: new Date(now - 120_000).toISOString(),
+        endTime: new Date(now - 60_000).toISOString(),
+      })
+
+      await expect(service.placeBid(auction.id, bidderId, 110)).rejects.toThrow('競標已結束')
+    })
+
     it('任何時刻同一 auction 最多一筆 isActive=true（single active invariant）', async () => {
       const auction = await createActiveAuction(baseProductId, 100, 10)
       await service.placeBid(auction.id, bidderId, 200)

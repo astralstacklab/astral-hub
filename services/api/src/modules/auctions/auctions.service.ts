@@ -132,6 +132,10 @@ export class AuctionsService {
         throw new Error('競標尚未開始或已結束')
       }
 
+      if (new Date() >= auction.endTime) {
+        throw new Error('競標已結束')
+      }
+
       const currentPrice = auction.currentPrice.toNumber()
       const increment = auction.incrementAmount.toNumber()
       const startingPrice = auction.startingPrice.toNumber()

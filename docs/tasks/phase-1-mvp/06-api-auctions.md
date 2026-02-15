@@ -1083,13 +1083,13 @@
 
 **建議拆分**:
 
-| Mission                  | 範圍                                                  | 檔案數 | 依賴 | 狀態      |
-| ------------------------ | ----------------------------------------------------- | ------ | ---- | --------- |
-| **A: Schema + Service**  | 6.1 + 6.2 + service test                              | 3      | 無   | ✅ 完成   |
-| **B: WebSocket + Rooms** | 6.3 + auction-rooms.ts                                | 3      | 無   | ✅ 完成   |
-| **C: Routes + 整合**     | 6.4 + server.ts 修改 + routes test                    | 4      | A, B | ✅ 完成   |
-| **C.5: Proxy Bidding**   | DB migration + schema + service + routes + tests 重構 | 6      | C    | ⏳ 未開始 |
-| **D: Cron Job**          | 6.5 + server.ts start() 修改                          | 2      | C.5  | ⏳ 未開始 |
+| Mission                  | 範圍                                                  | 檔案數 | 依賴 | 狀態    |
+| ------------------------ | ----------------------------------------------------- | ------ | ---- | ------- |
+| **A: Schema + Service**  | 6.1 + 6.2 + service test                              | 3      | 無   | ✅ 完成 |
+| **B: WebSocket + Rooms** | 6.3 + auction-rooms.ts                                | 3      | 無   | ✅ 完成 |
+| **C: Routes + 整合**     | 6.4 + server.ts 修改 + routes test                    | 4      | A, B | ✅ 完成 |
+| **C.5: Proxy Bidding**   | DB migration + schema + service + routes + tests 重構 | 6      | C    | ✅ 完成 |
+| **D: Cron Job**          | 6.5 + server.ts start() 修改                          | 2      | C.5  | ✅ 完成 |
 
 依賴圖：A + B → C → C.5 → D
 

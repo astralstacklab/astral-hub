@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 import { config } from './config/index.js'
 import { logger, loggerConfig } from './utils/logger.js'
+import { startAuctionEndJob } from './jobs/auction-end.job.js'
 
 // Plugins
 import prismaPlugin from './plugins/prisma.js'
@@ -78,6 +79,8 @@ async function start() {
       port: config.API_PORT,
       host: config.API_HOST,
     })
+
+    startAuctionEndJob(server.prisma, server.redis)
   } catch (err) {
     logger.error(err)
     process.exit(1)
