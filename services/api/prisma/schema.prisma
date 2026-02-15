@@ -233,7 +233,9 @@ model Bid {
   bidderId String
   bidder   User   @relation(fields: [bidderId], references: [id])
 
-  amount Decimal @db.Decimal(10, 2)
+  maxBid   Decimal @db.Decimal(10, 2)
+  amount   Decimal @db.Decimal(10, 2)
+  isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
 

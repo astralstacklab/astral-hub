@@ -203,13 +203,15 @@ describe('Auctions API', () => {
         method: 'POST',
         url: `/api/auctions/${created.id}/bid`,
         headers: { authorization: `Bearer ${authToken}` },
-        payload: { amount: 110 },
+        payload: { maxBid: 110 },
       })
 
       expect(response.statusCode).toBe(201)
       const json = response.json()
       expect(json.success).toBe(true)
-      expect(Number(json.data.amount)).toBe(110)
+      expect(Number(json.data.currentPrice)).toBe(100)
+      expect(Number(json.data.maxBid)).toBe(110)
+      expect(json.data.isActive).toBe(true)
     })
 
     it('should return 400 for insufficient amount', async () => {
@@ -220,7 +222,7 @@ describe('Auctions API', () => {
         method: 'POST',
         url: `/api/auctions/${created.id}/bid`,
         headers: { authorization: `Bearer ${authToken}` },
-        payload: { amount: 105 },
+        payload: { maxBid: 50 },
       })
 
       expect(response.statusCode).toBe(400)
@@ -231,7 +233,7 @@ describe('Auctions API', () => {
       const response = await server.inject({
         method: 'POST',
         url: '/api/auctions/00000000-0000-0000-0000-000000000000/bid',
-        payload: { amount: 100 },
+        payload: { maxBid: 100 },
       })
 
       expect(response.statusCode).toBe(401)
@@ -248,7 +250,7 @@ describe('Auctions API', () => {
         method: 'POST',
         url: `/api/auctions/${created.id}/bid`,
         headers: { authorization: `Bearer ${authToken}` },
-        payload: { amount: 110 },
+        payload: { maxBid: 110 },
       })
 
       const response = await server.inject({
@@ -260,7 +262,7 @@ describe('Auctions API', () => {
       const json = response.json()
       expect(Array.isArray(json.data)).toBe(true)
       expect(json.data).toHaveLength(1)
-      expect(Number(json.data[0].amount)).toBe(110)
+      expect(Number(json.data[0].currentPrice)).toBe(100)
     })
   })
 

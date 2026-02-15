@@ -110,7 +110,7 @@ export class AuctionsService {
     }
   }
 
-  async placeBid(auctionId: string, bidderId: string, amount: number): Promise<Bid> {
+  async placeBid(auctionId: string, bidderId: string, maxBidAmount: number): Promise<Bid> {
     const lockKey = `auction:${auctionId}:bid-lock`
     const lockOwner = `${bidderId}:${Date.now()}:${Math.random().toString(36).slice(2)}`
 
@@ -132,36 +132,105 @@ export class AuctionsService {
         throw new Error('競標尚未開始或已結束')
       }
 
-      const minimumAmount = auction.currentPrice.toNumber() + auction.incrementAmount.toNumber()
-      if (amount < minimumAmount) {
-        throw new Error(`出價必須至少 ${minimumAmount}`)
+      const currentPrice = auction.currentPrice.toNumber()
+      const increment = auction.incrementAmount.toNumber()
+      const startingPrice = auction.startingPrice.toNumber()
+
+      const minimumBid = auction.currentBidderId ? currentPrice + increment : startingPrice
+      if (maxBidAmount < minimumBid) {
+        throw new Error(`最高出價必須至少 ${minimumBid}`)
       }
 
-      const bid = await this.prisma.$transaction(async (tx) => {
+      const defender = await this.prisma.bid.findFirst({
+        where: { auctionId, isActive: true },
+        orderBy: { createdAt: 'desc' },
+      })
+
+      if (defender && defender.bidderId === bidderId) {
+        if (maxBidAmount <= defender.maxBid.toNumber()) {
+          throw new Error('追加金額必須高於目前的最高出價')
+        }
+
+        return this.prisma.bid.update({
+          where: { id: defender.id },
+          data: { maxBid: maxBidAmount },
+        })
+      }
+
+      let newPrice: number
+      let winnerId: string
+      let defenderActive = true
+
+      if (!defender) {
+        newPrice = startingPrice
+        winnerId = bidderId
+      } else {
+        const defenderMax = defender.maxBid.toNumber()
+
+        if (maxBidAmount > defenderMax) {
+          newPrice = Math.min(defenderMax + increment, maxBidAmount)
+          winnerId = bidderId
+          defenderActive = false
+        } else if (maxBidAmount < defenderMax) {
+          newPrice = Math.min(maxBidAmount + increment, defenderMax)
+          winnerId = defender.bidderId
+        } else {
+          newPrice = defenderMax
+          winnerId = defender.bidderId
+        }
+      }
+
+      let auctionStatus: 'ENDED' | undefined
+      if (auction.buyNowPrice && maxBidAmount >= auction.buyNowPrice.toNumber()) {
+        newPrice = auction.buyNowPrice.toNumber()
+        winnerId = bidderId
+        defenderActive = false
+        auctionStatus = 'ENDED'
+      }
+
+      const bid = await this.prisma.$transaction(async (tx): Promise<Bid> => {
+        if (defender && !defenderActive) {
+          await tx.bid.update({
+            where: { id: defender.id },
+            data: { isActive: false },
+          })
+        }
+
         const createdBid = await tx.bid.create({
           data: {
             auctionId,
             bidderId,
-            amount,
+            maxBid: maxBidAmount,
+            amount: newPrice,
+            isActive: winnerId === bidderId,
           },
         })
 
+        const auctionUpdateData: Record<string, unknown> = {
+          currentPrice: newPrice,
+          currentBidderId: winnerId,
+        }
+        if (auctionStatus) {
+          auctionUpdateData.status = auctionStatus
+        }
+
         await tx.auction.update({
           where: { id: auctionId },
-          data: {
-            currentPrice: amount,
-            currentBidderId: bidderId,
-          },
+          data: auctionUpdateData,
         })
 
         return createdBid
       })
 
       try {
-        await this.redis.hset(`auction:${auctionId}:info`, {
-          currentPrice: amount.toString(),
-          currentBidderId: bidderId,
-        })
+        const redisData: Record<string, string> = {
+          currentPrice: newPrice.toString(),
+          currentBidderId: winnerId,
+        }
+        if (auctionStatus) {
+          redisData.status = auctionStatus
+        }
+        await this.redis.hset(`auction:${auctionId}:info`, redisData)
       } catch {
         // Redis 同步失敗不影響交易一致性
       }
@@ -181,7 +250,7 @@ export class AuctionsService {
     }
   }
 
-  async getBids(auctionId: string): Promise<Bid[]> {
+  async getBids(auctionId: string) {
     return this.prisma.bid.findMany({
       where: { auctionId },
       orderBy: { amount: 'desc' },

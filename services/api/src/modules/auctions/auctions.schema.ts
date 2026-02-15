@@ -17,7 +17,7 @@ export const CreateAuctionSchema = z
 export type CreateAuctionInput = z.infer<typeof CreateAuctionSchema>
 
 export const PlaceBidSchema = z.object({
-  amount: z.number().positive(),
+  maxBid: z.number().positive(),
 })
 
 export type PlaceBidInput = z.infer<typeof PlaceBidSchema>

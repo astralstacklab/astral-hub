@@ -47,7 +47,8 @@ const BidSchema = {
     id: { type: 'string', format: 'uuid' },
     auctionId: { type: 'string', format: 'uuid' },
     bidderId: { type: 'string', format: 'uuid' },
-    amount: { type: 'number' },
+    currentPrice: { type: 'number', description: '觸發後的顯示價' },
+    isActive: { type: 'boolean', description: '是否為有效 proxy' },
     createdAt: { type: 'string', format: 'date-time' },
   },
 } as const
@@ -192,7 +193,7 @@ const auctionsRoutes: FastifyPluginAsync = async (server) => {
       schema: {
         tags: ['Auctions'],
         summary: '出價',
-        description: '對指定競標出價，使用 Redis 鎖防止併發問題',
+        description: 'Proxy Bidding：提交最高願付金額，系統自動以最低必要金額跟價',
         security: [{ bearerAuth: [] }],
         params: {
           type: 'object',
@@ -201,18 +202,29 @@ const auctionsRoutes: FastifyPluginAsync = async (server) => {
         },
         body: {
           type: 'object',
-          required: ['amount'],
+          required: ['maxBid'],
           properties: {
-            amount: { type: 'number', exclusiveMinimum: 0 },
+            maxBid: { type: 'number', exclusiveMinimum: 0, description: '最高願付金額（隱藏）' },
           },
         },
         response: {
           201: {
-            description: '出價成功',
+            description: '出價成功（回傳 currentPrice，出價者可見 maxBid）',
             type: 'object',
             properties: {
               success: { type: 'boolean', enum: [true] },
-              data: BidSchema,
+              data: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string', format: 'uuid' },
+                  auctionId: { type: 'string', format: 'uuid' },
+                  bidderId: { type: 'string', format: 'uuid' },
+                  maxBid: { type: 'number' },
+                  currentPrice: { type: 'number' },
+                  isActive: { type: 'boolean' },
+                  createdAt: { type: 'string', format: 'date-time' },
+                },
+              },
             },
           },
           400: { description: '出價失敗（金額不足 / 競標未開始）', ...ErrorResponseSchema },
@@ -223,7 +235,7 @@ const auctionsRoutes: FastifyPluginAsync = async (server) => {
     },
     async (request, reply) => {
       const { id } = AuctionIdParamSchema.parse(request.params)
-      const { amount } = PlaceBidSchema.parse(request.body)
+      const { maxBid } = PlaceBidSchema.parse(request.body)
       const bidderId = request.user.id
 
       const auction = await auctionsService.getAuctionById(id)
@@ -235,20 +247,34 @@ const auctionsRoutes: FastifyPluginAsync = async (server) => {
         return reply.code(400).send(errorResponse('BID_REJECTED', '競標尚未開始或已結束'))
       }
 
-      const minBidAmount = auction.currentPrice.toNumber() + auction.incrementAmount.toNumber()
-      if (amount < minBidAmount) {
-        return reply.code(400).send(errorResponse('BID_REJECTED', `出價必須至少 ${minBidAmount}`))
+      const minimumBid = auction.currentBidderId
+        ? auction.currentPrice.toNumber() + auction.incrementAmount.toNumber()
+        : auction.startingPrice.toNumber()
+      if (maxBid < minimumBid) {
+        return reply.code(400).send(errorResponse('BID_REJECTED', `最高出價必須至少 ${minimumBid}`))
       }
 
-      const bid = await auctionsService.placeBid(id, bidderId, amount)
+      const bid = await auctionsService.placeBid(id, bidderId, maxBid)
 
       auctionRooms.broadcast(id, {
         type: 'NEW_BID',
         auctionId: id,
-        bid: { amount, bidderId, timestamp: new Date().toISOString() },
+        currentPrice: bid.amount.toNumber(),
+        bidderId: bid.isActive ? bidderId : undefined,
+        timestamp: new Date().toISOString(),
       })
 
-      return reply.code(201).send(successResponse(bid))
+      return reply.code(201).send(
+        successResponse({
+          id: bid.id,
+          auctionId: bid.auctionId,
+          bidderId: bid.bidderId,
+          maxBid: bid.maxBid,
+          currentPrice: bid.amount,
+          isActive: bid.isActive,
+          createdAt: bid.createdAt,
+        })
+      )
     }
   )
 
@@ -279,8 +305,16 @@ const auctionsRoutes: FastifyPluginAsync = async (server) => {
     async (request, reply) => {
       const { id } = AuctionIdParamSchema.parse(request.params)
       const bids = await auctionsService.getBids(id)
+      const safeBids = bids.map((bid) => ({
+        id: bid.id,
+        auctionId: bid.auctionId,
+        bidderId: bid.bidderId,
+        currentPrice: bid.amount,
+        createdAt: bid.createdAt,
+        bidder: bid.bidder,
+      }))
 
-      return reply.send(successResponse(bids))
+      return reply.send(successResponse(safeBids))
     }
   )
 

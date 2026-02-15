@@ -23,7 +23,7 @@
 
 ### 競標特有
 
-- **Proxy Bidding（代理出價）**: 採 eBay 機制，用戶輸入 maxBid（最高願付），系統自動以最低必要金額跟價
+- **Proxy Bidding（代理出價）**: 採 eBay-like 機制（固定增額簡化版，非 eBay 分段加價梯度），用戶輸入 maxBid（最高願付），系統自動以最低必要金額跟價
 - **出價鎖**: Redis SETNX + owner 驗證，proxy 跟價計算在鎖內原子完成
 - **出價一致性**: `prisma.$transaction` 確保 bid create + auction update 原子操作
 - **maxBid 隱藏**: API response 與 WebSocket broadcast 僅包含 currentPrice，不暴露任何人的 maxBid

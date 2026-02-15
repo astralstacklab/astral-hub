@@ -1040,7 +1040,7 @@
 
 ## 🚨 注意事項
 
-1. **Proxy Bidding（代理出價）**: 採用 eBay 機制，用戶輸入 maxBid，系統自動以最低必要金額跟價。maxBid 對外隱藏，API/WebSocket 只暴露 currentPrice。詳見 `docs/plans/2026-02-14-auctions-api.md` 的跟價規則
+1. **Proxy Bidding（代理出價）**: 採用 eBay-like 機制（固定增額簡化版，非 eBay 分段加價梯度），用戶輸入 maxBid，系統自動以最低必要金額跟價。maxBid 對外隱藏，API/WebSocket 只暴露 currentPrice。詳見 `docs/plans/2026-02-14-auctions-api.md` 的跟價規則
 2. **分散式鎖**: 使用 Redis SETNX + Lua script owner 驗證，proxy 跟價計算在鎖內原子完成
 3. **Prisma Decimal**: 價格欄位是 `Decimal(10,2)`，做數值運算時需 `.toNumber()` 轉換
 4. **WebSocket 連線管理**: 使用 room-based 管理器（`auction-rooms.ts`），斷線時自動清理
