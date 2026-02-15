@@ -19,6 +19,7 @@ import errorHandlerMiddleware from './middlewares/error-handler.js'
 import { productsRoutes } from './modules/products/index.js'
 import { auctionsRoutes } from './modules/auctions/index.js'
 import { ordersRoutes } from './modules/orders/index.js'
+import { paymentsRoutes } from './modules/payments/index.js'
 
 export async function buildServer() {
   const server = Fastify({
@@ -54,6 +55,7 @@ export async function buildServer() {
   await server.register(productsRoutes, { prefix: '/api/products' })
   await server.register(auctionsRoutes, { prefix: '/api/auctions' })
   await server.register(ordersRoutes, { prefix: '/api/orders' })
+  await server.register(paymentsRoutes, { prefix: '/api/payments' })
 
   // API 版本資訊
   server.get(
