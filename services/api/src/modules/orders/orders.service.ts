@@ -18,15 +18,15 @@ export class OrdersService {
       })
 
       if (products.length !== data.items.length) {
-        throw new Error('部分商品不存在')
+        throw this.httpError(400, '部分商品不存在')
       }
 
       for (const product of products) {
         if (product.status === 'SOLD') {
-          throw new Error(`商品 ${product.name} 已售出`)
+          throw this.httpError(400, `商品 ${product.name} 已售出`)
         }
         if (product.status !== 'LISTED') {
-          throw new Error(`商品 ${product.name} 尚未上架`)
+          throw this.httpError(400, `商品 ${product.name} 尚未上架`)
         }
       }
 
@@ -158,11 +158,11 @@ export class OrdersService {
   async updateOrderStatus(id: string, data: UpdateOrderStatusInput): Promise<Order> {
     const order = await this.prisma.order.findUnique({ where: { id } })
     if (!order) {
-      throw new Error('訂單不存在')
+      throw this.httpError(404, '訂單不存在')
     }
 
     if (!this.isValidStatusTransition(order.status, data.status)) {
-      throw new Error(`訂單狀態不可從 ${order.status} 轉換為 ${data.status}`)
+      throw this.httpError(400, `訂單狀態不可從 ${order.status} 轉換為 ${data.status}`)
     }
 
     const updateData: Prisma.OrderUpdateInput = {
@@ -208,11 +208,11 @@ export class OrdersService {
       })
 
       if (!order) {
-        throw new Error('訂單不存在')
+        throw this.httpError(404, '訂單不存在')
       }
 
       if (order.status !== 'PENDING') {
-        throw new Error('僅能取消待處理訂單')
+        throw this.httpError(400, '僅能取消待處理訂單')
       }
 
       const cancelledOrder = await tx.order.update({
@@ -257,5 +257,9 @@ export class OrdersService {
     if (currentStatus === 'PENDING' && nextStatus === 'CANCELLED') return true
 
     return false
+  }
+
+  private httpError(statusCode: number, message: string): Error & { statusCode: number } {
+    return Object.assign(new Error(message), { statusCode })
   }
 }
