@@ -25,6 +25,7 @@
 ## 📦 前置條件
 
 **前置任務**:
+
 - [x] 01 - 環境建置完成
 - [x] 02 - shared-types 套件完成
 - [x] 03 - 資料庫設計完成
@@ -32,7 +33,8 @@
 - [x] 05 - 商品 API 完成
 
 **技術需求**:
-- Fastify 4.x
+
+- Fastify 5.x（非 4.x）
 - Prisma Transactions
 
 ---
@@ -42,10 +44,18 @@
 ### 7.1 資料驗證 Schema
 
 #### 7.1.1 建立 Zod Schema
+
 - [ ] 建立 `src/modules/orders/orders.schema.ts`
+
   ```typescript
   import { z } from 'zod'
-  import { PaymentMethod, PaymentStatus, ShippingMethod, OrderStatus, OrderChannel } from '@card-erp/shared-types'
+  import {
+    PaymentMethod,
+    PaymentStatus,
+    ShippingMethod,
+    OrderStatus,
+    OrderChannel,
+  } from '@card-erp/shared-types'
 
   export const CreateOrderItemSchema = z.object({
     productId: z.string().uuid(),
@@ -100,7 +110,9 @@
 ### 7.2 Service 層
 
 #### 7.2.1 建立訂單編號生成器
+
 - [ ] 建立 `src/modules/orders/order-number-generator.ts`
+
   ```typescript
   import { PrismaClient } from '@prisma/client'
 
@@ -132,7 +144,9 @@
   ```
 
 #### 7.2.2 建立 Orders Service
+
 - [ ] 建立 `src/modules/orders/orders.service.ts`
+
   ```typescript
   import { PrismaClient, Order } from '@prisma/client'
   import type { CreateOrderInput, UpdateOrderStatusInput, QueryOrdersInput } from './orders.schema'
@@ -325,11 +339,7 @@
       return order
     }
 
-    async updatePaymentStatus(
-      id: string,
-      status: string,
-      transactionId?: string
-    ): Promise<Order> {
+    async updatePaymentStatus(id: string, status: string, transactionId?: string): Promise<Order> {
       const updateData: Record<string, unknown> = {
         paymentStatus: status,
       }
@@ -397,7 +407,9 @@
 ### 7.3 Routes 層
 
 #### 7.3.1 建立 Orders Routes
+
 - [ ] 建立 `src/modules/orders/orders.routes.ts`
+
   ```typescript
   import { FastifyPluginAsync } from 'fastify'
   import { OrdersService } from './orders.service'
@@ -549,7 +561,9 @@
   ```
 
 #### 7.3.2 整合到主 server
+
 - [ ] 編輯 `src/server.ts`
+
   ```typescript
   import ordersRoutes from './modules/orders/orders.routes'
 
@@ -561,7 +575,9 @@
 ### 7.4 測試
 
 #### 7.4.1 單元測試
+
 - [ ] 建立 `tests/modules/orders/orders.service.test.ts`
+
   ```typescript
   import { describe, it, expect, beforeEach, afterEach } from 'vitest'
   import { PrismaClient } from '@prisma/client'
@@ -672,6 +688,7 @@
   ```
 
 #### 7.4.2 整合測試
+
 - [ ] 建立 `tests/modules/orders/orders.routes.test.ts`
 
 ---
@@ -720,6 +737,45 @@
 4. **金額計算**: 使用 Decimal 避免浮點數誤差
 5. **退款處理**: 取消訂單時需考慮付款狀態
 
+## ⚠️ 勘誤 — 代碼片段與現行專案慣例的偏差
+
+> 本文件撰寫時間較早，以下代碼片段存在與現行技術棧不一致之處。
+> **實作時以本勘誤為準，代碼片段僅供參考邏輯流程。**
+
+### Zod 相關
+
+| 原文寫法                                                      | 正確寫法                                                                 | 說明                                               |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------- |
+| `import { z } from 'zod'`                                     | `import { z } from 'zod/v4'`                                             | 全專案統一 Zod v4                                  |
+| `z.nativeEnum(PaymentMethod)`                                 | `z.enum(['CASH', 'CREDIT_CARD', 'LINE_PAY', 'TRANSFER'])`                | Zod v4 無 `nativeEnum`，用 `z.enum` 搭配字串字面量 |
+| `z.nativeEnum(ShippingMethod)`                                | `z.enum(['SEVEN_ELEVEN', 'FAMILY_MART', 'FACE_TO_FACE', 'IN_STORE'])`    | 同上                                               |
+| `z.nativeEnum(OrderStatus)`                                   | `z.enum(['PENDING', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'CANCELLED'])` | 同上                                               |
+| `z.nativeEnum(OrderChannel)`                                  | `z.enum(['ONLINE', 'POS'])`                                              | 同上                                               |
+| `z.string().transform(Number).default('1')`                   | `z.coerce.number().int().positive().default(1)`                          | 參照 products/auctions schema 慣例                 |
+| `import { PaymentMethod, ... } from '@card-erp/shared-types'` | 不需要 import                                                            | Schema 內直接用 `z.enum([...])` 字面量即可         |
+
+### Prisma / Import 路徑
+
+| 原文寫法                                             | 正確寫法                                                                                                                                         | 說明                                                |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| `import { PrismaClient } from '@prisma/client'`      | `import type { PrismaClient } from '../generated/prisma/client.js'`（從 modules/ 出發）或 `'../../generated/prisma/client.js'`（從 tests/ 出發） | 本專案 Prisma Client 生成於 `src/generated/prisma/` |
+| `import { successResponse } from '@/utils/response'` | `import { successResponse } from '../../utils/response.js'`                                                                                      | 專案未設定 `@/` alias，使用相對路徑 + `.js` 副檔名  |
+| `import { FastifyPluginAsync } from 'fastify'`       | `import type { FastifyPluginAsync } from 'fastify'`                                                                                              | 型別用 `import type`                                |
+| 所有 `.ts` import 結尾                               | 加 `.js` 副檔名                                                                                                                                  | ESM 慣例，例如 `'./orders.service.js'`              |
+
+### 邏輯 / 模式
+
+| 原文寫法                               | 正確做法                                                          | 說明                                                           |
+| -------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------- |
+| Routes 每個 handler 包 `try/catch`     | **不包 try/catch**，交給全域 errorHandler                         | 參照 auctions.routes.ts / products.routes.ts 慣例              |
+| `JSON.stringify(data.shippingAddress)` | 直接傳物件                                                        | Prisma `Json?` 型別直接接受 JS 物件                            |
+| `error.message`（routes 中）           | error 是 `unknown` 型別，需處理                                   | 改用 `(error as Error).message` 或交給 errorHandler            |
+| `expect(order.subtotal).toBe(300)`     | `expect(order.subtotal.toNumber()).toBe(300)`                     | Prisma Decimal 非原生 number                                   |
+| `product.images` in getOrderById       | 確認 Product model 是否有 `images` 欄位                           | 若無則移除                                                     |
+| POST /orders 內 inline `jwtVerify()`   | 用 `onRequest: [server.authenticate]` 或獨立的 optional auth 邏輯 | 參照現有 auth plugin 模式                                      |
+| `OrdersService` 只接 `prisma`          | 確認不需要 Redis（不同於 AuctionsService）                        | 訂單模組無即時快取需求，只用 Prisma 即可                       |
+| module export 模式                     | 需建立 `src/modules/orders/index.ts`                              | 參照 `products/index.ts`、`auctions/index.ts` 的 barrel export |
+
 ---
 
 ## 🔗 相關文件
@@ -731,12 +787,23 @@
 
 ## 📊 進度追蹤
 
-| 子任務 | 狀態 | 負責人 | 完成日期 |
-|--------|------|--------|---------|
-| 7.1 Schema | ⏳ 未開始 | - | - |
-| 7.2 Service | ⏳ 未開始 | - | - |
-| 7.3 Routes | ⏳ 未開始 | - | - |
-| 7.4 測試 | ⏳ 未開始 | - | - |
+| 子任務      | 狀態      | 負責人 | 完成日期 |
+| ----------- | --------- | ------ | -------- |
+| 7.1 Schema  | ⏳ 未開始 | -      | -        |
+| 7.2 Service | ⏳ 未開始 | -      | -        |
+| 7.3 Routes  | ⏳ 未開始 | -      | -        |
+| 7.4 測試    | ⏳ 未開始 | -      | -        |
+
+---
+
+## 🔀 分段管線（Multi-Mission）
+
+| Mission                        | 範圍                                          | 檔案數 | 依賴 | 狀態      |
+| ------------------------------ | --------------------------------------------- | ------ | ---- | --------- |
+| **A: Schema + Service + Test** | 7.1 + 7.2 + service test                      | 4      | 無   | ✅ 完成   |
+| **B: Routes + 整合 + Test**    | 7.3 + server.ts 修改 + index.ts + routes test | 4      | A    | ⏳ 未開始 |
+
+依賴圖：A → B
 
 ---
 
