@@ -11,6 +11,79 @@
 - Task 07: Orders API（訂單資料）
 - Task 08: Payments API（金流資料）
 
+**技術環境**:
+
+- Fastify v5 + Zod v4 + Prisma v6
+- ESM（所有 import 須加 `.js` 副檔名）
+
+---
+
+## ⚠️ 勘誤（與現有 codebase 嚴重不一致之處）
+
+> 本文件的程式碼範例有大量欄位名稱、路徑、模式與現有 schema 不符。
+> 以下列出所有需修正項目，實作時請依勘誤修正。
+
+### A. 路徑/結構
+
+| 原始寫法                                     | 正確寫法                                                  | 說明                   |
+| -------------------------------------------- | --------------------------------------------------------- | ---------------------- |
+| `apps/api/`                                  | `services/api/`                                           | 專案路徑               |
+| `apps/api/src/services/analytics.service.ts` | `services/api/src/modules/analytics/analytics.service.ts` | 模組結構               |
+| `apps/api/src/routes/analytics.routes.ts`    | `services/api/src/modules/analytics/analytics.routes.ts`  | 同上                   |
+| `apps/api/src/app.ts`                        | `services/api/src/server.ts`                              | server 檔名            |
+| `packages/shared-types/src/analytics.ts`     | `services/api/src/modules/analytics/analytics.schema.ts`  | Schema 放在 API 模組內 |
+
+### B. Zod / Import
+
+| 原始寫法                                             | 正確寫法                                                      | 說明                     |
+| ---------------------------------------------------- | ------------------------------------------------------------- | ------------------------ |
+| `import { z } from 'zod'`                            | `import { z } from 'zod/v4'`                                  | Zod v4                   |
+| `z.nativeEnum(AnalyticsPeriod)`                      | `z.enum(['DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM'])`            | z.enum literal           |
+| `enum AnalyticsPeriod { ... }`                       | 不需 TS enum，直接用 z.enum                                   | Zod v4 無 nativeEnum     |
+| `import { ... } from '@prisma/client'`               | `import type { ... } from '../../generated/prisma/client.js'` | 本地生成路徑             |
+| `import { ... } from '@card-erp/shared-types'`       | 從模組本地 schema 引入                                        | Schema 不放 shared-types |
+| `import { FastifyInstance } from 'fastify'`          | `import type { FastifyPluginAsync } from 'fastify'`           | 用 FastifyPluginAsync    |
+| `preHandler: [authMiddleware]`                       | `onRequest: [server.authenticate]`                            | 認證模式                 |
+| `import { authMiddleware } from '../middleware/...'` | 不需要，用 `server.authenticate`                              | 同上                     |
+| `reply.send(report)`                                 | `reply.send(successResponse(report))`                         | 統一回應格式             |
+
+### C. Schema 欄位不匹配（嚴重）
+
+| 文件寫法                               | 實際 Schema                  | 說明                                   |
+| -------------------------------------- | ---------------------------- | -------------------------------------- |
+| `order.totalAmount`                    | `order.finalAmount`          | 欄位名不同                             |
+| `order.orderItems`                     | `order.items`                | relation 名不同                        |
+| `item.subtotal`                        | `item.productPrice`          | OrderItem 無 subtotal                  |
+| `item.unitPrice`                       | `item.productPrice`          | OrderItem 無 unitPrice                 |
+| `item.quantity`                        | 不存在（每商品唯一，固定 1） | 收藏卡商品 1:1                         |
+| `product.sourceType`                   | 不存在                       | 用 `sellerId IS NULL` 判斷自營 vs 寄賣 |
+| `seller.tier`                          | `seller.level`               | 欄位名不同（SellerLevel enum）         |
+| `ProductStatus.AVAILABLE`              | `ProductStatus.LISTED`       | enum 值不同                            |
+| `product.type: 'TRADING_CARD'`         | `'CARD'` 或 `'ACCESSORY'`    | ProductType enum                       |
+| `OrderStatus` / `PaymentStatus` import | 直接用字串 literal 比較      | 不需 import enum                       |
+
+### D. Raw SQL 欄位名
+
+| 文件寫法           | 實際 DB 欄位        | 說明                          |
+| ------------------ | ------------------- | ----------------------------- |
+| `oi.subtotal`      | `oi."productPrice"` | 實際欄位名                    |
+| `oi.product_id`    | `oi."productId"`    | Prisma 預設 camelCase mapping |
+| `o.payment_status` | `o."paymentStatus"` | 同上                          |
+
+### E. 依賴
+
+| 原始寫法                      | 正確寫法                              | 說明                  |
+| ----------------------------- | ------------------------------------- | --------------------- |
+| `import Redis from 'ioredis'` | 用 `server.redis` (FastifyInstance)   | 不直接 import ioredis |
+| `new PrismaClient()` (測試)   | `buildTestServer()` + `server.prisma` | 統一測試模式          |
+| `csv-stringify`               | 需安裝 `pnpm add csv-stringify`       | 新依賴                |
+| `date-fns`                    | 需安裝 `pnpm add date-fns`            | 新依賴                |
+
+### F. AnalyticsSnapshot 表
+
+- MVP 階段**不需要**此表，所有報表即時計算 + Redis 快取
+- 未來有需要再加 migration
+
 ---
 
 ## 一、資料庫擴充
@@ -60,7 +133,7 @@ export enum AnalyticsPeriod {
   DAILY = 'DAILY',
   WEEKLY = 'WEEKLY',
   MONTHLY = 'MONTHLY',
-  CUSTOM = 'CUSTOM'
+  CUSTOM = 'CUSTOM',
 }
 
 /**
@@ -69,7 +142,10 @@ export enum AnalyticsPeriod {
 export const QuerySalesReportSchema = z.object({
   period: z.nativeEnum(AnalyticsPeriod),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  endDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 })
 export type QuerySalesReportInput = z.infer<typeof QuerySalesReportSchema>
 
@@ -121,8 +197,14 @@ export interface SalesReportOutput {
  */
 export const QueryProductStatsSchema = z.object({
   period: z.nativeEnum(AnalyticsPeriod).optional(),
-  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  startDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  endDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 export type QueryProductStatsInput = z.infer<typeof QueryProductStatsSchema>
@@ -307,9 +389,9 @@ export class AnalyticsService {
 
     const orderSet = new Set<string>()
 
-    orders.forEach(order => {
-      const hasSelf = order.orderItems.some(item => item.product.sourceType === 'SELF_OPERATED')
-      const hasConsign = order.orderItems.some(item => item.product.sourceType === 'CONSIGNMENT')
+    orders.forEach((order) => {
+      const hasSelf = order.orderItems.some((item) => item.product.sourceType === 'SELF_OPERATED')
+      const hasConsign = order.orderItems.some((item) => item.product.sourceType === 'CONSIGNMENT')
 
       if (hasSelf && !hasConsign) {
         selfRevenue += Number(order.totalAmount)
@@ -323,14 +405,14 @@ export class AnalyticsService {
         orderSet.add(order.id + '_consign')
 
         // 計算佣金（假設平均抽成 15%）
-        order.orderItems.forEach(item => {
+        order.orderItems.forEach((item) => {
           if (item.product.sourceType === 'CONSIGNMENT') {
             consignCommission += Number(item.subtotal) * 0.15
           }
         })
       } else {
         // 混合訂單（既有自營又有寄賣）
-        order.orderItems.forEach(item => {
+        order.orderItems.forEach((item) => {
           if (item.product.sourceType === 'SELF_OPERATED') {
             selfRevenue += Number(item.subtotal)
             selfProducts += 1
@@ -346,8 +428,8 @@ export class AnalyticsService {
     })
 
     // 計算線上 vs POS
-    const onlineOrders = orders.filter(o => o.channel === 'ONLINE')
-    const posOrders = orders.filter(o => o.channel === 'POS')
+    const onlineOrders = orders.filter((o) => o.channel === 'ONLINE')
+    const posOrders = orders.filter((o) => o.channel === 'POS')
     const onlineRevenue = onlineOrders.reduce((sum, o) => sum + Number(o.totalAmount), 0)
     const posRevenue = posOrders.reduce((sum, o) => sum + Number(o.totalAmount), 0)
 
@@ -355,12 +437,12 @@ export class AnalyticsService {
     const dailyMap = new Map<string, { revenue: number; orders: number }>()
     const days = eachDayOfInterval({ start, end })
 
-    days.forEach(day => {
+    days.forEach((day) => {
       const dateKey = day.toISOString().split('T')[0]
       dailyMap.set(dateKey, { revenue: 0, orders: 0 })
     })
 
-    orders.forEach(order => {
+    orders.forEach((order) => {
       const dateKey = order.createdAt.toISOString().split('T')[0]
       const existing = dailyMap.get(dateKey) || { revenue: 0, orders: 0 }
       dailyMap.set(dateKey, {
@@ -430,14 +512,15 @@ export class AnalyticsService {
     }
 
     // 日期範圍條件
-    const dateFilter = startDate && endDate
-      ? {
-          createdAt: {
-            gte: startOfDay(new Date(startDate)),
-            lte: endOfDay(new Date(endDate)),
-          },
-        }
-      : {}
+    const dateFilter =
+      startDate && endDate
+        ? {
+            createdAt: {
+              gte: startOfDay(new Date(startDate)),
+              lte: endOfDay(new Date(endDate)),
+            },
+          }
+        : {}
 
     // 暢銷商品（基於 OrderItem）
     const topSellingData = await this.prisma.orderItem.groupBy({
@@ -463,15 +546,15 @@ export class AnalyticsService {
       take: limit,
     })
 
-    const topSellingIds = topSellingData.map(item => item.productId)
+    const topSellingIds = topSellingData.map((item) => item.productId)
     const products = await this.prisma.product.findMany({
       where: { id: { in: topSellingIds } },
       select: { id: true, name: true, category: true },
     })
 
-    const productMap = new Map(products.map(p => [p.id, p]))
+    const productMap = new Map(products.map((p) => [p.id, p]))
 
-    const topSelling = topSellingData.map(item => {
+    const topSelling = topSellingData.map((item) => {
       const product = productMap.get(item.productId)
       return {
         productId: item.productId,
@@ -492,12 +575,13 @@ export class AnalyticsService {
 
     const inventory = {
       totalProducts: inventoryStats.reduce((sum, s) => sum + s._count.status, 0),
-      pending: inventoryStats.find(s => s.status === ProductStatus.PENDING)?._count.status || 0,
-      available: inventoryStats.find(s => s.status === ProductStatus.AVAILABLE)?._count.status || 0,
-      sold: inventoryStats.find(s => s.status === ProductStatus.SOLD)?._count.status || 0,
+      pending: inventoryStats.find((s) => s.status === ProductStatus.PENDING)?._count.status || 0,
+      available:
+        inventoryStats.find((s) => s.status === ProductStatus.AVAILABLE)?._count.status || 0,
+      sold: inventoryStats.find((s) => s.status === ProductStatus.SOLD)?._count.status || 0,
       consignment:
         inventoryStats.reduce((sum, s) => sum + s._count.status, 0) -
-        (inventoryStats.find(s => s.status === ProductStatus.SOLD)?._count.status || 0),
+        (inventoryStats.find((s) => s.status === ProductStatus.SOLD)?._count.status || 0),
     }
 
     // 類別統計
@@ -521,9 +605,9 @@ export class AnalyticsService {
       GROUP BY p.category
     `
 
-    const revenueMap = new Map(categoryRevenue.map(c => [c.category, c.revenue]))
+    const revenueMap = new Map(categoryRevenue.map((c) => [c.category, c.revenue]))
 
-    const categoryBreakdown = categoryStats.map(cat => ({
+    const categoryBreakdown = categoryStats.map((cat) => ({
       category: cat.category,
       count: cat._count.category,
       revenue: (revenueMap.get(cat.category) || 0).toString(),
@@ -578,20 +662,20 @@ export class AnalyticsService {
       },
     })
 
-    const sellersData = sellers.map(seller => {
+    const sellersData = sellers.map((seller) => {
       const totalProducts = seller.products.length
-      const soldProducts = seller.products.filter(p => p.status === ProductStatus.SOLD).length
+      const soldProducts = seller.products.filter((p) => p.status === ProductStatus.SOLD).length
 
       let totalRevenue = 0
-      seller.products.forEach(product => {
-        product.orderItems.forEach(item => {
+      seller.products.forEach((product) => {
+        product.orderItems.forEach((item) => {
           totalRevenue += Number(item.subtotal)
         })
       })
 
       // 根據賣家等級計算抽成比例
       let commissionRate = 0.15 // BRONZE: 15%
-      if (seller.tier === 'SILVER') commissionRate = 0.10
+      if (seller.tier === 'SILVER') commissionRate = 0.1
       if (seller.tier === 'GOLD') commissionRate = 0.05
 
       const platformCommission = totalRevenue * commissionRate
@@ -689,7 +773,9 @@ export class AnalyticsService {
     })
     const prev30DaysRevenue = prev30DaysOrders.reduce((sum, o) => sum + Number(o.totalAmount), 0)
     const growth30Days =
-      prev30DaysRevenue > 0 ? ((last30DaysRevenue - prev30DaysRevenue) / prev30DaysRevenue) * 100 : 0
+      prev30DaysRevenue > 0
+        ? ((last30DaysRevenue - prev30DaysRevenue) / prev30DaysRevenue) * 100
+        : 0
 
     // 快速統計
     const [pendingOrders, pendingPayments, activeAuctions] = await Promise.all([
@@ -866,7 +952,7 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
           endDate,
         })
 
-        const records = report.dailyData.map(day => ({
+        const records = report.dailyData.map((day) => ({
           日期: day.date,
           營收: day.revenue,
           訂單數: day.orders,
@@ -880,7 +966,7 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
           limit: 100,
         })
 
-        const records = stats.topSelling.map(product => ({
+        const records = stats.topSelling.map((product) => ({
           商品ID: product.productId,
           商品名稱: product.productName,
           類別: product.category,
@@ -895,7 +981,7 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
           endDate,
         })
 
-        const records = commission.sellers.map(seller => ({
+        const records = commission.sellers.map((seller) => ({
           賣家ID: seller.sellerId,
           賣家名稱: seller.sellerName,
           等級: seller.tier,
@@ -914,7 +1000,10 @@ export async function analyticsRoutes(fastify: FastifyInstance) {
 
       reply
         .header('Content-Type', 'text/csv; charset=utf-8')
-        .header('Content-Disposition', `attachment; filename="${reportType}-${startDate}-${endDate}.csv"`)
+        .header(
+          'Content-Disposition',
+          `attachment; filename="${reportType}-${startDate}-${endDate}.csv"`
+        )
         .send(csvData)
     }
   )
@@ -1141,3 +1230,23 @@ describe('AnalyticsService', () => {
 - **Task 10**: Buyer Web Setup（買家前台基礎建立）
 - **Task 17**: Admin Web Analytics（後台報表視覺化）
 - **Task 21**: Testing（E2E 測試報表功能）
+
+---
+
+## 📊 進度追蹤
+
+| 子任務                | 狀態      | 負責人 | 完成日期 |
+| --------------------- | --------- | ------ | -------- |
+| 9.1 Schema + 依賴安裝 | ⏳ 未開始 | -      | -        |
+| 9.2 Service 層        | ⏳ 未開始 | -      | -        |
+| 9.3 Routes 層         | ⏳ 未開始 | -      | -        |
+| 9.4 測試              | ⏳ 未開始 | -      | -        |
+
+---
+
+## 🔀 Multi-Mission 分割
+
+| Mission | 範圍                                                                          | 新增/修改檔案        | 測試數(預估) |
+| ------- | ----------------------------------------------------------------------------- | -------------------- | ------------ |
+| A       | Schema + Service (4 methods: sales/products/sellers/dashboard) + Service Test | 3 new + deps install | ~8           |
+| B       | Routes (5 endpoints + CSV export) + barrel + server 整合 + Routes Test        | 4 new + 1 modify     | ~8           |
