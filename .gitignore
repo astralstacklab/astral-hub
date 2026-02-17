@@ -45,6 +45,11 @@ lerna-debug.log*
 coverage/
 .nyc_output/
 
+# Playwright
+tests/e2e/screenshots/
+test-results/
+playwright-report/
+
 # Prisma
 prisma/migrations/
 
