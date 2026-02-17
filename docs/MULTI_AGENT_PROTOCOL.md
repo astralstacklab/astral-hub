@@ -1,15 +1,36 @@
 # Multi-Agent 協作協定 (Multi-Agent Collaboration Protocol)
 
-> **版本**: 0.4.0 (Draft)
-> **最後更新**: 2026-02-14
+> **版本**: 0.5.0 (Draft)
+> **最後更新**: 2026-02-17
 > **狀態**: 待審核
 > **適用範圍**: Card ERP 專案所有 AI Agent 協作場景
 
-本協定定義 Card ERP 開發中的多 Agent 協作規範。角色與 Agent 的對應關係如下：
+本協定定義 Card ERP 開發中的多 Agent 協作規範。
 
-- **Planner / Archiver（策劃 + 進版控）**：Claude（固定）
-- **Executor（開發）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派）
-- **Reviewer（審查）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派，需與 Executor 不同）
+### 角色與 Agent 對應
+
+- **Planner / Archiver（策劃 + 進版控 + 最終把關）**：Claude（固定）
+- **Executor（開發）**：任何可用 Agent（Gemini / Codex / Claude 等，由 Coordinator 彈性指派）
+- **Reviewer（審查）**：任何可用 Agent（由 Coordinator 彈性指派，建議與 Executor 不同）
+
+### 彈性配置模式
+
+本協定支援 2~3 個 Agent 的配置，角色可依實際情況互換：
+
+| 模式                | Agent 配置              | 說明                                                             |
+| ------------------- | ----------------------- | ---------------------------------------------------------------- |
+| **2-Agent**         | Claude + Gemini         | Claude 兼任 Planner + Reviewer + Final QA；Gemini 擔任 Executor  |
+| **2-Agent**         | Claude + Codex          | Claude 兼任 Planner + Final QA；Codex 擔任 Executor + 自我驗證   |
+| **3-Agent**         | Claude + Gemini + Codex | Claude = Planner + Final QA；Gemini = Executor；Codex = Reviewer |
+| **3-Agent（反轉）** | Claude + Codex + Gemini | Claude = Planner + Final QA；Codex = Executor；Gemini = Reviewer |
+
+**核心不變量**：無論幾個 Agent，Claude 始終負責最終把關（Final QA）與版控歸檔。其餘角色可自由分配。
+
+**角色互換規則**：
+
+- 同一個 Mission 中，Executor 和 Reviewer 建議由不同 Agent 擔任（避免自我審查盲區）
+- 2-Agent 模式下若無法分開，Claude 在 Final QA 階段需加強驗證力度（重新跑測試 + 截圖檢查）
+- 不同 Mission 之間，Executor 和 Reviewer 角色可以互換
 
 ---
 
@@ -25,29 +46,44 @@
 
 ## 2. 角色定義
 
-### 2.1 Planner（策劃者）— Claude
+### 2.1 Planner / Final QA（策劃 + 最終把關）— Claude（固定）
 
 - 分析任務需求，寫入 `MISSION_CONTROL.md`
 - 定義 File Scope、約束條件、驗證指令、中止條件
-- 最終驗證通過後歸檔進版控
+- **最終把關（Final QA）**：獨立重新執行驗證，不信任上游報告
+- 驗證通過後歸檔進版控
 
 **輸入**：人類的任務描述 + 專案文件
 **輸出**：`MISSION_CONTROL.md`
 
-### 2.2 Executor（執行者）— Gemini / Codex / Antigravity
+**Final QA 職責**（歸檔前必做）：
+
+1. 重新執行 Verification Commands（typecheck、測試等）
+2. 前端任務：執行 Playwright 截圖，以 multimodal 能力確認 UI 符合 Style Guide
+3. 確認代碼品質與架構一致性
+4. git commit + 更新任務文件
+
+### 2.2 Executor（執行者）— 任何可用 Agent
 
 由 Coordinator 依任務性質彈性指派，每次任務指定一位。
 
 - 根據 `MISSION_CONTROL.md` 執行程式碼變更
 - 記錄每一步操作的原因與結果至 `EXECUTION_LOG.md`
+- **執行完成後必須自行跑驗證**（Verification Commands），將結果記錄在 EXECUTION_LOG
 - 觸及中止條件時停止並回報
 
 **輸入**：`MISSION_CONTROL.md`
 **輸出**：`EXECUTION_LOG.md` + 程式碼變更
 
-### 2.3 Reviewer（審查者）— Gemini / Codex / Antigravity
+**前端任務額外職責**：
 
-由 Coordinator 依任務性質彈性指派，需與同一任務的 Executor 不同。
+1. 執行 `npx playwright test` 或對應的 E2E 測試，確保頁面可正常渲染
+2. 若 MISSION_CONTROL 要求截圖驗收，需產出截圖並記錄在 EXECUTION_LOG
+3. 確認響應式斷點（mobile / tablet / desktop）無明顯破版
+
+### 2.3 Reviewer（審查者）— 任何可用 Agent
+
+由 Coordinator 依任務性質彈性指派，建議與同一任務的 Executor 不同。
 
 - 對比 `MISSION_CONTROL.md` 目標與 `EXECUTION_LOG.md` 產出
 - 檢查架構一致性（對比 AGENTS.md 設計規範）
@@ -56,9 +92,16 @@
 **輸入**：`MISSION_CONTROL.md` + `EXECUTION_LOG.md`
 **輸出**：`REVIEW_REPORT.md`
 
+**前端任務額外職責**：
+
+1. 執行 Playwright E2E 測試，驗證 Executor 的結果可重現
+2. 檢查 UI 是否符合對應的 Style Guide（`docs/design-system/`）
+3. 確認無 console.error / 無效 API 呼叫
+
 ### 2.4 Coordinator（調度者）— 人類
 
 - 決定任務等級（見第 3 節）
+- **指定每個 Mission 的角色分配**（哪個 Agent 當 Executor、哪個當 Reviewer）
 - 觸發 Agent 切換（告知下一個 Agent 讀取對應產物）
 - 在 Agent 產出間做最終判斷
 
@@ -369,7 +412,6 @@ No errors found.
 - **Claude**：讀取 `CLAUDE.md` → 引導至 `AGENTS.md`
 - **Gemini**：讀取 `AGENTS.md`（透過 System Instructions 配置）
 - **Codex**：讀取 `AGENTS.md` + `codex.md`
-- **Antigravity**：讀取 `AGENTS.md`（透過 System Instructions 配置）
 
 因此 **不需要額外的 handoff prompt 或上下文組裝文件**。Agent 切換時，人類只需告知下一個 Agent 讀取 repo 根目錄的對應產物。
 
@@ -380,12 +422,29 @@ Coordinator 透過關鍵字觸發 Agent 角色：
 - **Executor 觸發**：「讀取 MISSION_CONTROL」、「開始執行」、「執行任務」
 - **Reviewer 觸發**：「REVIEW」、「閱讀 EXECUTION_LOG」、「審查」
 
-| 切換方向                   | 目標 Agent                   | 人類對下一個 Agent 說的話                                              |
-| -------------------------- | ---------------------------- | ---------------------------------------------------------------------- |
-| → Executor                 | Gemini / Codex / Antigravity | 「讀取 MISSION_CONTROL.md 並執行」                                     |
-| → Reviewer                 | Gemini / Codex / Antigravity | 「讀取 MISSION_CONTROL.md 和 EXECUTION_LOG.md，產出 REVIEW_REPORT.md」 |
-| → Executor（修正）         | 同原 Executor                | 「讀取 REVIEW_REPORT.md，修正問題後更新 EXECUTION_LOG.md」             |
-| → Planner（歸檔 + 進版控） | Claude                       | 「讀取 EXECUTION_LOG.md 和 REVIEW_REPORT.md，驗證並歸檔」              |
+| 切換方向           | 目標 Agent    | 人類對下一個 Agent 說的話                                              |
+| ------------------ | ------------- | ---------------------------------------------------------------------- |
+| → Executor         | 指定的 Agent  | 「讀取 MISSION_CONTROL.md 並執行」                                     |
+| → Reviewer         | 指定的 Agent  | 「讀取 MISSION_CONTROL.md 和 EXECUTION_LOG.md，產出 REVIEW_REPORT.md」 |
+| → Executor（修正） | 同原 Executor | 「讀取 REVIEW_REPORT.md，修正問題後更新 EXECUTION_LOG.md」             |
+| → Final QA（歸檔） | Claude        | 「讀取 EXECUTION_LOG.md 和 REVIEW_REPORT.md，驗證並歸檔」              |
+
+### 2-Agent 模式的簡化流程
+
+當僅有 2 個 Agent 時，可省略獨立 Reviewer 階段，由 Claude 在 Final QA 中加強驗證：
+
+```
+MISSION_CONTROL.md                    EXECUTION_LOG.md
+      │                                     │
+      ▼                                     ▼
+┌─────────────┐  寫入  ┌─────────────┐  讀取  ┌──────────────────────┐
+│  Phase 1    │───────▶│  Phase 2    │───────▶│  Phase 3             │
+│  策劃       │        │  執行       │        │  Final QA + 歸檔     │
+│  (Claude)   │        │  (Executor) │        │  (Claude, 加強驗證)  │
+└─────────────┘        └─────────────┘        └──────────────────────┘
+```
+
+此模式下 Claude 的 Final QA 需額外承擔 Reviewer 的職責（架構一致性檢查、副作用分析等）。
 
 ---
 
@@ -427,6 +486,88 @@ Coordinator 透過關鍵字觸發 Agent 角色：
 1. **試行**：從 Phase 1 任務中選 2 個 L2 任務試跑完整管線
 2. **正式啟用**：根據試行結果調整後，協定升級為 v1.0.0
 3. **持續演進**：每完成一個 Phase，回顧協定並調整
+
+---
+
+## 10. 前端任務驗證流程
+
+Task 10 起進入前端 UI/UX 開發，驗證方式與後端 API 不同。本節定義前端任務的驗證標準與各角色職責。
+
+### 10.1 驗證工具
+
+| 驗證層           | 工具                               | 驗證內容                 | 誰執行                             |
+| ---------------- | ---------------------------------- | ------------------------ | ---------------------------------- |
+| **型別正確性**   | `nuxt typecheck` 或 `tsc --noEmit` | TypeScript 編譯通過      | Executor + Final QA                |
+| **E2E 測試**     | `npx playwright test`              | DOM 狀態、導航、互動邏輯 | Executor + Reviewer + Final QA     |
+| **截圖驗收**     | Playwright screenshot → 圖檔       | 視覺呈現符合 Style Guide | Executor（產出）+ Final QA（判讀） |
+| **Console 檢查** | Playwright console log capture     | 無 console.error / 警告  | Executor + Reviewer                |
+
+### 10.2 Playwright 安裝位置
+
+Playwright 安裝於 **monorepo root**，所有前端 app 共用：
+
+```
+card-erp/
+├── playwright.config.ts      ← 統一配置，支援多 project
+├── tests/e2e/                ← E2E 測試目錄
+│   ├── buyer-web/
+│   ├── admin-web/
+│   └── pos-web/
+├── package.json              ← @playwright/test 在此安裝
+```
+
+### 10.3 前端版 MISSION_CONTROL 額外欄位
+
+前端任務的 MISSION_CONTROL 除標準欄位外，需額外包含：
+
+```markdown
+## Design Reference
+
+（指向對應的 Style Guide）
+
+- `docs/design-system/BUYER_WEB_STYLE_GUIDE.md`
+- `docs/design-system/TAILWIND_USAGE.md`
+
+## Visual Acceptance Criteria
+
+（截圖驗收條件，描述頁面應有的視覺呈現）
+
+- 首頁 Hero section 需有漸層背景
+- 手機版 (375px) 導航需收合為 hamburger menu
+- 卡片元件需有 hover shadow 效果
+
+## Responsive Breakpoints
+
+（必須驗證的斷點）
+
+- Mobile: 375px
+- Tablet: 768px
+- Desktop: 1280px
+```
+
+### 10.4 各角色的前端驗證清單
+
+**Executor 完成開發後必做**：
+
+- [ ] `nuxt typecheck` 通過
+- [ ] `npx playwright test` 相關測試通過
+- [ ] 在 EXECUTION_LOG 中記錄測試結果與截圖路徑
+- [ ] 確認無 TypeScript `any` 型別（單元測試除外）
+
+**Reviewer 審查時必做**：
+
+- [ ] 重新執行 `npx playwright test`，確認結果可重現
+- [ ] 檢查代碼是否符合 Style Guide 規範
+- [ ] 檢查是否有 console.error
+- [ ] 在 REVIEW_REPORT 中記錄驗證結果
+
+**Claude（Final QA）歸檔前必做**：
+
+- [ ] 重新執行 typecheck + Playwright 測試
+- [ ] 執行 Playwright 截圖，用 multimodal 能力看圖確認 UI
+- [ ] 對照 Style Guide 確認視覺一致性
+- [ ] 確認響應式各斷點無破版
+- [ ] git commit + 更新任務文件
 
 ---
 

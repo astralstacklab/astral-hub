@@ -226,11 +226,19 @@ main            # 生產環境（保護分支）
 
 ### Multi-Agent 協作規範
 
-本專案採用多 Agent 協作開發，角色分配如下：
+本專案採用多 Agent 協作開發，支援 2~3 個 Agent 的彈性配置，角色可互換：
 
-- **Planner / Archiver（策劃 + 進版控）**：Claude（固定）
-- **Executor（開發）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派）
-- **Reviewer（審查）**：Gemini / Codex / Antigravity（由 Coordinator 彈性指派，需與 Executor 不同）
+- **Planner / Final QA（策劃 + 最終把關 + 進版控）**：Claude（固定）
+- **Executor（開發）**：任何可用 Agent（由 Coordinator 彈性指派）
+- **Reviewer（審查）**：任何可用 Agent（由 Coordinator 彈性指派，建議與 Executor 不同）
+
+**彈性配置**：
+
+- **2-Agent 模式**：Claude (Planner + Final QA) + 另一 Agent (Executor)，省略獨立 Reviewer 階段
+- **3-Agent 模式**：Claude (Planner + Final QA) + Executor + Reviewer，完整管線
+- 不同 Mission 之間 Executor 和 Reviewer 角色可互換
+
+**核心不變量**：無論幾個 Agent，Claude 始終負責最終把關（Final QA）與版控歸檔。
 
 **觸發辨識**：當 Coordinator 要求 Agent「讀取 MISSION_CONTROL」或「開始執行」→ Executor 角色；要求「REVIEW」或「閱讀 EXECUTION_LOG」→ Reviewer 角色。
 
@@ -246,7 +254,9 @@ main            # 生產環境（保護分支）
 - `EXECUTION_LOG.md` — 執行者產出，記錄操作步驟與決策理由
 - `REVIEW_REPORT.md` — 審查者產出，結構化差異分析與改進建議
 
-**歸檔職責**：任務文件（`docs/tasks/`）的 checkbox 勾選、進度更新、版控提交**專屬於 Claude（Planner/Archiver）**。Executor 和 Reviewer 不得修改任務文件。
+**前端任務驗證**：Task 10 起進入前端開發，Executor 完成後必須自行跑 `npx playwright test` 驗證，Claude 在 Final QA 階段用 Playwright 截圖 + multimodal 做視覺確認。詳見協定第 10 節。
+
+**歸檔職責**：任務文件（`docs/tasks/`）的 checkbox 勾選、進度更新、版控提交**專屬於 Claude（Planner/Final QA）**。Executor 和 Reviewer 不得修改任務文件。
 
 **完整協定**：[`docs/MULTI_AGENT_PROTOCOL.md`](./docs/MULTI_AGENT_PROTOCOL.md)
 
