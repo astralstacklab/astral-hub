@@ -568,6 +568,50 @@ card-erp/
 - [ ] 對照 Style Guide 確認視覺一致性
 - [ ] 確認響應式各斷點無破版
 - [ ] git commit + 更新任務文件
+- [ ] 產出「人類視覺抽測報告」（見 10.5）
+
+### 10.5 人類視覺抽測流程
+
+Claude 完成 Final QA 後，若該 Mission 涉及 UI/UX 變更，**必須**在回報結果時附上以下內容，供人類（Coordinator）做最終視覺抽測：
+
+#### 回報格式
+
+```markdown
+## Final QA 結果：PASS / FAIL
+
+### 截圖驗證摘要
+
+（表格列出各驗證項目 + PASS/FAIL + 說明）
+
+### 人類視覺抽測步驟
+
+#### Step 1: 啟動 dev server
+
+（具體指令）
+
+#### Step 2: 瀏覽器開啟
+
+（URL + 檢查重點清單）
+
+#### Step 3: 響應式測試
+
+（DevTools 操作 + 各斷點檢查項目）
+
+#### Step 4: 互動測試
+
+（hover / click / 動畫等需人工確認的項目）
+
+#### Step 5: 結束
+
+（停止 server 的方式）
+```
+
+#### 回報原則
+
+- **只在涉及 UI/UX 的 Mission 產出**（純邏輯層如 API Client / Store 不需要）
+- **步驟必須具體可執行**：包含完整指令、URL、DevTools 操作方式
+- **檢查重點對齊 MISSION_CONTROL 的 Visual Acceptance Criteria**
+- **列出需要人工確認的互動效果**（hover 動畫、transition、scroll 行為等，這些 Playwright 截圖無法完整呈現）
 
 ---
 
