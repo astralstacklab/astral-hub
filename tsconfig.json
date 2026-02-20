@@ -16,7 +16,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "noEmit": true
   },
-  "exclude": ["node_modules", "dist", "**/dist", "build", ".output", ".nuxt", "docs"]
+  "exclude": ["node_modules", "dist", "**/dist", "build", ".output", ".nuxt", "docs", "apps"]
 }

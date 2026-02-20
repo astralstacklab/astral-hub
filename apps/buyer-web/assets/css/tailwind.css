@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Pure Black Base */
+    --bg-pure-black: #000000;
+    --bg-dark: #0A0A0A;
+    --bg-charcoal: #141414;
+
+    /* Cyan - 主要霓虹色 */
+    --neon-cyan: #00F0FF;
+    --neon-cyan-glow: 0 0 20px #00F0FF, 0 0 40px #00F0FF;
+    --neon-cyan-strong: 0 0 30px #00F0FF, 0 0 60px #00F0FF, 0 0 90px #00F0FF;
+
+    /* Magenta - 次要霓虹色 */
+    --neon-magenta: #FF00FF;
+    --neon-magenta-glow: 0 0 20px #FF00FF, 0 0 40px #FF00FF;
+
+    /* Lime - 能量色 */
+    --neon-lime: #84FF00;
+    --neon-lime-glow: 0 0 20px #84FF00, 0 0 40px #84FF00;
+
+    /* Fonts */
+    --font-sans: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Orbitron', 'Exo 2', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+  }
+
+  body {
+    @apply bg-black text-white;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply uppercase tracking-wider;
+  }
+}
+
+@layer components {
+  .neon-text {
+    color: var(--neon-cyan);
+    text-shadow: var(--neon-cyan-glow);
+    animation: neon-flicker 3s infinite alternate;
+  }
+
+  .neon-text-magenta {
+    color: var(--neon-magenta);
+    text-shadow: var(--neon-magenta-glow);
+  }
+
+  .neon-text-lime {
+    color: var(--neon-lime);
+    text-shadow: var(--neon-lime-glow);
+  }
+
+  .neon-border {
+    border: 2px solid var(--neon-cyan);
+    box-shadow:
+      inset 0 0 20px rgba(0, 240, 255, 0.2),
+      0 0 20px rgba(0, 240, 255, 0.5);
+    @apply transition-all duration-300;
+  }
+
+  .neon-border:hover {
+    box-shadow:
+      inset 0 0 30px rgba(0, 240, 255, 0.3),
+      0 0 40px rgba(0, 240, 255, 0.8);
+  }
+
+  .neon-button {
+    @apply relative px-8 py-4 bg-transparent border-2 border-neon-cyan text-neon-cyan font-display font-bold uppercase tracking-widest cursor-pointer overflow-hidden transition-all duration-300;
+  }
+
+  .neon-button::before {
+    content: '';
+    @apply absolute top-0 -left-full w-full h-full;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 240, 255, 0.3),
+      transparent
+    );
+    @apply transition-all duration-500;
+  }
+
+  .neon-button:hover::before {
+    @apply left-full;
+  }
+
+  .neon-button:hover {
+    background: rgba(0, 240, 255, 0.1);
+    box-shadow:
+      inset 0 0 20px rgba(0, 240, 255, 0.3),
+      0 0 30px rgba(0, 240, 255, 0.8);
+    text-shadow: 0 0 10px #00F0FF;
+  }
+
+  .neon-button:active {
+    @apply scale-95;
+  }
+}
+
+@keyframes neon-flicker {
+  0%, 100% {
+    text-shadow: var(--neon-cyan-glow);
+    opacity: 1;
+  }
+  50% {
+    text-shadow: var(--neon-cyan-strong);
+    opacity: 0.9;
+  }
+}
