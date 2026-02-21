@@ -79,12 +79,7 @@ pnpm add -D nuxt@latest
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt',
-    '@vueuse/nuxt',
-    '@vite-pwa/nuxt',
-  ],
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt', '@vite-pwa/nuxt'],
 
   // TypeScript 嚴格模式
   typescript: {
@@ -108,12 +103,13 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
       meta: [
-        { name: 'description', content: 'OMO 卡牌交易平台 - 寶可夢、海賊王、遊戲王卡牌線上線下交易' },
+        {
+          name: 'description',
+          content: 'OMO 卡牌交易平台 - 寶可夢、海賊王、遊戲王卡牌線上線下交易',
+        },
         { name: 'format-detection', content: 'telephone=no' },
       ],
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      ],
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     },
   },
 
@@ -308,10 +304,7 @@ export const useApiClient = () => {
   /**
    * 通用 API 請求函式
    */
-  const apiFetch = async <T>(
-    endpoint: string,
-    options?: FetchOptions
-  ): Promise<T> => {
+  const apiFetch = async <T>(endpoint: string, options?: FetchOptions): Promise<T> => {
     try {
       const response = await $fetch<T>(endpoint, {
         baseURL,
@@ -506,7 +499,7 @@ export const useCartStore = defineStore('cart', {
 
   actions: {
     addItem(product: Product) {
-      const existingItem = this.items.find(item => item.productId === product.id)
+      const existingItem = this.items.find((item) => item.productId === product.id)
 
       if (existingItem) {
         existingItem.quantity += 1
@@ -520,11 +513,11 @@ export const useCartStore = defineStore('cart', {
     },
 
     removeItem(productId: string) {
-      this.items = this.items.filter(item => item.productId !== productId)
+      this.items = this.items.filter((item) => item.productId !== productId)
     },
 
     updateQuantity(productId: string, quantity: number) {
-      const item = this.items.find(item => item.productId === productId)
+      const item = this.items.find((item) => item.productId === productId)
       if (item) {
         item.quantity = quantity
       }
@@ -557,9 +550,7 @@ export const useCartStore = defineStore('cart', {
       <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
           <!-- Logo -->
-          <NuxtLink to="/" class="text-2xl font-bold text-primary-600">
-            卡牌商城
-          </NuxtLink>
+          <NuxtLink to="/" class="text-2xl font-bold text-primary-600"> 卡牌商城 </NuxtLink>
 
           <!-- Navigation -->
           <nav class="hidden md:flex items-center space-x-8">
@@ -574,10 +565,23 @@ export const useCartStore = defineStore('cart', {
           <!-- Cart & User -->
           <div class="flex items-center space-x-4">
             <NuxtLink to="/cart" class="relative">
-              <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              <svg
+                class="w-6 h-6 text-gray-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                />
               </svg>
-              <span v-if="cartStore.totalItems > 0" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span
+                v-if="cartStore.totalItems > 0"
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+              >
                 {{ cartStore.totalItems }}
               </span>
             </NuxtLink>
@@ -620,10 +624,16 @@ const cartStore = useCartStore()
         <h1 class="text-5xl font-bold mb-4">歡迎來到卡牌商城</h1>
         <p class="text-xl mb-8">收藏級卡牌交易平台 - 線上線下無縫整合</p>
         <div class="flex justify-center space-x-4">
-          <NuxtLink to="/products" class="btn btn-primary bg-white text-primary-600 hover:bg-gray-100">
+          <NuxtLink
+            to="/products"
+            class="btn btn-primary bg-white text-primary-600 hover:bg-gray-100"
+          >
             瀏覽商品
           </NuxtLink>
-          <NuxtLink to="/auctions" class="btn border-2 border-white text-white hover:bg-white hover:text-primary-600">
+          <NuxtLink
+            to="/auctions"
+            class="btn border-2 border-white text-white hover:bg-white hover:text-primary-600"
+          >
             競標專區
           </NuxtLink>
         </div>
@@ -677,10 +687,7 @@ useHead({
 
 <template>
   <div class="flex justify-center items-center" :class="containerClass">
-    <div
-      class="animate-spin rounded-full border-t-2 border-b-2"
-      :class="[sizeClass, colorClass]"
-    />
+    <div class="animate-spin rounded-full border-t-2 border-b-2" :class="[sizeClass, colorClass]" />
   </div>
 </template>
 
@@ -722,10 +729,18 @@ const colorClass = computed(() => {
 <!-- apps/buyer-web/components/ErrorMessage.vue -->
 
 <template>
-  <div v-if="message" class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md" role="alert">
+  <div
+    v-if="message"
+    class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md"
+    role="alert"
+  >
     <div class="flex items-center">
       <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        <path
+          fill-rule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+          clip-rule="evenodd"
+        />
       </svg>
       <span>{{ message }}</span>
     </div>
@@ -825,16 +840,16 @@ pnpm preview
 
 ## 十一、驗收標準
 
-- [ ] Nuxt 3 專案正常啟動（`pnpm dev`）
-- [ ] TailwindCSS 樣式正常載入
-- [ ] TypeScript 嚴格模式開啟，無型別錯誤
-- [ ] Pinia stores 正常運作（user, cart）
-- [ ] API client 可正常呼叫後端 API
-- [ ] Layout 與首頁正常顯示
-- [ ] PWA manifest 正確配置
-- [ ] 響應式設計在手機/平板/桌面正常顯示
-- [ ] 無使用 `any` 型別（除單元測試外）
-- [ ] 共用元件（LoadingSpinner, ErrorMessage）可正常使用
+- [x] Nuxt 3 專案正常啟動（`pnpm dev`）
+- [x] TailwindCSS 樣式正常載入
+- [x] TypeScript 嚴格模式開啟，無型別錯誤
+- [x] Pinia stores 正常運作（user, cart）
+- [x] API client 可正常呼叫後端 API
+- [x] Layout 與首頁正常顯示
+- [x] PWA manifest 正確配置
+- [x] 響應式設計在手機/平板/桌面正常顯示
+- [x] 無使用 `any` 型別（除單元測試外）
+- [x] 共用元件（LoadingSpinner, ErrorMessage）可正常使用
 
 ---
 
