@@ -1,54 +1,38 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Buyer Web Smoke Test', () => {
-  test('should render the homepage with neon theme', async ({ page }) => {
-    // Navigate to the buyer web app
+  test('should render hero and header structure', async ({ page }) => {
     await page.goto('/')
 
-    // Check for the main title
-    const title = page.locator('h1')
-    await expect(title).toBeVisible()
-    await expect(title).toHaveText('CARD ERP')
+    const hero = page.getByTestId('hero-section')
+    await expect(hero).toBeVisible()
 
-    // Verify that the Orbitron font or neon class is likely applied (checking computed style)
-    const titleStyle = await title.evaluate((el) => {
-      const style = window.getComputedStyle(el)
-      return {
-        color: style.color,
-        fontFamily: style.fontFamily,
-        textTransform: style.textTransform,
-      }
-    })
+    const header = page.locator('header')
+    await expect(header).toBeVisible()
+    await expect(header.getByRole('link', { name: 'CARD ERP' })).toBeVisible()
 
-    // Primary neon-cyan is #00F0FF (rgb(0, 240, 255))
-    expect(titleStyle.color).toBe('rgb(0, 240, 255)')
-    expect(titleStyle.fontFamily).toContain('Orbitron')
-    expect(titleStyle.textTransform).toBe('uppercase')
+    const title = hero.locator('h1')
+    await expect(title).toContainText('COLLECT')
+    await expect(title).toContainText('TRADE')
+    await expect(title).toContainText('WIN')
 
-    // Check for the neon button
-    const neonButton = page.locator('button.neon-button')
-    await expect(neonButton).toBeVisible()
-    await expect(neonButton).toHaveText('開始探索')
-
-    // Check for another neon magenta button or element
-    const magentaButton = page.locator('button:has-text("查看競標")')
-    await expect(magentaButton).toBeVisible()
-
-    // Check background is black
-    const bodyBg = await page.evaluate(() => {
-      return window.getComputedStyle(document.body).backgroundColor
-    })
-    expect(bodyBg).toBe('rgb(0, 0, 0)')
+    const statsBar = page.getByTestId('stats-bar')
+    await expect(statsBar).toBeVisible()
+    await expect(statsBar.locator(':scope > div')).toHaveCount(3)
   })
 
-  test('should show stats grid', async ({ page }) => {
+  test('should show mobile hamburger and hide desktop nav', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 })
     await page.goto('/')
 
-    const stats = page.locator('.grid > div')
-    await expect(stats).toHaveCount(3)
+    const header = page.locator('header')
+    const desktopNav = header.locator('nav[aria-label="Primary"]')
+    await expect(desktopNav).toBeHidden()
 
-    await expect(stats.nth(0)).toContainText('Active Listings')
-    await expect(stats.nth(1)).toContainText('Traders Online')
-    await expect(stats.nth(2)).toContainText('Auctions Ending')
+    const menuButton = header.getByRole('button', { name: 'Toggle menu' })
+    await expect(menuButton).toBeVisible()
+
+    await menuButton.click()
+    await expect(page.getByRole('link', { name: '商城' })).toBeVisible()
   })
 })
