@@ -75,12 +75,42 @@
           </svg>
         </button>
       </div>
+    </header>
 
+    <Teleport to="body">
       <div
         v-if="isMenuOpen"
-        class="fixed inset-0 z-50 border-t border-neon-cyan/30 bg-black/95 px-6 py-20 md:hidden"
+        class="fixed inset-0 z-[100] flex flex-col bg-black px-6 pt-6 pb-12 md:hidden"
       >
-        <div class="mx-auto flex max-w-md flex-col gap-8">
+        <div class="flex items-center justify-between">
+          <NuxtLink
+            to="/"
+            class="font-display text-xl tracking-[0.2em] text-neon-cyan"
+            @click="closeMenu"
+          >
+            CARD ERP
+          </NuxtLink>
+          <button
+            type="button"
+            aria-label="Close menu"
+            class="inline-flex h-10 w-10 items-center justify-center rounded border border-neon-cyan/30 text-neon-cyan transition-colors hover:bg-neon-cyan/10"
+            @click="closeMenu"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            >
+              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="18" y1="6" x2="6" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <nav class="mt-12 flex flex-col gap-8">
           <NuxtLink
             to="/marketplace"
             class="font-display text-2xl uppercase tracking-[0.2em] text-neon-cyan"
@@ -109,9 +139,9 @@
           >
             購物車 (2)
           </NuxtLink>
-        </div>
+        </nav>
       </div>
-    </header>
+    </Teleport>
 
     <main>
       <slot />
