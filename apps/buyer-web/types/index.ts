@@ -21,6 +21,8 @@ export interface ProductListQuery extends Record<string, string | number | boole
   search?: string
   category?: string
   status?: string
+  minPrice?: number
+  maxPrice?: number
 }
 
 export interface AuctionListQuery extends Record<string, string | number | boolean | undefined> {

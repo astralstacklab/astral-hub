@@ -1,4 +1,4 @@
-import type { Product, SuccessResponse } from '@card-erp/shared-types'
+import type { PaginationMeta, Product, SuccessResponse } from '@card-erp/shared-types'
 import type { MaybeRefOrGetter } from 'vue'
 import type { ProductListQuery } from '~/types'
 import { toValue } from 'vue'
@@ -16,6 +16,7 @@ export function useProducts(query: ProductListQuery = {}) {
 
   return {
     data: computed(() => asyncData.data.value?.data ?? []),
+    meta: computed<PaginationMeta | null>(() => asyncData.data.value?.meta ?? null),
     pending: asyncData.pending,
     error: computed(() => (asyncData.error.value ? handleApiError(asyncData.error.value) : null)),
     refresh: asyncData.refresh,
