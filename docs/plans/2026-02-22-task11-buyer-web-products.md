@@ -32,6 +32,7 @@
 - Create: `apps/buyer-web/components/Pagination.vue`
 - Create: `apps/buyer-web/components/ImageGallery.vue`
 - Modify: `apps/buyer-web/types/index.ts` — 新增 `minPrice` / `maxPrice` 欄位
+- Modify: `apps/buyer-web/composables/useProducts.ts` — 新增 `meta` 回傳（Pagination 需要 `totalPages`）
 
 ### Step A-1: 擴充 ProductListQuery 型別
 
@@ -54,6 +55,28 @@ export interface ProductListQuery extends Record<string, string | number | boole
 ```bash
 pnpm --filter @card-erp/buyer-web typecheck
 ```
+
+### Step A-1.5: 修正 useProducts meta 回傳
+
+**檔案**: `apps/buyer-web/composables/useProducts.ts`
+
+目前 `useProducts` 回傳 `data`（Product[]）但不回傳 `meta`（PaginationMeta），Pagination 元件需要 `totalPages`。
+
+在 return 物件中新增 `meta`：
+
+```typescript
+import type { PaginationMeta } from '@card-erp/shared-types'
+
+return {
+  data: computed(() => asyncData.data.value?.data ?? []),
+  meta: computed(() => asyncData.data.value?.meta ?? null),  // 新增這行
+  pending: asyncData.pending,
+  error: computed(...),
+  refresh: asyncData.refresh,
+}
+```
+
+其餘邏輯不動。`useProduct` 不需改。
 
 ### Step A-2: 實作 ProductCard.vue
 
