@@ -159,13 +159,18 @@ Phase 3（審查）→ REVIEW_REPORT verdict = BLOCKED
 
 ```
 Planning（全局規劃）
-  │  Planner 產出整體實作計畫，定義所有 Mission 的切分方式
+  │  Planner 先產出 docs/plans/YYYY-MM-DD-<task-name>.md
+  │  定義所有 Mission 的切分方式、檔案範圍、關鍵程式碼與驗證指令
   │
   ├→ Mission A（小塊）→ MISSION_CONTROL → Execute → Review → Commit
   ├→ Mission B（小塊）→ MISSION_CONTROL → Execute → Review → Commit
   ├→ Mission C（小塊）→ MISSION_CONTROL → Execute → Review → Commit
   └→ ...（依序執行，每個 Mission 獨立走完整管線）
 ```
+
+> **⚠️ 強制要求**：**全新 Task 開始時，Planner 必須先產出 Planning 文件**（`docs/plans/`），再依序撰寫各 Mission 的 `MISSION_CONTROL.md`。
+> 禁止跳過 Planning 直接寫 MISSION_CONTROL。Planning 文件是 MISSION_CONTROL 的上游輸入，確保每個 Mission 的範圍切分合理且有完整的技術細節。
+> Planning 文件命名規則：`docs/plans/YYYY-MM-DD-task{N}-{feature-name}.md`
 
 **適用條件**：
 
