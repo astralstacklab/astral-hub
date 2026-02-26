@@ -3,9 +3,9 @@
 > **版本**: 0.5.0 (Draft)
 > **最後更新**: 2026-02-17
 > **狀態**: 待審核
-> **適用範圍**: Card ERP 專案所有 AI Agent 協作場景
+> **適用範圍**: Astral Hub 專案所有 AI Agent 協作場景
 
-本協定定義 Card ERP 開發中的多 Agent 協作規範。
+本協定定義 Astral Hub 開發中的多 Agent 協作規範。
 
 ### 角色與 Agent 對應
 
@@ -198,7 +198,7 @@ Planning（全局規劃）
 3 份固定檔案，位於 **repo 根目錄**，每次任務覆寫前一次內容。不進版控。
 
 ```
-card-erp/
+astral-hub/
 ├── MISSION_CONTROL.md    ← Planner 寫，Executor 讀
 ├── EXECUTION_LOG.md      ← Executor 寫，Reviewer 讀
 ├── REVIEW_REPORT.md      ← Reviewer 寫，Executor / Planner 讀
@@ -512,7 +512,7 @@ Task 10 起進入前端 UI/UX 開發，驗證方式與後端 API 不同。本節
 Playwright 安裝於 **monorepo root**，所有前端 app 共用：
 
 ```
-card-erp/
+astral-hub/
 ├── playwright.config.ts      ← 統一配置，支援多 project
 ├── tests/e2e/                ← E2E 測試目錄
 │   ├── buyer-web/

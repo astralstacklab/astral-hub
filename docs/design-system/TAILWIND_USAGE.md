@@ -1,6 +1,6 @@
 # Tailwind CSS 使用指南
 
-本文件說明如何在 Card ERP 各應用程式中使用共用的 Tailwind CSS preset。
+本文件說明如何在 Astral Hub 各應用程式中使用共用的 Tailwind CSS preset。
 
 ---
 
@@ -672,4 +672,4 @@ module.exports = {
 ---
 
 **最後更新**: 2026-01-25
-**維護者**: Card ERP 開發團隊
+**維護者**: Astral Hub 開發團隊

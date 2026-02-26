@@ -1,11 +1,11 @@
-# Card ERP - OMO 收藏卡交易平台
+# Astral Hub - OMO 收藏卡交易平台
 
 線上線下整合的收藏卡、鑑定卡交易系統，支援多賣家寄賣、競標、實體店面掃碼結帳等完整功能。
 
 ## 專案結構
 
 ```
-card-erp/
+astral-hub/
 ├── apps/                          # 前端應用
 │   ├── buyer-web/                 # 買家端（Nuxt 3 SSR + PWA）
 │   ├── admin-web/                 # 後台管理系統（Vue 3 SPA）
@@ -98,8 +98,8 @@ card-erp/
 
 ```bash
 # 1. Clone 專案
-git clone <repo-url> card-erp
-cd card-erp
+git clone <repo-url> astral-hub
+cd astral-hub
 
 # 2. 一鍵設定開發環境（安裝依賴 + 啟動 Docker + 驗證環境變數）
 pnpm run setup-dev

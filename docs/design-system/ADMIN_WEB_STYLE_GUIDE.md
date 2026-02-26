@@ -670,8 +670,8 @@ Professional    Trustworthy    Sophisticated
 <aside class="sidebar">
   <div class="sidebar-header">
     <div class="logo">
-      <img src="/logo.svg" alt="Card ERP" />
-      <span>Card ERP</span>
+      <img src="/logo.svg" alt="Astral Hub" />
+      <span>Astral Hub</span>
     </div>
   </div>
 

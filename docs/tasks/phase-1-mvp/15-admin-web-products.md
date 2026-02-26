@@ -24,7 +24,7 @@ import type {
   ProductDetailOutput,
   CreateProductInput,
   UpdateProductInput,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 export const useProductsApi = () => {
   const { apiFetch } = useApiClient()
@@ -585,7 +585,7 @@ watch(() => props.modelValue, (newValue) => {
 </template>
 
 <script setup lang="ts">
-import type { ProductStatus } from '@card-erp/shared-types'
+import type { ProductStatus } from '@astral-hub/shared-types'
 
 definePageMeta({
   middleware: ['auth'],
@@ -761,7 +761,7 @@ useHead({
 </template>
 
 <script setup lang="ts">
-import type { CreateProductInput } from '@card-erp/shared-types'
+import type { CreateProductInput } from '@astral-hub/shared-types'
 
 definePageMeta({
   middleware: ['auth'],
@@ -821,7 +821,7 @@ useHead({
 </template>
 
 <script setup lang="ts">
-import type { UpdateProductInput, ProductDetailOutput } from '@card-erp/shared-types'
+import type { UpdateProductInput, ProductDetailOutput } from '@astral-hub/shared-types'
 
 definePageMeta({
   middleware: ['auth'],
@@ -984,7 +984,7 @@ useHead({
 </template>
 
 <script setup lang="ts">
-import type { CreateProductInput, ProductDetailOutput } from '@card-erp/shared-types'
+import type { CreateProductInput, ProductDetailOutput } from '@astral-hub/shared-types'
 
 interface Props {
   initialData?: ProductDetailOutput
@@ -1179,7 +1179,7 @@ const handleSubmit = (): void => {
 </template>
 
 <script setup lang="ts">
-import type { ProductDetailOutput, ProductStatus } from '@card-erp/shared-types'
+import type { ProductDetailOutput, ProductStatus } from '@astral-hub/shared-types'
 
 definePageMeta({
   middleware: ['auth'],

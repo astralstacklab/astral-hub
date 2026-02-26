@@ -1,4 +1,4 @@
-# Card ERP - AI Agent 專案指南
+# Astral Hub - AI Agent 專案指南
 
 > 此文件為 AI 編程助手（Claude、Gemini、Codex 等）提供專案背景與開發指引
 
@@ -6,7 +6,7 @@
 
 ## 專案簡介
 
-**Card ERP** 是一個 OMO（線上線下整合）收藏卡交易平台，主要功能包含：
+**Astral Hub** 是一個 OMO（線上線下整合）收藏卡交易平台，主要功能包含：
 
 - 🏪 **實體店面**: QR Code 掃碼結帳系統
 - 🛒 **線上商城**: 直購 + 競標功能
@@ -57,7 +57,7 @@
 ## 專案結構
 
 ```
-card-erp/                          # Monorepo 根目錄
+astral-hub/                          # Monorepo 根目錄
 │
 ├── apps/                          # 前端應用
 │   ├── buyer-web/                 # 買家端 (Nuxt 3 SSR + PWA)
@@ -514,12 +514,12 @@ API_PORT=3000
 API_HOST=0.0.0.0
 
 # 資料庫
-DATABASE_URL=postgresql://user:password@localhost:5678/card_erp
+DATABASE_URL=postgresql://user:password@localhost:5678/astral_hub
 REDIS_URL=redis://localhost:6379
 
 # GCS
 GCS_PROJECT_ID=your-project-id
-GCS_BUCKET_NAME=card-erp-storage
+GCS_BUCKET_NAME=astral-hub-storage
 GCS_KEY_FILE=./gcs-key.json
 
 # JWT
@@ -565,9 +565,9 @@ POS_WEB_URL=http://localhost:3003
 
    ```bash
    docker run -d \
-     --name card-erp-postgres \
+     --name astral-hub-postgres \
      -e POSTGRES_PASSWORD=password \
-     -e POSTGRES_DB=card_erp \
+     -e POSTGRES_DB=astral_hub \
      -p 5678:5432 \
      postgres:15
    ```
@@ -575,7 +575,7 @@ POS_WEB_URL=http://localhost:3003
 3. **啟動 Redis**（使用既有 Redis Cloud 或本地）:
 
    ```bash
-   docker run -d --name card-erp-redis -p 6379:6379 redis:7
+   docker run -d --name astral-hub-redis -p 6379:6379 redis:7
    ```
 
 4. **資料庫遷移**:
@@ -651,7 +651,7 @@ pnpm deploy
 
 1. 在 `packages/shared-types/src/` 定義型別
 2. 導出到 `index.ts`
-3. 前後端專案即可引用: `import { Product } from '@card-erp/shared-types'`
+3. 前後端專案即可引用: `import { Product } from '@astral-hub/shared-types'`
 
 ---
 
@@ -746,7 +746,7 @@ pnpm type-check                 # TypeScript 型別檢查
 
 ### 📚 文件導航
 
-Card ERP 專案包含完整的文件體系，確保開發過程有據可循。所有文件分為以下類別：
+Astral Hub 專案包含完整的文件體系，確保開發過程有據可循。所有文件分為以下類別：
 
 **完整文件索引**: [docs/DOCS_INDEX.md](./docs/DOCS_INDEX.md)
 

@@ -1,4 +1,4 @@
-// Card ERP - Database Schema
+// Astral Hub - Database Schema
 // Prisma ORM for PostgreSQL
 
 generator client {

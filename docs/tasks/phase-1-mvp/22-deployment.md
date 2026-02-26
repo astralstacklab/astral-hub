@@ -15,7 +15,7 @@
 ### 1.1 建立 GCP 專案
 
 1. 前往 [Google Cloud Console](https://console.cloud.google.com/)
-2. 建立新專案：`card-erp-production`
+2. 建立新專案：`astral-hub-production`
 3. 啟用以下 API：
    - Cloud Run API
    - Cloud SQL Admin API
@@ -35,7 +35,7 @@ curl https://sdk.cloud.google.com | bash
 # 初始化
 gcloud init
 gcloud auth login
-gcloud config set project card-erp-production
+gcloud config set project astral-hub-production
 ```
 
 ---
@@ -293,7 +293,7 @@ test-results
 
 ```bash
 # 建立 PostgreSQL 實例
-gcloud sql instances create card-erp-db \
+gcloud sql instances create astral-hub-db \
   --database-version=POSTGRES_15 \
   --tier=db-f1-micro \
   --region=asia-east1 \
@@ -302,11 +302,11 @@ gcloud sql instances create card-erp-db \
   --storage-size=10GB
 
 # 建立資料庫
-gcloud sql databases create card_erp --instance=card-erp-db
+gcloud sql databases create astral_hub --instance=astral-hub-db
 
 # 建立使用者
-gcloud sql users create card_erp_user \
-  --instance=card-erp-db \
+gcloud sql users create astral_hub_user \
+  --instance=astral-hub-db \
   --password=CHANGE_ME
 ```
 
@@ -314,7 +314,7 @@ gcloud sql users create card_erp_user \
 
 ```bash
 # 建立 Redis 實例
-gcloud redis instances create card-erp-redis \
+gcloud redis instances create astral-hub-redis \
   --size=1 \
   --region=asia-east1 \
   --redis-version=redis_7_0
@@ -328,7 +328,7 @@ gcloud redis instances create card-erp-redis \
 
 ```bash
 # 資料庫 URL
-echo -n "postgresql://card_erp_user:PASSWORD@/card_erp?host=/cloudsql/PROJECT_ID:asia-east1:card-erp-db" | \
+echo -n "postgresql://astral_hub_user:PASSWORD@/astral_hub?host=/cloudsql/PROJECT_ID:asia-east1:astral-hub-db" | \
   gcloud secrets create DATABASE_URL --data-file=-
 
 # JWT Secret
@@ -352,7 +352,7 @@ gcloud secrets create GCS_KEY_FILE --data-file=./gcp-key.json
 
 ```bash
 # 設定 Artifact Registry（建議使用 Artifact Registry 取代 Container Registry）
-gcloud artifacts repositories create card-erp-images \
+gcloud artifacts repositories create astral-hub-images \
   --repository-format=docker \
   --location=asia-east1
 
@@ -361,31 +361,31 @@ gcloud auth configure-docker asia-east1-docker.pkg.dev
 
 # 建置 API 映像檔
 cd apps/api
-docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/api:latest -f Dockerfile ../..
-docker push asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/api:latest
+docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/api:latest -f Dockerfile ../..
+docker push asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/api:latest
 
 # 建置 Buyer Web 映像檔
 cd apps/buyer-web
-docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/buyer-web:latest -f Dockerfile ../..
-docker push asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/buyer-web:latest
+docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/buyer-web:latest -f Dockerfile ../..
+docker push asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/buyer-web:latest
 
 # 建置 Admin Web 映像檔
 cd apps/admin-web
-docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/admin-web:latest -f Dockerfile ../..
-docker push asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/admin-web:latest
+docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/admin-web:latest -f Dockerfile ../..
+docker push asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/admin-web:latest
 
 # 建置 POS Web 映像檔
 cd apps/pos-web
-docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/pos-web:latest -f Dockerfile ../..
-docker push asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/pos-web:latest
+docker build -t asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/pos-web:latest -f Dockerfile ../..
+docker push asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/pos-web:latest
 ```
 
 ### 5.2 部署到 Cloud Run
 
 ```bash
 # 部署 API
-gcloud run deploy card-erp-api \
-  --image=asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/api:latest \
+gcloud run deploy astral-hub-api \
+  --image=asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/api:latest \
   --region=asia-east1 \
   --platform=managed \
   --allow-unauthenticated \
@@ -394,13 +394,13 @@ gcloud run deploy card-erp-api \
   --memory=512Mi \
   --cpu=1 \
   --timeout=300 \
-  --set-cloudsql-instances=PROJECT_ID:asia-east1:card-erp-db \
+  --set-cloudsql-instances=PROJECT_ID:asia-east1:astral-hub-db \
   --set-secrets=DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest,ECPAY_MERCHANT_ID=ECPAY_MERCHANT_ID:latest,ECPAY_HASH_KEY=ECPAY_HASH_KEY:latest,ECPAY_HASH_IV=ECPAY_HASH_IV:latest \
   --set-env-vars=NODE_ENV=production,PORT=3001
 
 # 部署 Buyer Web
-gcloud run deploy card-erp-buyer-web \
-  --image=asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/buyer-web:latest \
+gcloud run deploy astral-hub-buyer-web \
+  --image=asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/buyer-web:latest \
   --region=asia-east1 \
   --platform=managed \
   --allow-unauthenticated \
@@ -408,11 +408,11 @@ gcloud run deploy card-erp-buyer-web \
   --max-instances=5 \
   --memory=256Mi \
   --cpu=1 \
-  --set-env-vars=NODE_ENV=production,PORT=3000,NUXT_PUBLIC_API_BASE=https://card-erp-api-xxx.run.app
+  --set-env-vars=NODE_ENV=production,PORT=3000,NUXT_PUBLIC_API_BASE=https://astral-hub-api-xxx.run.app
 
 # 部署 Admin Web
-gcloud run deploy card-erp-admin-web \
-  --image=asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/admin-web:latest \
+gcloud run deploy astral-hub-admin-web \
+  --image=asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/admin-web:latest \
   --region=asia-east1 \
   --platform=managed \
   --allow-unauthenticated \
@@ -420,11 +420,11 @@ gcloud run deploy card-erp-admin-web \
   --max-instances=3 \
   --memory=256Mi \
   --cpu=1 \
-  --set-env-vars=NODE_ENV=production,PORT=3002,NUXT_PUBLIC_API_BASE=https://card-erp-api-xxx.run.app
+  --set-env-vars=NODE_ENV=production,PORT=3002,NUXT_PUBLIC_API_BASE=https://astral-hub-api-xxx.run.app
 
 # 部署 POS Web
-gcloud run deploy card-erp-pos-web \
-  --image=asia-east1-docker.pkg.dev/PROJECT_ID/card-erp-images/pos-web:latest \
+gcloud run deploy astral-hub-pos-web \
+  --image=asia-east1-docker.pkg.dev/PROJECT_ID/astral-hub-images/pos-web:latest \
   --region=asia-east1 \
   --platform=managed \
   --allow-unauthenticated \
@@ -432,7 +432,7 @@ gcloud run deploy card-erp-pos-web \
   --max-instances=3 \
   --memory=256Mi \
   --cpu=1 \
-  --set-env-vars=NODE_ENV=production,PORT=3003,NUXT_PUBLIC_API_BASE=https://card-erp-api-xxx.run.app
+  --set-env-vars=NODE_ENV=production,PORT=3003,NUXT_PUBLIC_API_BASE=https://astral-hub-api-xxx.run.app
 ```
 
 ---
@@ -454,12 +454,12 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/card-erp-images/api:latest'
+      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/astral-hub-images/api:latest'
       - '-f'
       - 'apps/api/Dockerfile'
       - '.'
 
-  - name: 'asia-east1-docker.pkg.dev/$PROJECT_ID/card-erp-images/api:latest'
+  - name: 'asia-east1-docker.pkg.dev/$PROJECT_ID/astral-hub-images/api:latest'
     entrypoint: 'sh'
     args:
       - '-c'
@@ -491,9 +491,9 @@ on:
     branches: [main]
 
 env:
-  PROJECT_ID: card-erp-production
+  PROJECT_ID: astral-hub-production
   REGION: asia-east1
-  REPOSITORY: card-erp-images
+  REPOSITORY: astral-hub-images
 
 jobs:
   deploy-api:
@@ -522,7 +522,7 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy card-erp-api \
+          gcloud run deploy astral-hub-api \
             --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/api:${{ github.sha }} \
             --region=${{ env.REGION }} \
             --platform=managed
@@ -554,7 +554,7 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy card-erp-buyer-web \
+          gcloud run deploy astral-hub-buyer-web \
             --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/buyer-web:${{ github.sha }} \
             --region=${{ env.REGION }} \
             --platform=managed
@@ -569,23 +569,23 @@ jobs:
 ```bash
 # 為 Cloud Run 服務設定自訂網域
 gcloud run domain-mappings create \
-  --service=card-erp-buyer-web \
-  --domain=www.card-erp.com \
+  --service=astral-hub-buyer-web \
+  --domain=www.astral-hub.com \
   --region=asia-east1
 
 gcloud run domain-mappings create \
-  --service=card-erp-api \
-  --domain=api.card-erp.com \
+  --service=astral-hub-api \
+  --domain=api.astral-hub.com \
   --region=asia-east1
 
 gcloud run domain-mappings create \
-  --service=card-erp-admin-web \
-  --domain=admin.card-erp.com \
+  --service=astral-hub-admin-web \
+  --domain=admin.astral-hub.com \
   --region=asia-east1
 
 gcloud run domain-mappings create \
-  --service=card-erp-pos-web \
-  --domain=pos.card-erp.com \
+  --service=astral-hub-pos-web \
+  --domain=pos.astral-hub.com \
   --region=asia-east1
 ```
 
@@ -609,7 +609,7 @@ CNAME   pos     ghs.googlehosted.com.
 
 ```bash
 # 查看 API 日誌
-gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=card-erp-api" --limit 50
+gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=astral-hub-api" --limit 50
 
 # 查看錯誤日誌
 gcloud logging read "resource.type=cloud_run_revision AND severity>=ERROR" --limit 20
@@ -653,11 +653,11 @@ gcloud alpha monitoring policies create \
 
 ```bash
 # 開發環境：可在非營業時間關閉
-gcloud sql instances patch card-erp-db \
+gcloud sql instances patch astral-hub-db \
   --activation-policy=NEVER
 
 # 恢復啟動
-gcloud sql instances patch card-erp-db \
+gcloud sql instances patch astral-hub-db \
   --activation-policy=ALWAYS
 ```
 
@@ -732,7 +732,7 @@ gcloud sql instances patch card-erp-db \
 **Q: Cloud Run 連接不到 Cloud SQL**
 ```bash
 # 確認 Cloud SQL 連線設定
-gcloud run services describe card-erp-api --region=asia-east1 | grep cloudsql
+gcloud run services describe astral-hub-api --region=asia-east1 | grep cloudsql
 ```
 
 **Q: Prisma Migration 失敗**
@@ -744,20 +744,20 @@ gcloud builds submit --config=cloudbuild-migrate.yaml
 **Q: 環境變數未生效**
 ```bash
 # 檢查 Cloud Run 環境變數
-gcloud run services describe card-erp-api --region=asia-east1 --format=yaml
+gcloud run services describe astral-hub-api --region=asia-east1 --format=yaml
 ```
 
 ### 13.2 除錯技巧
 
 ```bash
 # 查看最新部署
-gcloud run revisions list --service=card-erp-api --region=asia-east1
+gcloud run revisions list --service=astral-hub-api --region=asia-east1
 
 # 查看特定 revision 的日誌
 gcloud logging read "resource.labels.revision_name=REVISION_NAME" --limit 100
 
 # 測試 Cloud SQL 連線
-gcloud sql connect card-erp-db --user=card_erp_user --database=card_erp
+gcloud sql connect astral-hub-db --user=astral_hub_user --database=astral_hub
 ```
 
 ---

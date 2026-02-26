@@ -1,4 +1,4 @@
-# Codex CLI — Card ERP 專案指引
+# Codex CLI — Astral Hub 專案指引
 
 > 本文件為 Codex CLI 的角色定義與操作指引。完整專案規範請參閱 `AGENTS.md`。
 

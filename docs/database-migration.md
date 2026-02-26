@@ -1,4 +1,4 @@
-# Card ERP 資料庫遷移指南
+# Astral Hub 資料庫遷移指南
 
 ## 概述
 

@@ -2,11 +2,11 @@
 
 > **For Claude:** 本計畫採分段管線（4.3 節），拆為多個 Mission 逐步執行。
 
-**Goal:** 建立 `@card-erp/ui-components` 共用 Vue 3 元件庫，採 Headless + 預設 Tailwind class 模式，供三個前端應用（Admin/Buyer/POS）共用。
+**Goal:** 建立 `@astral-hub/ui-components` 共用 Vue 3 元件庫，採 Headless + 預設 Tailwind class 模式，供三個前端應用（Admin/Buyer/POS）共用。
 
 **Architecture:** Headless 元件提供完整的 props/events/slots/accessibility 邏輯，自帶基本 Tailwind class 作為預設樣式，各 app 可透過 class prop 覆寫。使用 Vite library mode 建置，vue-tsc 做型別檢查。
 
-**Tech Stack:** Vue 3.3+, TypeScript, Vite (library mode), Tailwind CSS, @card-erp/shared-types
+**Tech Stack:** Vue 3.3+, TypeScript, Vite (library mode), Tailwind CSS, @astral-hub/shared-types
 
 ---
 
@@ -17,7 +17,7 @@
 - 元件自帶基本 Tailwind class（佈局、互動狀態、無障礙）
 - 不包含品牌色彩，使用 semantic class（`bg-primary`、`text-muted` 等由各 app 定義）
 - 透過 `class` prop 可完全覆寫外觀
-- 業務元件（ProductCard 等）依賴 `@card-erp/shared-types` 型別
+- 業務元件（ProductCard 等）依賴 `@astral-hub/shared-types` 型別
 
 ### 元件 API 慣例
 
@@ -43,7 +43,7 @@
 - `packages/ui-components/vite.config.ts`
 - `packages/ui-components/src/index.ts`（空殼）
 
-**驗證**: `pnpm install` + `pnpm --filter @card-erp/ui-components type-check`
+**驗證**: `pnpm install` + `pnpm --filter @astral-hub/ui-components type-check`
 
 ### Mission B: 基礎元件（base/）
 

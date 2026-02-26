@@ -174,7 +174,7 @@ git commit -m "Add project skills configuration"
 ```bash
 # Clone 專案
 git clone <repo-url>
-cd card-erp
+cd astral-hub
 
 # Claude Code 會自動偵測 .claude/settings.json
 # 首次使用時會提示安裝缺少的 plugins

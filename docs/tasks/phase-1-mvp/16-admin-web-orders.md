@@ -24,7 +24,7 @@ import type {
   OrderListOutput,
   OrderDetailOutput,
   UpdateOrderStatusInput,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 export const useOrdersApi = () => {
   const { apiFetch } = useApiClient()
@@ -67,7 +67,7 @@ export const useOrdersApi = () => {
 ```typescript
 // apps/admin-web/composables/usePaymentsApi.ts
 
-import type { UpdatePaymentStatusInput } from '@card-erp/shared-types'
+import type { UpdatePaymentStatusInput } from '@astral-hub/shared-types'
 
 export const usePaymentsApi = () => {
   const { apiFetch } = useApiClient()
@@ -243,7 +243,7 @@ export const usePaymentsApi = () => {
 </template>
 
 <script setup lang="ts">
-import type { OrderStatus, PaymentStatus } from '@card-erp/shared-types'
+import type { OrderStatus, PaymentStatus } from '@astral-hub/shared-types'
 
 definePageMeta({
   middleware: ['auth'],
@@ -649,7 +649,7 @@ useHead({
 </template>
 
 <script setup lang="ts">
-import type { OrderDetailOutput, OrderStatus, PaymentStatus } from '@card-erp/shared-types'
+import type { OrderDetailOutput, OrderStatus, PaymentStatus } from '@astral-hub/shared-types'
 
 definePageMeta({
   middleware: ['auth'],

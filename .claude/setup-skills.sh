@@ -1,11 +1,11 @@
 #!/bin/bash
-# Card ERP - Claude Code Skills 安裝腳本
+# Astral Hub - Claude Code Skills 安裝腳本
 # 此腳本會安裝專案所需的 Claude Code plugins
 # 執行方式: bash .claude/setup-skills.sh
 
 set -e
 
-echo "=== Card ERP Claude Code Skills Setup ==="
+echo "=== Astral Hub Claude Code Skills Setup ==="
 echo ""
 
 # 檢查 claude 命令是否存在

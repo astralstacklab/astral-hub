@@ -1,4 +1,4 @@
-# Card ERP Brand Guidelines
+# Astral Hub Brand Guidelines
 
 **版本**: 1.0.0
 **最後更新**: 2026-01-25
@@ -10,7 +10,7 @@
 
 ### 品牌定位
 
-**Card ERP** 是一個創新的 OMO 卡片交易平台，結合了：
+**Astral Hub** 是一個創新的 OMO 卡片交易平台，結合了：
 - 🏪 **實體店面**的信任感與即時性
 - 💻 **線上交易**的便利性與廣度
 - ⚡ **競標機制**的刺激感與公平性
@@ -559,5 +559,5 @@ Padding: 24px (desktop) / 16px (mobile)
 ---
 
 **建立日期**: 2026-01-25
-**維護團隊**: Card ERP Design Team
-**聯絡方式**: design@card-erp.com
+**維護團隊**: Astral Hub Design Team
+**聯絡方式**: design@astral-hub.com

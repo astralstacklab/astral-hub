@@ -1,4 +1,4 @@
-# Card ERP - Claude Code 配置
+# Astral Hub - Claude Code 配置
 
 此目錄包含專案的 Claude Code 配置，讓 skills 和設定能跟隨 repo 進行版本控制。
 
@@ -19,7 +19,7 @@ bash .claude/setup-skills.sh
 ├── settings.local.json    # 本地設定（不進版控）
 ├── setup-skills.sh        # Plugins 安裝腳本
 └── skills/                # 專案 skills（版本控制）
-    ├── card-erp-workflow/          # Card ERP 開發工作流程
+    ├── astral-hub-workflow/          # Astral Hub 開發工作流程
     │   └── SKILL.md
     ├── systematic-debugging/       # 系統化除錯（含參考腳本）
     │   ├── SKILL.md
@@ -99,7 +99,7 @@ bash .claude/setup-skills.sh
 | `webapp-testing` | E2E 測試、前端功能驗證 |
 | `writing-plans` | 規劃多步驟任務 |
 | `receiving-code-review` | 接收 review 反饋 |
-| `card-erp-workflow` | Card ERP 專案專用工作流程 |
+| `astral-hub-workflow` | Astral Hub 專案專用工作流程 |
 
 ## 安裝的 Plugins
 

@@ -19,7 +19,7 @@
 2. 建立新專案或選擇現有專案
 3. 啟用 Cloud Storage API
 4. 建立 Storage Bucket：
-   - 名稱：`card-erp-images`（全球唯一）
+   - 名稱：`astral-hub-images`（全球唯一）
    - 位置類型：Region
    - 位置：asia-east1（台灣）
    - 儲存類別：Standard
@@ -30,7 +30,7 @@
 
 1. 前往「IAM 與管理」>「服務帳號」
 2. 建立服務帳號：
-   - 名稱：`card-erp-storage`
+   - 名稱：`astral-hub-storage`
    - 角色：Storage Object Admin
 3. 建立金鑰（JSON 格式）
 4. 下載金鑰檔案並儲存為 `gcp-key.json`
@@ -42,11 +42,11 @@
 
 # GCS 設定
 GCS_PROJECT_ID=your-project-id
-GCS_BUCKET_NAME=card-erp-images
+GCS_BUCKET_NAME=astral-hub-images
 GCS_KEY_FILE=./gcp-key.json
 
 # 圖片 CDN URL（可選，使用 Cloud CDN 加速）
-GCS_CDN_URL=https://storage.googleapis.com/card-erp-images
+GCS_CDN_URL=https://storage.googleapis.com/astral-hub-images
 ```
 
 ---
@@ -559,7 +559,7 @@ export class ProductsService {
 
 ```bash
 # 使用 gsutil 設定 Bucket 權限（需安裝 Google Cloud SDK）
-gsutil iam ch allUsers:objectViewer gs://card-erp-images
+gsutil iam ch allUsers:objectViewer gs://astral-hub-images
 ```
 
 或透過 Console：
@@ -586,7 +586,7 @@ gsutil iam ch allUsers:objectViewer gs://card-erp-images
 
 ```bash
 # 套用 CORS 設定
-gsutil cors set cors.json gs://card-erp-images
+gsutil cors set cors.json gs://astral-hub-images
 ```
 
 ---

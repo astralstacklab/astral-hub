@@ -8,7 +8,7 @@
 
 ## 關於本專案
 
-- **專案名稱**: Card ERP（OMO 收藏卡交易平台）
+- **專案名稱**: Astral Hub（OMO 收藏卡交易平台）
 - **共用指引**: [`AGENTS.md`](./AGENTS.md) — 所有 AI Agent（Claude、Gemini、Codex）共用
 - **技術棧**: Vue 3 + Nuxt 3 / Fastify + Prisma / PostgreSQL + Redis / GCP
 

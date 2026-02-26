@@ -1,13 +1,13 @@
 ---
-name: card-erp-workflow
-description: Card ERP 專案開發工作流程。在開始任何 Card ERP 相關開發任務時使用此 skill，確保遵循專案規範與最佳實踐。
+name: astral-hub-workflow
+description: Astral Hub 專案開發工作流程。在開始任何 Astral Hub 相關開發任務時使用此 skill，確保遵循專案規範與最佳實踐。
 ---
 
-# Card ERP 開發工作流程
+# Astral Hub 開發工作流程
 
 ## 專案背景
 
-Card ERP 是一個 OMO 收藏卡交易平台，包含：
+Astral Hub 是一個 OMO 收藏卡交易平台，包含：
 - **buyer-web**: 買家端 (Nuxt 3 SSR + PWA)
 - **admin-web**: 後台管理 (Vue 3 SPA)
 - **pos-web**: 店面結帳系統 (Vue 3 PWA)
@@ -27,7 +27,7 @@ Card ERP 是一個 OMO 收藏卡交易平台，包含：
 - 禁止使用 `any` 類型（單元測試除外）
 - 使用 `unknown` 或明確型別定義
 - 使用 Zod schema 進行運行時驗證
-- 使用 `@card-erp/shared-types` 共享類型
+- 使用 `@astral-hub/shared-types` 共享類型
 
 ## 開發流程
 

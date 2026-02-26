@@ -1,4 +1,4 @@
-# Card ERP Project Skills Guide
+# Astral Hub Project Skills Guide
 
 本專案已安裝以下 Claude Code Skills，協助開發流程更加系統化和高效。
 
@@ -281,10 +281,10 @@ cat .claude/settings.json
 ├── setup-skills.sh        # Plugins 安裝腳本
 ├── README.md              # 配置說明
 └── skills/                # 專案自訂 skills
-    └── card-erp-workflow.md  # Card ERP 開發工作流程
+    └── astral-hub-workflow.md  # Astral Hub 開發工作流程
 ```
 
-### 專案自訂 Skill: `card-erp-workflow`
+### 專案自訂 Skill: `astral-hub-workflow`
 
 專案內建的開發工作流程 skill，包含：
 - 專案背景與結構

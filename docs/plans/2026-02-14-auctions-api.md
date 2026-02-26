@@ -87,7 +87,7 @@
 - `services/api/tests/modules/auctions/auctions.service.test.ts` — Service 單元測試
 
 **依賴**: 無（獨立）
-**驗證**: `pnpm --filter @card-erp/api exec tsc --noEmit` + `pnpm --filter @card-erp/api test`
+**驗證**: `pnpm --filter @astral-hub/api exec tsc --noEmit` + `pnpm --filter @astral-hub/api test`
 
 ### Mission B: WebSocket Plugin + Room Manager
 
@@ -98,7 +98,7 @@
 - `services/api/package.json` — 新增 @fastify/websocket 依賴
 
 **依賴**: 無（可與 A 平行）
-**驗證**: `pnpm install` + `pnpm --filter @card-erp/api exec tsc --noEmit`
+**驗證**: `pnpm install` + `pnpm --filter @astral-hub/api exec tsc --noEmit`
 
 ### Mission C: Routes + Server 整合 + Routes Test
 
@@ -110,7 +110,7 @@
 - `services/api/tests/modules/auctions/auctions.routes.test.ts` — Routes 整合測試 + WebSocket 測試
 
 **依賴**: Mission A + Mission B
-**驗證**: `pnpm --filter @card-erp/api exec tsc --noEmit` + `pnpm --filter @card-erp/api test`
+**驗證**: `pnpm --filter @astral-hub/api exec tsc --noEmit` + `pnpm --filter @astral-hub/api test`
 
 ### Mission C.5: Proxy Bidding 機制
 
@@ -124,7 +124,7 @@
 - `services/api/tests/modules/auctions/auctions.routes.test.ts` — 更新 bid 相關測試
 
 **依賴**: Mission C（Routes 已建立）
-**驗證**: `prisma migrate dev` + `pnpm --filter @card-erp/api exec tsc --noEmit` + `pnpm --filter @card-erp/api test`
+**驗證**: `prisma migrate dev` + `pnpm --filter @astral-hub/api exec tsc --noEmit` + `pnpm --filter @astral-hub/api test`
 
 ### Mission D: Cron Job
 
@@ -135,7 +135,7 @@
 - `services/api/package.json` — 新增 node-cron + @types/node-cron 依賴
 
 **依賴**: Mission C.5（使用更新後的 AuctionsService）
-**驗證**: `pnpm --filter @card-erp/api exec tsc --noEmit` + `pnpm --filter @card-erp/api test`
+**驗證**: `pnpm --filter @astral-hub/api exec tsc --noEmit` + `pnpm --filter @astral-hub/api test`
 
 ---
 

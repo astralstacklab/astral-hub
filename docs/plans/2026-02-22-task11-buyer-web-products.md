@@ -53,7 +53,7 @@ export interface ProductListQuery extends Record<string, string | number | boole
 執行型別檢查確認無錯誤：
 
 ```bash
-pnpm --filter @card-erp/buyer-web typecheck
+pnpm --filter @astral-hub/buyer-web typecheck
 ```
 
 ### Step A-1.5: 修正 useProducts meta 回傳
@@ -65,7 +65,7 @@ pnpm --filter @card-erp/buyer-web typecheck
 在 return 物件中新增 `meta`：
 
 ```typescript
-import type { PaginationMeta } from '@card-erp/shared-types'
+import type { PaginationMeta } from '@astral-hub/shared-types'
 
 return {
   data: computed(() => asyncData.data.value?.data ?? []),
@@ -155,7 +155,7 @@ return {
 </template>
 
 <script setup lang="ts">
-import type { Product } from '@card-erp/shared-types'
+import type { Product } from '@astral-hub/shared-types'
 import { useCartStore } from '~/stores/cart'
 
 const props = defineProps<{ product: Product }>()
@@ -449,7 +449,7 @@ onMounted(() => {
 
 ```bash
 # TypeScript 型別檢查
-pnpm --filter @card-erp/buyer-web typecheck
+pnpm --filter @astral-hub/buyer-web typecheck
 ```
 
 確認：0 errors / 0 warnings。
@@ -469,7 +469,7 @@ pnpm --filter @card-erp/buyer-web typecheck
 修改 `apps/buyer-web/composables/useProducts.ts`，在 `useProducts` 函數的 return 中新增 `meta`：
 
 ```typescript
-import type { Product, SuccessResponse, PaginationMeta } from '@card-erp/shared-types'
+import type { Product, SuccessResponse, PaginationMeta } from '@astral-hub/shared-types'
 import type { MaybeRefOrGetter } from 'vue'
 import type { ProductListQuery } from '~/types'
 import { toValue } from 'vue'
@@ -500,7 +500,7 @@ export function useProduct(id: MaybeRefOrGetter<string>) {
 }
 ```
 
-> **注意**: `PaginationMeta` 的 import 需確認 `@card-erp/shared-types` 有 export。若無，改用 inline 型別定義：
+> **注意**: `PaginationMeta` 的 import 需確認 `@astral-hub/shared-types` 有 export。若無，改用 inline 型別定義：
 >
 > ```typescript
 > meta: computed(
@@ -605,7 +605,7 @@ export function useProduct(id: MaybeRefOrGetter<string>) {
 import type { ProductListQuery } from '~/types'
 
 useHead({
-  title: 'Marketplace — Card ERP',
+  title: 'Marketplace — Astral Hub',
   meta: [{ name: 'description', content: '瀏覽所有收藏卡商品，支援搜尋與篩選' }],
 })
 
@@ -789,7 +789,7 @@ const { data: product, pending, error } = useProduct(id)
 
 useHead(
   computed(() => ({
-    title: product.value ? `${product.value.name} — Card ERP` : 'Product — Card ERP',
+    title: product.value ? `${product.value.name} — Astral Hub` : 'Product — Astral Hub',
     meta: [
       {
         name: 'description',
@@ -825,7 +825,7 @@ function handleAddToCart() {
 ### Step B-4: 驗證 Mission B
 
 ```bash
-pnpm --filter @card-erp/buyer-web typecheck
+pnpm --filter @astral-hub/buyer-web typecheck
 ```
 
 確認：0 errors。
@@ -833,8 +833,8 @@ pnpm --filter @card-erp/buyer-web typecheck
 手動驗證（需先啟動 API + buyer-web dev server）：
 
 ```bash
-pnpm --filter @card-erp/api dev   # 另一個 terminal
-pnpm --filter @card-erp/buyer-web dev
+pnpm --filter @astral-hub/api dev   # 另一個 terminal
+pnpm --filter @astral-hub/buyer-web dev
 # 瀏覽 http://localhost:3000/products
 # 瀏覽 http://localhost:3000/products/<任何商品ID>
 ```
@@ -872,7 +872,7 @@ test.describe('Product List Page', () => {
   })
 
   test('should have correct page title', async ({ page }) => {
-    await expect(page).toHaveTitle(/Card ERP/)
+    await expect(page).toHaveTitle(/Astral Hub/)
   })
 
   test('should render Marketplace heading', async ({ page }) => {
@@ -1157,7 +1157,7 @@ npx playwright test --project=buyer-web --reporter=list
 ### Step C-4: TypeScript 最終確認
 
 ```bash
-pnpm --filter @card-erp/buyer-web typecheck
+pnpm --filter @astral-hub/buyer-web typecheck
 ```
 
 確認 0 errors。

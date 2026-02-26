@@ -62,7 +62,7 @@
 
 **需求**:
 
-- 接受 `Product`（from `@card-erp/shared-types`）prop
+- 接受 `Product`（from `@astral-hub/shared-types`）prop
 - 顯示：圖片（aspect-square）、類別、名稱（line-clamp-2）、售價（font-mono + neon-cyan glow）
 - 狀態標籤：SOLD → 紅色 badge、PENDING → 黃色 badge
 - 點擊跳轉 `/products/${id}`
@@ -75,7 +75,7 @@
 ```typescript
 import { useCartStore } from '~/stores/cart'
 const cartStore = useCartStore()
-cartStore.addItem(product) // Product from @card-erp/shared-types
+cartStore.addItem(product) // Product from @astral-hub/shared-types
 ```
 
 ### 1.2 ProductFilter 篩選器
@@ -177,7 +177,7 @@ const { data: products, pending, error, refresh } = useProducts(query)
 ## 四、注意事項
 
 1. **API 整合**：直接使用 Task 10 建立的 `useProducts` / `useProduct` composable，勿重複封裝
-2. **型別**：`Product` 統一從 `@card-erp/shared-types` import，前端額外型別放 `~/types/index.ts`
+2. **型別**：`Product` 統一從 `@astral-hub/shared-types` import，前端額外型別放 `~/types/index.ts`
 3. **購物車**：`cartStore.addItem(product)` 接受 `Product` from shared-types，不需轉換
 4. **Teleport**：Lightbox/Modal 使用 `<Teleport to="body">` 避免 z-index stacking context 問題
 5. **效能**：圖片 lazy loading、篩選/搜尋 debounce、大量資料考慮虛擬滾動

@@ -22,7 +22,7 @@
 import type {
   CreateOrderInput,
   OrderDetailOutput,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 export const useOrdersApi = () => {
   const { apiFetch } = useApiClient()
@@ -490,7 +490,7 @@ export type CheckoutFormData = z.infer<typeof CheckoutFormSchema>
 
 <script setup lang="ts">
 import { CheckoutFormSchema, type CheckoutFormData } from '~/types/checkout'
-import type { CreateOrderInput } from '@card-erp/shared-types'
+import type { CreateOrderInput } from '@astral-hub/shared-types'
 
 const cartStore = useCartStore()
 const ordersApi = useOrdersApi()
@@ -676,7 +676,7 @@ useHead({
 </template>
 
 <script setup lang="ts">
-import type { OrderDetailOutput, OrderStatus, PaymentStatus } from '@card-erp/shared-types'
+import type { OrderDetailOutput, OrderStatus, PaymentStatus } from '@astral-hub/shared-types'
 
 const route = useRoute()
 const ordersApi = useOrdersApi()

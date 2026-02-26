@@ -40,7 +40,7 @@
 ### 重點提示
 
 - `playwright.config.ts` 需定義三個 project（buyer-web / admin-web / pos-web），每個有獨立的 `webServer` 設定
-- buyer-web 的 webServer 指向 `pnpm --filter @card-erp/buyer-web dev`，port 3000
+- buyer-web 的 webServer 指向 `pnpm --filter @astral-hub/buyer-web dev`，port 3000
 - smoke test 先用一個簡單的 `page.goto` + 截圖，確認流程通，不需要實際頁面內容
 - screenshot helper 需支援三個 viewport：mobile (375x812), tablet (768x1024), desktop (1280x800)
 
@@ -89,15 +89,15 @@ npx playwright test tests/e2e/buyer-web/smoke.spec.ts --project=buyer-web
 - 加入 `tailwind-preset.js` 作為 preset（按 TAILWIND_USAGE.md 說明）
 - `nuxt.config.ts` 需含 runtimeConfig（apiBase）、PWA 基礎配置、TypeScript strict
 - `app.vue` 只需渲染一個黑底 + 霓虹文字的最小頁面，確認 Tailwind + 字體生效
-- package name: `@card-erp/buyer-web`
-- 依賴 `@card-erp/shared-types: workspace:*`
+- package name: `@astral-hub/buyer-web`
+- 依賴 `@astral-hub/shared-types: workspace:*`
 
 ### Verification Commands
 
 ```bash
 cd apps/buyer-web && pnpm install
-pnpm --filter @card-erp/buyer-web dev  # 確認能啟動
-pnpm --filter @card-erp/buyer-web typecheck
+pnpm --filter @astral-hub/buyer-web dev  # 確認能啟動
+pnpm --filter @astral-hub/buyer-web typecheck
 ```
 
 ### UX 驗證要求
@@ -145,8 +145,8 @@ pnpm --filter @card-erp/buyer-web typecheck
 ### Verification Commands
 
 ```bash
-pnpm --filter @card-erp/buyer-web typecheck
-pnpm --filter @card-erp/buyer-web dev  # 手動確認頁面
+pnpm --filter @astral-hub/buyer-web typecheck
+pnpm --filter @astral-hub/buyer-web dev  # 手動確認頁面
 ```
 
 ### UX 驗證要求
@@ -196,7 +196,7 @@ npx playwright test tests/e2e/buyer-web/ --project=buyer-web
 ### 重點提示
 
 - API client 使用 Nuxt 內建 `$fetch`（基於 ofetch），設定 baseURL 來自 runtimeConfig
-- composables 的回傳型別使用 `@card-erp/shared-types` 的型別（如有合適的，沒有就自定義）
+- composables 的回傳型別使用 `@astral-hub/shared-types` 的型別（如有合適的，沒有就自定義）
 - Cart store 需要 `persist` 功能（localStorage），需安裝 `@pinia-plugin-persistedstate/nuxt` 或同等方案
 - User store 暫不含 JWT 邏輯（Task 12 再做），只做基本狀態管理
 - 所有函式需有 TypeScript 型別標註，禁止 `any`
@@ -204,7 +204,7 @@ npx playwright test tests/e2e/buyer-web/ --project=buyer-web
 ### Verification Commands
 
 ```bash
-pnpm --filter @card-erp/buyer-web typecheck
+pnpm --filter @astral-hub/buyer-web typecheck
 ```
 
 ### UX 驗證要求
@@ -233,7 +233,7 @@ pnpm --filter @card-erp/buyer-web typecheck
 **TypeScript**:
 
 ```bash
-pnpm --filter @card-erp/buyer-web typecheck  # 零 error
+pnpm --filter @astral-hub/buyer-web typecheck  # 零 error
 ```
 
 **Playwright E2E**:

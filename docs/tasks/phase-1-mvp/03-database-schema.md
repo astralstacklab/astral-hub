@@ -639,7 +639,7 @@
     const admin = await prisma.adminUser.create({
       data: {
         username: 'admin',
-        email: 'admin@card-erp.com',
+        email: 'admin@astral-hub.com',
         passwordHash: '...', // bcrypt hash
         name: '系統管理員',
         role: 'SUPER_ADMIN',

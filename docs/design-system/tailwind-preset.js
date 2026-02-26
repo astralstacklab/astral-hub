@@ -1,5 +1,5 @@
 /**
- * Card ERP Shared Tailwind CSS Preset
+ * Astral Hub Shared Tailwind CSS Preset
  *
  * 此 preset 為所有應用程式提供統一的基礎設計系統：
  * - Admin Web (Fintech/Crypto Dark Mode)

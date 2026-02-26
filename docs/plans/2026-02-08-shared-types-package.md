@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** 建立 `@card-erp/shared-types` 套件，為前後端提供統一的型別定義（entities、enums、DTOs、API response types）。
+**Goal:** 建立 `@astral-hub/shared-types` 套件，為前後端提供統一的型別定義（entities、enums、DTOs、API response types）。
 
 **Architecture:** 純 TypeScript 套件，只輸出型別定義和 const enums。使用 Zod v4 定義 schema 同時產生 runtime validation + TypeScript 型別。套件透過 pnpm workspace 供 monorepo 內其他專案引用。
 
@@ -22,7 +22,7 @@
 
 ```json
 {
-  "name": "@card-erp/shared-types",
+  "name": "@astral-hub/shared-types",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -69,15 +69,15 @@
 **Step 3: 建立空的 src/index.ts**
 
 ```typescript
-// @card-erp/shared-types
+// @astral-hub/shared-types
 // 統一匯出入口
 ```
 
 **Step 4: 安裝依賴並驗證**
 
-Run: `cd /home/a9293340/card-erp && pnpm install`
+Run: `cd /home/a9293340/astral-hub && pnpm install`
 
-Run: `pnpm --filter @card-erp/shared-types type-check`
+Run: `pnpm --filter @astral-hub/shared-types type-check`
 Expected: 通過，無錯誤
 
 **Step 5: Commit**
@@ -254,7 +254,7 @@ export * from './common'
 export * from './enums'
 ```
 
-Run: `pnpm --filter @card-erp/shared-types type-check`
+Run: `pnpm --filter @astral-hub/shared-types type-check`
 Expected: 通過
 
 **Step 7: Commit**
@@ -466,7 +466,7 @@ export * from './enums'
 export * from './entities'
 ```
 
-Run: `pnpm --filter @card-erp/shared-types type-check`
+Run: `pnpm --filter @astral-hub/shared-types type-check`
 Expected: 通過
 
 **Step 9: Commit**
@@ -633,7 +633,7 @@ export * from './entities'
 export * from './dtos'
 ```
 
-Run: `pnpm --filter @card-erp/shared-types type-check`
+Run: `pnpm --filter @astral-hub/shared-types type-check`
 Expected: 通過
 
 **Step 7: Commit**
@@ -711,7 +711,7 @@ export * from './dtos'
 export * from './api'
 ```
 
-Run: `pnpm --filter @card-erp/shared-types type-check`
+Run: `pnpm --filter @astral-hub/shared-types type-check`
 Expected: 通過
 
 **Step 4: Commit**
@@ -732,7 +732,7 @@ git commit -m "feat(shared-types): 定義 API 回應型別（SuccessResponse, Er
 
 **Step 1: 執行完整 build**
 
-Run: `pnpm --filter @card-erp/shared-types build`
+Run: `pnpm --filter @astral-hub/shared-types build`
 Expected: 成功，`packages/shared-types/dist/` 產生 `.js` + `.d.ts` 檔案
 
 **Step 2: 驗證 dist 輸出結構**

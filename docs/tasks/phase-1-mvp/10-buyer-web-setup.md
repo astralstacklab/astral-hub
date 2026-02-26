@@ -30,7 +30,7 @@ pnpm add -D nuxt@latest
 
 ```json
 {
-  "name": "@card-erp/buyer-web",
+  "name": "@astral-hub/buyer-web",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -44,7 +44,7 @@ pnpm add -D nuxt@latest
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@card-erp/shared-types": "workspace:*",
+    "@astral-hub/shared-types": "workspace:*",
     "@pinia/nuxt": "^0.5.1",
     "nuxt": "^3.13.0",
     "pinia": "^2.1.7",
@@ -159,7 +159,7 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
-        '@card-erp/shared-types': '../../../packages/shared-types/src',
+        '@astral-hub/shared-types': '../../../packages/shared-types/src',
       },
     },
   },
@@ -358,7 +358,7 @@ import type {
   QueryAuctionsInput,
   AuctionListOutput,
   AuctionDetailOutput,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 /**
  * API Composables
@@ -407,7 +407,7 @@ export const useApi = () => {
 ```typescript
 // apps/buyer-web/types/store.ts
 
-import type { ProductType, ProductStatus } from '@card-erp/shared-types'
+import type { ProductType, ProductStatus } from '@astral-hub/shared-types'
 
 export interface Product {
   id: string
@@ -773,7 +773,7 @@ NUXT_PUBLIC_API_BASE=http://localhost:3001
 ```bash
 # apps/buyer-web/.env.production
 
-NUXT_PUBLIC_API_BASE=https://api.card-erp.com
+NUXT_PUBLIC_API_BASE=https://api.astral-hub.com
 ```
 
 ---

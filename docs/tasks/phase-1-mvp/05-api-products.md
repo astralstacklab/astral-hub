@@ -50,7 +50,7 @@
 
   ```typescript
   import { z } from 'zod'
-  import { ProductType, ProductStatus, ProductChannel, GradingStatus } from '@card-erp/shared-types'
+  import { ProductType, ProductStatus, ProductChannel, GradingStatus } from '@astral-hub/shared-types'
 
   export const CreateProductSchema = z.object({
     type: z.nativeEnum(ProductType),
@@ -745,13 +745,13 @@
 2. **Service 層測試**
 
    ```bash
-   pnpm --filter @card-erp/api test products.service.test
+   pnpm --filter @astral-hub/api test products.service.test
    ```
 
 3. **API 整合測試**
 
    ```bash
-   pnpm --filter @card-erp/api test products.routes.test
+   pnpm --filter @astral-hub/api test products.routes.test
    ```
 
 4. **手動 API 測試**（使用 Postman 或 curl）

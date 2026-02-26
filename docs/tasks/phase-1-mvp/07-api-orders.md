@@ -55,7 +55,7 @@
     ShippingMethod,
     OrderStatus,
     OrderChannel,
-  } from '@card-erp/shared-types'
+  } from '@astral-hub/shared-types'
 
   export const CreateOrderItemSchema = z.object({
     productId: z.string().uuid(),
@@ -752,7 +752,7 @@
 | `z.nativeEnum(OrderStatus)`                                   | `z.enum(['PENDING', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'CANCELLED'])` | 同上                                               |
 | `z.nativeEnum(OrderChannel)`                                  | `z.enum(['ONLINE', 'POS'])`                                              | 同上                                               |
 | `z.string().transform(Number).default('1')`                   | `z.coerce.number().int().positive().default(1)`                          | 參照 products/auctions schema 慣例                 |
-| `import { PaymentMethod, ... } from '@card-erp/shared-types'` | 不需要 import                                                            | Schema 內直接用 `z.enum([...])` 字面量即可         |
+| `import { PaymentMethod, ... } from '@astral-hub/shared-types'` | 不需要 import                                                            | Schema 內直接用 `z.enum([...])` 字面量即可         |
 
 ### Prisma / Import 路徑
 

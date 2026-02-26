@@ -26,7 +26,7 @@ import type {
   QuerySellerCommissionInput,
   SellerCommissionOutput,
   DashboardOutput,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 export const useAnalyticsApi = () => {
   const { apiFetch } = useApiClient()
@@ -244,7 +244,7 @@ export const useAnalyticsApi = () => {
 </template>
 
 <script setup lang="ts">
-import type { DashboardOutput } from '@card-erp/shared-types'
+import type { DashboardOutput } from '@astral-hub/shared-types'
 
 definePageMeta({
   middleware: ['auth'],
@@ -522,7 +522,7 @@ useHead({
 </template>
 
 <script setup lang="ts">
-import type { SalesReportOutput, AnalyticsPeriod } from '@card-erp/shared-types'
+import type { SalesReportOutput, AnalyticsPeriod } from '@astral-hub/shared-types'
 
 const analyticsApi = useAnalyticsApi()
 
@@ -714,7 +714,7 @@ onMounted(() => {
 </template>
 
 <script setup lang="ts">
-import type { ProductStatsOutput } from '@card-erp/shared-types'
+import type { ProductStatsOutput } from '@astral-hub/shared-types'
 
 const analyticsApi = useAnalyticsApi()
 
@@ -863,7 +863,7 @@ onMounted(() => {
 </template>
 
 <script setup lang="ts">
-import type { SellerCommissionOutput } from '@card-erp/shared-types'
+import type { SellerCommissionOutput } from '@astral-hub/shared-types'
 
 const analyticsApi = useAnalyticsApi()
 

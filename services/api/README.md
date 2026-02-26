@@ -1,6 +1,6 @@
-# @card-erp/api
+# @astral-hub/api
 
-Card ERP 後端 API 服務，基於 Fastify + Prisma + Redis。
+Astral Hub 後端 API 服務，基於 Fastify + Prisma + Redis。
 
 ## 快速開始
 

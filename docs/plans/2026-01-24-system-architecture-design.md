@@ -1,5 +1,5 @@
 # 系統架構設計文檔
-# Card ERP - OMO 收藏卡交易平台
+# Astral Hub - OMO 收藏卡交易平台
 
 **版本**: 1.0
 **日期**: 2026-01-24
@@ -573,7 +573,7 @@ CREATE TABLE audit_logs (
 
 ### 4.1 API 規範
 
-**基礎 URL**: `https://api.card-erp.com/v1`
+**基礎 URL**: `https://api.astral-hub.com/v1`
 
 **認證方式**:
 - 後台/賣家: `Authorization: Bearer <JWT>`
@@ -638,7 +638,7 @@ PUT    /auctions/:id/cancel       # 取消競標（後台）
 
 **WebSocket 訂閱**:
 ```javascript
-ws://api.card-erp.com/ws/auctions/:id
+ws://api.astral-hub.com/ws/auctions/:id
 // 接收即時出價通知
 ```
 
@@ -784,7 +784,7 @@ export default defineNuxtConfig({
 
   pwa: {
     manifest: {
-      name: 'Card ERP',
+      name: 'Astral Hub',
       short_name: 'CardERP',
       description: '收藏卡交易平台',
       theme_color: '#ffffff'
@@ -965,7 +965,7 @@ API: POST /products/:id/images
   TotalAmount: 1500,
   TradeDesc: "收藏卡購買",
   ItemName: "寶可夢 皮卡丘",
-  ReturnURL: "https://api.card-erp.com/payments/ecpay/callback",
+  ReturnURL: "https://api.astral-hub.com/payments/ecpay/callback",
   ChoosePayment: "Credit",  // or "ALL" 讓用戶選擇
   CheckMacValue: "..." // HMAC 簽章
 }
@@ -1085,8 +1085,8 @@ fastify.register(require('@fastify/rate-limit'), {
 ```typescript
 fastify.register(require('@fastify/cors'), {
   origin: [
-    'https://card-erp.com',
-    'https://admin.card-erp.com',
+    'https://astral-hub.com',
+    'https://admin.astral-hub.com',
     'http://localhost:3001'  // 開發環境
   ],
   credentials: true
@@ -1238,7 +1238,7 @@ const ProductDetail = defineAsyncComponent(() =>
 
 ┌──────────────────────────────────────────┐
 │      Cloud Storage (GCS Bucket)          │
-│  ├─ card-erp-storage/products/           │
+│  ├─ astral-hub-storage/products/           │
 │  ├─ Lifecycle: 90天後轉 Nearline         │
 │  └─ Public Access (圖片 URLs)            │
 └──────────────────────────────────────────┘

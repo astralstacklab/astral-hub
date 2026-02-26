@@ -2,7 +2,7 @@
 
 > **For Claude:** 本計畫採分段管線（4.3 節），拆為 4 個 Mission 逐步執行。
 
-**Goal:** 建立 `@card-erp/utils` 共用工具函數庫，提供格式化、驗證、計算、字串處理等純 TypeScript 函數，供前後端應用共用。
+**Goal:** 建立 `@astral-hub/utils` 共用工具函數庫，提供格式化、驗證、計算、字串處理等純 TypeScript 函數，供前後端應用共用。
 
 **Tech Stack:** TypeScript, Vitest（單元測試），無外部依賴（零依賴原則）
 
@@ -48,7 +48,7 @@ src/
 - `packages/utils/vitest.config.ts`
 - `packages/utils/src/index.ts`（空殼）
 
-**驗證**: `pnpm install` + `pnpm --filter @card-erp/utils type-check`
+**驗證**: `pnpm install` + `pnpm --filter @astral-hub/utils type-check`
 
 ### Mission B: 格式化工具（formatters/）
 

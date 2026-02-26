@@ -1,6 +1,6 @@
-# Card ERP 產品路線圖
+# Astral Hub 產品路線圖
 
-本目錄包含 Card ERP 系統從 MVP 到規模化的完整產品與技術演進規劃。
+本目錄包含 Astral Hub 系統從 MVP 到規模化的完整產品與技術演進規劃。
 
 ---
 

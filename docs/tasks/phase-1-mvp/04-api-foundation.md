@@ -79,7 +79,7 @@
 - [x] 建立 `services/api/package.json`
   ```json
   {
-    "name": "@card-erp/api",
+    "name": "@astral-hub/api",
     "version": "1.0.0",
     "type": "module",
     "scripts": {
@@ -90,7 +90,7 @@
       "type-check": "tsc --noEmit"
     },
     "dependencies": {
-      "@card-erp/shared-types": "workspace:*",
+      "@astral-hub/shared-types": "workspace:*",
       "@fastify/cors": "^8.4.0",
       "@fastify/jwt": "^7.2.0",
       "@fastify/rate-limit": "^9.0.0",
@@ -333,7 +333,7 @@
     await server.register(cors, {
       origin:
         config.NODE_ENV === 'production'
-          ? ['https://card-erp.com', 'https://admin.card-erp.com']
+          ? ['https://astral-hub.com', 'https://admin.astral-hub.com']
           : true,
       credentials: true,
     })
@@ -419,7 +419,7 @@
 - [x] 建立 `src/utils/response.ts`
 
   ```typescript
-  import type { SuccessResponse, ErrorResponse } from '@card-erp/shared-types'
+  import type { SuccessResponse, ErrorResponse } from '@astral-hub/shared-types'
 
   export function successResponse<T>(data: T, meta?: Record<string, unknown>): SuccessResponse<T> {
     return {
@@ -515,7 +515,7 @@
 
 #### 4.7.2 測試伺服器啟動
 
-- [x] 執行 `pnpm --filter @card-erp/api dev`
+- [x] 執行 `pnpm --filter @astral-hub/api dev`
 - [x] 驗證伺服器啟動成功
 - [x] 測試 `/health` endpoint
 
@@ -606,13 +606,13 @@
 1. **環境變數測試**
 
    ```bash
-   pnpm --filter @card-erp/api validate-env
+   pnpm --filter @astral-hub/api validate-env
    ```
 
 2. **啟動測試**
 
    ```bash
-   pnpm --filter @card-erp/api dev
+   pnpm --filter @astral-hub/api dev
    ```
 
 3. **Health Check 測試**

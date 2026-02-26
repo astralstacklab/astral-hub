@@ -1,6 +1,6 @@
-# @card-erp/ui-components
+# @astral-hub/ui-components
 
-Card ERP 共用 Vue 3 元件庫，採 Headless + 預設 Tailwind CSS class 模式。
+Astral Hub 共用 Vue 3 元件庫，採 Headless + 預設 Tailwind CSS class 模式。
 
 ## 安裝
 
@@ -9,7 +9,7 @@ Card ERP 共用 Vue 3 元件庫，採 Headless + 預設 Tailwind CSS class 模�
 ```json
 {
   "dependencies": {
-    "@card-erp/ui-components": "workspace:*"
+    "@astral-hub/ui-components": "workspace:*"
   }
 }
 ```
@@ -20,7 +20,7 @@ Card ERP 共用 Vue 3 元件庫，採 Headless + 預設 Tailwind CSS class 模�
 
 ```vue
 <script setup lang="ts">
-import { Button, Card, Table, FormInput, ProductCard } from '@card-erp/ui-components'
+import { Button, Card, Table, FormInput, ProductCard } from '@astral-hub/ui-components'
 </script>
 
 <template>
@@ -77,10 +77,10 @@ import { Button, Card, Table, FormInput, ProductCard } from '@card-erp/ui-compon
 
 ```bash
 # 型別檢查
-pnpm --filter @card-erp/ui-components type-check
+pnpm --filter @astral-hub/ui-components type-check
 
 # 建置
-pnpm --filter @card-erp/ui-components build
+pnpm --filter @astral-hub/ui-components build
 ```
 
 ## 套件結構

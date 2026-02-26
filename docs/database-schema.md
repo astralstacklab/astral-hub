@@ -1,8 +1,8 @@
-# Card ERP 資料庫 Schema 文檔
+# Astral Hub 資料庫 Schema 文檔
 
 ## 概述
 
-Card ERP 使用 PostgreSQL 資料庫，透過 Prisma ORM 管理。Schema 定義位於 `services/api/prisma/schema.prisma`。
+Astral Hub 使用 PostgreSQL 資料庫，透過 Prisma ORM 管理。Schema 定義位於 `services/api/prisma/schema.prisma`。
 
 ---
 

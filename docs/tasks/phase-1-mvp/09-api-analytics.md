@@ -41,7 +41,7 @@
 | `z.nativeEnum(AnalyticsPeriod)`                      | `z.enum(['DAILY', 'WEEKLY', 'MONTHLY', 'CUSTOM'])`            | z.enum literal           |
 | `enum AnalyticsPeriod { ... }`                       | 不需 TS enum，直接用 z.enum                                   | Zod v4 無 nativeEnum     |
 | `import { ... } from '@prisma/client'`               | `import type { ... } from '../../generated/prisma/client.js'` | 本地生成路徑             |
-| `import { ... } from '@card-erp/shared-types'`       | 從模組本地 schema 引入                                        | Schema 不放 shared-types |
+| `import { ... } from '@astral-hub/shared-types'`       | 從模組本地 schema 引入                                        | Schema 不放 shared-types |
 | `import { FastifyInstance } from 'fastify'`          | `import type { FastifyPluginAsync } from 'fastify'`           | 用 FastifyPluginAsync    |
 | `preHandler: [authMiddleware]`                       | `onRequest: [server.authenticate]`                            | 認證模式                 |
 | `import { authMiddleware } from '../middleware/...'` | 不需要，用 `server.authenticate`                              | 同上                     |
@@ -322,7 +322,7 @@ import {
   SellerCommissionOutput,
   DashboardOutput,
   AnalyticsPeriod,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 import { addDays, startOfDay, endOfDay, eachDayOfInterval } from 'date-fns'
 
 export class AnalyticsService {
@@ -840,7 +840,7 @@ import {
   QueryProductStatsSchema,
   QuerySellerCommissionSchema,
   ExportCSVSchema,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 import { authMiddleware } from '../middleware/auth.middleware'
 import { stringify } from 'csv-stringify/sync'
 

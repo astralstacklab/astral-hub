@@ -411,7 +411,7 @@
 
 - [x] 安裝依賴
   ```bash
-  pnpm --filter @card-erp/api add @fastify/websocket
+  pnpm --filter @astral-hub/api add @fastify/websocket
   ```
 
 #### 6.3.2 建立 WebSocket Plugin
@@ -901,8 +901,8 @@
 
 - [ ] 安裝依賴
   ```bash
-  pnpm --filter @card-erp/api add node-cron
-  pnpm --filter @card-erp/api add -D @types/node-cron
+  pnpm --filter @astral-hub/api add node-cron
+  pnpm --filter @astral-hub/api add -D @types/node-cron
   ```
 
 #### 6.5.2 建立定時任務

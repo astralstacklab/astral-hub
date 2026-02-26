@@ -59,7 +59,7 @@
 - [x] 建立 `packages/shared-types/package.json`
   ```json
   {
-    "name": "@card-erp/shared-types",
+    "name": "@astral-hub/shared-types",
     "version": "1.0.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -284,7 +284,7 @@
 - [x] 建立 `packages/ui-components/package.json`
   ```json
   {
-    "name": "@card-erp/ui-components",
+    "name": "@astral-hub/ui-components",
     "version": "1.0.0",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -362,7 +362,7 @@
 
   ```vue
   <script setup lang="ts">
-  import type { Product } from '@card-erp/shared-types'
+  import type { Product } from '@astral-hub/shared-types'
 
   interface Props {
     product: Product
@@ -550,23 +550,23 @@
 1. **型別檢查**
 
    ```bash
-   pnpm --filter @card-erp/shared-types type-check
-   pnpm --filter @card-erp/ui-components type-check
-   pnpm --filter @card-erp/utils type-check
+   pnpm --filter @astral-hub/shared-types type-check
+   pnpm --filter @astral-hub/ui-components type-check
+   pnpm --filter @astral-hub/utils type-check
    ```
 
 2. **單元測試**
 
    ```bash
-   pnpm --filter @card-erp/utils test
+   pnpm --filter @astral-hub/utils test
    ```
 
 3. **建置測試**
 
    ```bash
-   pnpm --filter @card-erp/shared-types build
-   pnpm --filter @card-erp/ui-components build
-   pnpm --filter @card-erp/utils build
+   pnpm --filter @astral-hub/shared-types build
+   pnpm --filter @astral-hub/ui-components build
+   pnpm --filter @astral-hub/utils build
    ```
 
 4. **引用測試**

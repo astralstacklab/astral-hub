@@ -47,18 +47,18 @@
   services:
     postgres:
       image: postgres:15-alpine
-      container_name: card-erp-postgres
+      container_name: astral-hub-postgres
       environment:
-        POSTGRES_USER: card_erp_user
-        POSTGRES_PASSWORD: card_erp_password
-        POSTGRES_DB: card_erp
+        POSTGRES_USER: astral_hub_user
+        POSTGRES_PASSWORD: astral_hub_password
+        POSTGRES_DB: astral_hub
       ports:
         - '5678:5432'
       volumes:
         - postgres_data:/var/lib/postgresql/data
         - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
       healthcheck:
-        test: ['CMD-SHELL', 'pg_isready -U card_erp_user']
+        test: ['CMD-SHELL', 'pg_isready -U astral_hub_user']
         interval: 10s
         timeout: 5s
         retries: 5
@@ -67,7 +67,7 @@
   ```yaml
   redis:
     image: redis:7-alpine
-    container_name: card-erp-redis
+    container_name: astral-hub-redis
     ports:
       - '6379:6379'
     volumes:
@@ -98,11 +98,11 @@
 - [x] 確認 containers 正常啟動
 - [x] 測試 PostgreSQL 連線
   ```bash
-  docker exec -it card-erp-postgres psql -U card_erp_user -d card_erp
+  docker exec -it astral-hub-postgres psql -U astral_hub_user -d astral_hub
   ```
 - [x] 測試 Redis 連線
   ```bash
-  docker exec -it card-erp-redis redis-cli ping
+  docker exec -it astral-hub-redis redis-cli ping
   ```
 
 ---
@@ -151,7 +151,7 @@
       "docker:up": "docker compose up -d",
       "docker:down": "docker compose down",
       "docker:logs": "docker compose logs -f",
-      "db:psql": "docker exec -it card-erp-postgres psql -U card_erp_user -d card_erp"
+      "db:psql": "docker exec -it astral-hub-postgres psql -U astral_hub_user -d astral_hub"
     }
   }
   ```

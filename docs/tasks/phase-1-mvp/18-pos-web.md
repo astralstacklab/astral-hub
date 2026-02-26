@@ -28,7 +28,7 @@ pnpm add -D nuxt@latest
 
 ```json
 {
-  "name": "@card-erp/pos-web",
+  "name": "@astral-hub/pos-web",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -40,7 +40,7 @@ pnpm add -D nuxt@latest
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@card-erp/shared-types": "workspace:*",
+    "@astral-hub/shared-types": "workspace:*",
     "@pinia/nuxt": "^0.5.1",
     "nuxt": "^3.13.0",
     "pinia": "^2.1.7",
@@ -112,7 +112,7 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
-        '@card-erp/shared-types': '../../../packages/shared-types/src',
+        '@astral-hub/shared-types': '../../../packages/shared-types/src',
       },
     },
   },
@@ -261,7 +261,7 @@ input, textarea {
 // apps/pos-web/stores/cart.ts
 
 import { defineStore } from 'pinia'
-import type { ProductDetailOutput } from '@card-erp/shared-types'
+import type { ProductDetailOutput } from '@astral-hub/shared-types'
 
 export interface CartItem {
   productId: string
@@ -497,7 +497,7 @@ export const useCartStore = defineStore('cart', {
 </template>
 
 <script setup lang="ts">
-import type { ProductDetailOutput } from '@card-erp/shared-types'
+import type { ProductDetailOutput } from '@astral-hub/shared-types'
 
 const cartStore = useCartStore()
 const productsApi = useProductsApi()
@@ -741,7 +741,7 @@ onUnmounted(() => {
 </template>
 
 <script setup lang="ts">
-import type { ProductDetailOutput } from '@card-erp/shared-types'
+import type { ProductDetailOutput } from '@astral-hub/shared-types'
 
 interface Props {
   products: ProductDetailOutput[]
@@ -911,7 +911,7 @@ import type {
   QueryProductsInput,
   ProductListOutput,
   ProductDetailOutput,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 export const useProductsApi = () => {
   const { apiFetch } = useApiClient()
@@ -938,7 +938,7 @@ export const useProductsApi = () => {
 ```typescript
 // apps/pos-web/composables/useOrdersApi.ts
 
-import type { CreateOrderInput, OrderDetailOutput } from '@card-erp/shared-types'
+import type { CreateOrderInput, OrderDetailOutput } from '@astral-hub/shared-types'
 
 export const useOrdersApi = () => {
   const { apiFetch } = useApiClient()

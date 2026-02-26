@@ -1,6 +1,6 @@
-# @card-erp/shared-types
+# @astral-hub/shared-types
 
-Card ERP 前後端共用型別定義套件。
+Astral Hub 前後端共用型別定義套件。
 
 ## 安裝
 
@@ -9,7 +9,7 @@ Card ERP 前後端共用型別定義套件。
 ```json
 {
   "dependencies": {
-    "@card-erp/shared-types": "workspace:*"
+    "@astral-hub/shared-types": "workspace:*"
   }
 }
 ```
@@ -17,8 +17,8 @@ Card ERP 前後端共用型別定義套件。
 ## 使用
 
 ```typescript
-import type { Product, ApiResponse, CreateProductDTO } from '@card-erp/shared-types'
-import { ProductType, ProductStatus } from '@card-erp/shared-types'
+import type { Product, ApiResponse, CreateProductDTO } from '@astral-hub/shared-types'
+import { ProductType, ProductStatus } from '@astral-hub/shared-types'
 ```
 
 ## 套件結構
@@ -36,8 +36,8 @@ src/
 
 ```bash
 # 型別檢查
-pnpm --filter @card-erp/shared-types type-check
+pnpm --filter @astral-hub/shared-types type-check
 
 # 建置
-pnpm --filter @card-erp/shared-types build
+pnpm --filter @astral-hub/shared-types build
 ```

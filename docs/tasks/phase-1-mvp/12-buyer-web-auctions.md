@@ -108,7 +108,7 @@ import type {
   AuctionDetailOutput,
   PlaceBidInput,
   BidOutput,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 export const useAuctionsApi = () => {
   const { apiFetch } = useApiClient()
@@ -227,7 +227,7 @@ export const useAuctionsApi = () => {
 </template>
 
 <script setup lang="ts">
-import type { AuctionDetailOutput } from '@card-erp/shared-types'
+import type { AuctionDetailOutput } from '@astral-hub/shared-types'
 
 interface Props {
   auction: AuctionDetailOutput
@@ -483,7 +483,7 @@ const formatDateTime = (dateString: string): string => {
 </template>
 
 <script setup lang="ts">
-import type { AuctionDetailOutput, AuctionStatus } from '@card-erp/shared-types'
+import type { AuctionDetailOutput, AuctionStatus } from '@astral-hub/shared-types'
 
 const auctionsApi = useAuctionsApi()
 
@@ -656,7 +656,7 @@ useHead({
 </template>
 
 <script setup lang="ts">
-import type { AuctionDetailOutput } from '@card-erp/shared-types'
+import type { AuctionDetailOutput } from '@astral-hub/shared-types'
 
 interface Bid {
   id: string
