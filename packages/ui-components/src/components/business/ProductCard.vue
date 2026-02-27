@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { withDefaults, computed } from 'vue'
-import type { Product } from '@card-erp/shared-types'
-import { GradingStatus as GradingStatusEnum } from '@card-erp/shared-types' // Import runtime object
+import type { Product } from '@astral-hub/shared-types'
+import { GradingStatus as GradingStatusEnum } from '@astral-hub/shared-types' // Import runtime object
 import BaseCard from '../base/Card.vue'
 
 interface Props {

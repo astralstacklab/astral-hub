@@ -1,5 +1,5 @@
 {
-  "name": "@card-erp/api",
+  "name": "@astral-hub/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "db:reset": "prisma migrate reset"
   },
   "dependencies": {
-    "@card-erp/shared-types": "workspace:*",
+    "@astral-hub/shared-types": "workspace:*",
     "@fastify/cors": "^10.0.0",
     "@fastify/jwt": "^9.0.0",
     "@fastify/rate-limit": "^10.0.0",

@@ -47,7 +47,7 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
-        '@card-erp/shared-types': '../../../packages/shared-types/src',
+        '@astral-hub/shared-types': '../../../packages/shared-types/src',
       },
     },
   },

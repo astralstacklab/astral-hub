@@ -29,7 +29,7 @@ async function main() {
   const superAdmin = await prisma.adminUser.create({
     data: {
       username: 'admin',
-      email: 'admin@card-erp.com',
+      email: 'admin@astral-hub.com',
       passwordHash: '$2b$10$placeholder_hash_for_seed_data_only',
       name: '系統管理員',
       role: 'SUPER_ADMIN',
@@ -39,7 +39,7 @@ async function main() {
   const staffUser = await prisma.adminUser.create({
     data: {
       username: 'staff01',
-      email: 'staff01@card-erp.com',
+      email: 'staff01@astral-hub.com',
       passwordHash: '$2b$10$placeholder_hash_for_seed_data_only',
       name: '門市店員 A',
       role: 'STAFF',

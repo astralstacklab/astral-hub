@@ -1,4 +1,4 @@
-import type { ErrorResponse } from '@card-erp/shared-types'
+import type { ErrorResponse } from '@astral-hub/shared-types'
 import type { FetchError } from 'ofetch'
 
 interface RequestOptions {

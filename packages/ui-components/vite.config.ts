@@ -7,12 +7,12 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'CardErpUiComponents',
+      name: 'AstralHubUiComponents',
       fileName: 'ui-components',
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['vue', '@card-erp/shared-types'],
+      external: ['vue', '@astral-hub/shared-types'],
       output: {
         globals: {
           vue: 'Vue',

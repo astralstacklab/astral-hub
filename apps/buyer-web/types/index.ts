@@ -1,4 +1,4 @@
-import type { Auction, Product, User } from '@card-erp/shared-types'
+import type { Auction, Product, User } from '@astral-hub/shared-types'
 
 export interface CartItem {
   productId: string

@@ -1,5 +1,5 @@
 /**
- * 整合測試：驗證 @card-erp/utils 與 @card-erp/shared-types 的跨套件引用
+ * 整合測試：驗證 @astral-hub/utils 與 @astral-hub/shared-types 的跨套件引用
  *
  * 目的：確認 workspace 依賴解析正確、型別正確傳遞、enum 值可在執行期使用
  */
@@ -16,7 +16,7 @@ import {
   ShippingMethod,
   UserRole,
   AdminRole,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 import type {
   // Entities（純型別）
@@ -28,7 +28,7 @@ import type {
   ErrorResponse,
   ApiResponse,
   PaginationMeta,
-} from '@card-erp/shared-types'
+} from '@astral-hub/shared-types'
 
 // Utils 函數
 import {

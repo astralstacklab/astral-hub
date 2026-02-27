@@ -1,4 +1,4 @@
-import type { PaginationMeta, Product, SuccessResponse } from '@card-erp/shared-types'
+import type { PaginationMeta, Product, SuccessResponse } from '@astral-hub/shared-types'
 import type { MaybeRefOrGetter } from 'vue'
 import type { ProductListQuery } from '~/types'
 import { toValue } from 'vue'

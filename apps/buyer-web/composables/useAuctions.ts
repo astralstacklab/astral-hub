@@ -1,4 +1,4 @@
-import type { Auction, SuccessResponse } from '@card-erp/shared-types'
+import type { Auction, SuccessResponse } from '@astral-hub/shared-types'
 import type { MaybeRefOrGetter } from 'vue'
 import type { AuctionListQuery, PlaceBidPayload } from '~/types'
 import { readonly, toValue } from 'vue'

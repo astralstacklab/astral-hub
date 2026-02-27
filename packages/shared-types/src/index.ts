@@ -1,4 +1,4 @@
-// @card-erp/shared-types
+// @astral-hub/shared-types
 // 統一匯出入口
 
 // Enums

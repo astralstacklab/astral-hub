@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Product } from '@card-erp/shared-types'
+import type { Product } from '@astral-hub/shared-types'
 import { useCartStore } from '~/stores/cart'
 
 const props = defineProps<{

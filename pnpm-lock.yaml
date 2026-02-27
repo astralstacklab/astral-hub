@@ -64,7 +64,7 @@ importers:
 
   apps/buyer-web:
     dependencies:
-      '@card-erp/shared-types':
+      '@astral-hub/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       '@pinia/nuxt':
@@ -132,7 +132,7 @@ importers:
 
   packages/ui-components:
     dependencies:
-      '@card-erp/shared-types':
+      '@astral-hub/shared-types':
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
@@ -154,7 +154,7 @@ importers:
 
   packages/utils:
     dependencies:
-      '@card-erp/shared-types':
+      '@astral-hub/shared-types':
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
@@ -167,7 +167,7 @@ importers:
 
   services/api:
     dependencies:
-      '@card-erp/shared-types':
+      '@astral-hub/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       '@fastify/cors':

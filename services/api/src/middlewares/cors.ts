@@ -7,7 +7,7 @@ const corsPlugin: FastifyPluginAsync = async (server) => {
   await server.register(cors, {
     origin:
       config.NODE_ENV === 'production'
-        ? ['https://card-erp.com', 'https://admin.card-erp.com']
+        ? ['https://astral-hub.com', 'https://admin.astral-hub.com']
         : true,
     credentials: true,
   })

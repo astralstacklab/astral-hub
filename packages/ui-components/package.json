@@ -1,5 +1,5 @@
 {
-  "name": "@card-erp/ui-components",
+  "name": "@astral-hub/ui-components",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "vue": "^3.3.0"
   },
   "dependencies": {
-    "@card-erp/shared-types": "workspace:*"
+    "@astral-hub/shared-types": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",

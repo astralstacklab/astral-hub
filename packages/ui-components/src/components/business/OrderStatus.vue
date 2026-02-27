@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { withDefaults, computed, useSlots } from 'vue'
-import type { OrderStatus } from '@card-erp/shared-types'
-import { OrderStatus as OrderStatusEnum } from '@card-erp/shared-types' // Runtime value
+import type { OrderStatus } from '@astral-hub/shared-types'
+import { OrderStatus as OrderStatusEnum } from '@astral-hub/shared-types' // Runtime value
 
 interface Props {
   status: OrderStatus

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { withDefaults, ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import type { AuctionStatus } from '@card-erp/shared-types'
-import { AuctionStatus as AuctionStatusEnum } from '@card-erp/shared-types'
+import type { AuctionStatus } from '@astral-hub/shared-types'
+import { AuctionStatus as AuctionStatusEnum } from '@astral-hub/shared-types'
 
 interface Props {
   endTime: Date | string

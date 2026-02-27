@@ -42,7 +42,7 @@ export default defineConfig({
 
   webServer: [
     {
-      command: 'pnpm --filter @card-erp/buyer-web dev',
+      command: 'pnpm --filter @astral-hub/buyer-web dev',
       port: 3000,
       reuseExistingServer: !process.env.CI,
       timeout: 60000,

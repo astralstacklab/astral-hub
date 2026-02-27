@@ -1,7 +1,7 @@
-import type { Product } from '@card-erp/shared-types'
+import type { Product } from '@astral-hub/shared-types'
 import type { CartItem } from '~/types'
 
-const CART_STORAGE_KEY = 'card-erp:buyer-cart'
+const CART_STORAGE_KEY = 'astral-hub:buyer-cart'
 
 interface CartState {
   items: CartItem[]

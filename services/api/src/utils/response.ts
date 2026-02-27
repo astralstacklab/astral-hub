@@ -1,4 +1,4 @@
-import type { SuccessResponse, ErrorResponse, PaginationMeta } from '@card-erp/shared-types'
+import type { SuccessResponse, ErrorResponse, PaginationMeta } from '@astral-hub/shared-types'
 
 export function successResponse<T>(data: T, meta?: PaginationMeta): SuccessResponse<T> {
   return {

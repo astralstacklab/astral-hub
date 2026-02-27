@@ -1,5 +1,5 @@
 {
-  "name": "@card-erp/buyer-web",
+  "name": "@astral-hub/buyer-web",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
-    "@card-erp/shared-types": "workspace:*",
+    "@astral-hub/shared-types": "workspace:*",
     "@pinia/nuxt": "^0.5.1",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",

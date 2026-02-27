@@ -1,9 +1,9 @@
 {
-  "name": "card-erp",
+  "name": "astral-hub",
   "version": "1.0.0",
   "description": "OMO 收藏卡交易平台 - 線上線下整合系統",
   "private": true,
-  "author": "Card ERP Team",
+  "author": "Astral Hub Team",
   "license": "UNLICENSED",
   "scripts": {
     "dev": "echo 'Please run dev command in specific workspace (e.g., pnpm --filter api dev)'",
@@ -18,7 +18,7 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "db:psql": "docker exec -it card-erp-postgres psql -U card_erp_user -d card_erp",
+    "db:psql": "docker exec -it astral-hub-postgres psql -U astral_hub_user -d astral_hub",
     "validate-env": "tsx scripts/validate-env.ts",
     "prepare": "husky"
   },

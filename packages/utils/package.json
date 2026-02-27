@@ -1,5 +1,5 @@
 {
-  "name": "@card-erp/utils",
+  "name": "@astral-hub/utils",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@card-erp/shared-types": "workspace:*"
+    "@astral-hub/shared-types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.2.0",
