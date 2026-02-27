@@ -8,7 +8,7 @@ const swaggerPlugin: FastifyPluginAsync = async (server) => {
   await server.register(swagger, {
     openapi: {
       info: {
-        title: 'Card ERP API',
+        title: 'Astral Hub API',
         description: 'OMO 收藏卡交易平台 API 文檔',
         version: '0.1.0',
       },

@@ -67,7 +67,7 @@ export async function buildServer() {
     },
     async () => {
       return {
-        name: 'Card ERP API',
+        name: 'Astral Hub API',
         version: '0.1.0',
         environment: config.NODE_ENV,
       }

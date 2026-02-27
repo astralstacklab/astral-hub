@@ -8,7 +8,7 @@ test.describe('Buyer Web Navigation', () => {
     await expect(header).toBeVisible()
 
     // Logo
-    const logo = header.getByRole('link', { name: 'CARD ERP' })
+    const logo = header.getByRole('link', { name: 'ASTRAL HUB' })
     await expect(logo).toBeVisible()
 
     // Desktop nav links

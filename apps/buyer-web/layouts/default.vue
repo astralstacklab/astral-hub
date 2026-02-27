@@ -7,7 +7,7 @@
           class="font-display text-xl tracking-[0.2em] text-neon-cyan neon-text"
           @click="closeMenu"
         >
-          CARD ERP
+          ASTRAL HUB
         </NuxtLink>
 
         <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
@@ -88,7 +88,7 @@
             class="font-display text-xl tracking-[0.2em] text-neon-cyan"
             @click="closeMenu"
           >
-            CARD ERP
+            ASTRAL HUB
           </NuxtLink>
           <button
             type="button"
@@ -151,8 +151,8 @@
       <div
         class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-center md:flex-row md:px-6 md:text-left"
       >
-        <p class="font-display text-sm tracking-[0.2em] text-neon-cyan">CARD ERP</p>
-        <p class="text-xs text-text-secondary">2026 Card ERP. All rights reserved.</p>
+        <p class="font-display text-sm tracking-[0.2em] text-neon-cyan">ASTRAL HUB</p>
+        <p class="text-xs text-text-secondary">2026 Astral Hub. All rights reserved.</p>
       </div>
     </footer>
   </div>

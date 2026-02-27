@@ -56,7 +56,7 @@ test.describe('Buyer Web Homepage', () => {
   test('should render Footer', async ({ page }) => {
     const footer = page.locator('footer')
     await expect(footer).toBeVisible()
-    await expect(footer).toContainText('Card ERP')
+    await expect(footer).toContainText('Astral Hub')
     await expect(footer).toContainText('All rights reserved')
   })
 

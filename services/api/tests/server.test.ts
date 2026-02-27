@@ -40,7 +40,7 @@ describe('Server', () => {
 
       expect(response.statusCode).toBe(200)
       const json = response.json()
-      expect(json.name).toBe('Card ERP API')
+      expect(json.name).toBe('Astral Hub API')
       expect(json.version).toBeDefined()
     })
   })

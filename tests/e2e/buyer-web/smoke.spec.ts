@@ -9,7 +9,7 @@ test.describe('Buyer Web Smoke Test', () => {
 
     const header = page.locator('header')
     await expect(header).toBeVisible()
-    await expect(header.getByRole('link', { name: 'CARD ERP' })).toBeVisible()
+    await expect(header.getByRole('link', { name: 'ASTRAL HUB' })).toBeVisible()
 
     const title = hero.locator('h1')
     await expect(title).toContainText('COLLECT')
