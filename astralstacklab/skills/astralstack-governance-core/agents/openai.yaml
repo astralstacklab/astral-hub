@@ -1,0 +1,3 @@
+interface:
+  display_name: "AstralStackLab Core Governance"
+  short_description: "Enforce product governance, release contracts, and agent rules across AstralStackLab repos"
