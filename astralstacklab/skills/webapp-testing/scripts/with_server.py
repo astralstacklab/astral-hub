@@ -65,10 +65,10 @@ def main():
         for i, server in enumerate(servers):
             print(f"Starting server {i+1}/{len(servers)}: {server['cmd']}")
 
-            # Use shell=True to support commands with cd and &&
+            # Use shell=True to support commands with cd and && (intentional)  # nosemgrep: python.lang.security.audit.subprocess-popen-with-shell-equals-true
             process = subprocess.Popen(
                 server['cmd'],
-                shell=True,
+                shell=True,  # nosemgrep
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
             )
