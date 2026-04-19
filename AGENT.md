@@ -381,3 +381,63 @@ ASTRA `/llm` panel 依賴 Langfuse tag 做跨 repo 數據聚合。**Tag 不一�
 - [ ] 四個 tag 齊全且格式正確
 - [ ] `project` tag 與 `PRODUCT.yaml` 一致
 - [ ] Cloud Run Job 有 `flushAsync()`
+
+## 15. ASL Skills Discovery Pipeline
+
+### 15.1 目的
+
+Skills 是 ASL 組織的**共用執行知識單元**，用於在所有 repo 之間同步一致的做法。
+每個 Skill 封裝一個明確的「如何做」，讓 Claude 或人工在無額外說明的情況下即可正確執行。
+
+### 15.2 何時應封裝為 Skill
+
+當下列任一條件成立時，應考慮將做法封裝為 Skill：
+
+- 同樣的做法在兩個以上 repo 重複出現
+- 沒有 Skill 時，Claude 容易做出不一致或錯誤的選擇
+- 做法有明確的「對/錯」邊界（不是個人偏好）
+
+### 15.3 Skill 存放位置與格式
+
+所有共用 Skills 存放於：
+
+```
+astralstacklab/astralstacklab/skills/{skill-name}/SKILL.md
+```
+
+每個 `SKILL.md` 必須包含 YAML frontmatter：
+
+```yaml
+---
+name: {skill-name}
+description: {一句話說明這個 skill 解決什麼問題}
+tags: [{分類標籤}]
+---
+```
+
+body 內容遵循 agentskills.io 格式，並在文末加上：
+
+```
+> Governance: AGENT.md §15
+```
+
+### 15.4 Skill 生命週期
+
+```
+發現候選 → 起草 SKILL.md → PR 至 astralstacklab → 合併 → AEGIS 自動 sync PR 至所有 repo
+```
+
+- **發現**：Eric 或 Claude 均可提出候選
+- **起草**：由 Claude 產生初稿，Eric 審核
+- **合併後**：AEGIS standards-sync 自動偵測 diff，對所有已安裝 repo 開 PR
+
+### 15.5 版本控制
+
+Skills 隨 `astralstacklab/VERSION` 一起版本化。
+新增或修改任何 Skill 後，必須同時 bump VERSION（MINOR），並產生對應 `change.json`。
+
+### 15.6 禁止事項
+
+- 禁止將 repo 專屬邏輯放入共用 Skills（應放在該 repo 的 `.claude/` 目錄）
+- 禁止直接修改已 sync 至各 repo 的 Skill 副本（應修改 `astralstacklab` 來源後重新 sync）
+- 禁止在未讀取對應 Skill 的情況下自行實作該 Skill 所涵蓋的功能
